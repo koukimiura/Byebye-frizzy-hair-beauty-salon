@@ -1,0 +1,51 @@
+<div class='schedule'>
+    <div class='form-body'>
+        <div class='staff-name'>
+            <p><span>社員番号</span><%= @current_staff.number %></p>
+            <p><span>名前</span><%= @current_staff.last_name+@current_staff.first_name %></p>
+        </div>
+        <div class='timesheet'>
+            <% d= Date.today %>
+            <h2><%= d.strftime("%Y年") %><%= d.next_month.strftime("%m月")%></h2>
+            <hr>
+            <%= form_for @schedule do |f| %>
+                <%= render 'layouts/error_message', model: f.object %>
+                    <% @dates.each do |date| %>
+                        <%= f.label :日にち %>
+                        <%= date %>
+                        <%= hidden_field_tag "schedule_date[]", date %>
+                        <%= hidden_field_tag "staff_id", @current_staff.id%>
+                        <p>出勤時間</p>
+                        <select name="start_time[]">
+                            <option value="break">休暇</option>
+                            <option value="10.0" selected = "10:00">10:00</option>
+                            <option value="10.5">10:30</option>
+                            <option value="11.0">11:00</option>
+                            <option value="11.5">11:30</option>
+                            <option value="12.0">12:00</option>
+                            <option value="12.5">12:30</option>
+                            <option value="13.0">13:00</option>
+                            <option value="13.5">13:30</option>
+                            <option value="14.0">14:00</option>
+                            </select>
+                        <p>退勤時間</p>
+                        <select name="end_time[]">
+                            <option value="break">休暇</option>
+                            <option value="16.0">16:00</option>
+                            <option value="16.5">16:30</option>
+                            <option value="17.0">17:00</option>
+                            <option value="17.5">17:30</option>
+                            <option value="18.0">18:00</option>
+                            <option value="18.5">18:30</option>
+                            <option value="19.0">19:00</option>
+                            <option value="19.5">19:30</option>
+                            <option value="20.0">20:00</option>
+                            <option value="20.5" selected = "20:30">20:30</option>
+                        </select>
+                        <hr>
+                    <% end %>
+                <%= f.submit :登録 %>
+            <% end %>
+        
+    </div>
+</div>

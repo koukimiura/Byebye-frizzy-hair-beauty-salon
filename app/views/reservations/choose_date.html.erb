@@ -1,0 +1,29 @@
+<div class='reservation-of-date'>
+     <div class='main-title'>
+        <h2 class='text-center'>日時を選択してください</h2>
+    </div>
+    <div class='main'>
+        <div class='pre-reservation'>
+            <table class="tacheck" border="1">
+                <tbody>
+                    <tr>
+                        <th>メニュー</th>
+                        <td><%= @menuNames %></td>
+                    </tr>
+                    <tr>
+                        <th>所要時間</th>
+                        <td><%= @menuRequiredTimes %>分</td>
+                    </tr>
+                    <tr>
+                        <th>お支払い予定金額</th>
+                        <td><%= "￥#{@price.to_s(:delimited)}" %><br><span class="caution">※実際のお支払い金額と異なる場合があります。</span></td>
+                    </tr>
+                    <tr>
+                        <th><%= image_tag @staff.image.to_s %></th>
+                        <td><%= @staff.last_name %><span><%= @staff.first_name %></span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

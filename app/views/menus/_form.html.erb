@@ -1,0 +1,32 @@
+ <div class='staff-form'>
+    <div class='field'>
+      <%= f.label :name %>
+      <%= f.text_field :name %>
+   </div>
+   
+   <div class='field'>
+      <%= f.label :category %>
+      <%= f.select :category, [['haircut', 1], ['colour', 2], ['curl', 3], ['treatment', 4], ['setting_your_hair', 5],
+                              ['other', 6]], :promt => 'please select' %>
+   </div>
+   
+   <div class='field'>
+      <%= f.label :price %>
+      <em class="number-alarm">＊半角数字で記入してください</em>
+      <%= f.number_field :price %>
+   </div>
+   
+   <div class='field'>
+      <%= f.label :required_time %>
+      <%= f.text_field :required_time %>
+   </div>
+   
+   <div class='field'>
+       <%= f.label :detail %>
+       <%= f.text_field :detail, class:'form-control' %>
+   </div>
+   
+   <div class='field'>
+      <%= f.submit "登録" %>
+   </div>
+</div>

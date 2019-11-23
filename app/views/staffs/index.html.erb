@@ -1,0 +1,37 @@
+<div class='staff'>
+    <div class='all-staff'>
+        <div class='staff-inner'>
+            <% @staffs.each do |staff| %>
+                <div class='staff-date'>
+                    <div class='staff-image'>
+                        <%= image_tag staff.image.to_s %>
+                    </div>
+                    <div class='staff-details'>
+                        <p><span><%= @name %></span><%= staff.last_name %><%= staff.first_name %></p>
+                        <p><span>カナ</span><%= staff.last_name_kana %><%= staff.first_name_kana %></p>
+                        <p><span><%= @age %></span><%= staff.age %></p>
+                        <p><span><%= @gender %></span><%= staff.gender %></p>
+                        <% case staff.status %>
+                            <% when 1 then %>
+                                <p><span><%= @status %></span>店長</p>
+                            <% when 2 then %>
+                                <p><span><%= @status %></span>副店長</p>
+                            <% when 3 then %>
+                                <p><span><%= @status %></span>スタイリスト</p>
+                        <% end %>
+                    </div>
+                    <div class='staff-introduction'>
+                        <p>自己紹介</p>
+                        <div class='content'>
+                            <%= staff.self_introduction %>
+                        </div>
+                    </div>
+                    <div class='staff-management'>
+                        <%= link_to '編集', edit_staff_path(staff.id) %>
+                        <%= link_to '削除', staff_path(staff.id), method: :delete, data: { confirm: 'Are you sure?' } %>
+                    </div>
+                </div>
+            <% end %>
+        </div>
+    </div>
+</div>

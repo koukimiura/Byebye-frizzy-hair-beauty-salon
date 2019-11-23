@@ -1,0 +1,55 @@
+         <div class='staff-form'>
+            <div class='field'>
+              <%= f.label :社員番号 %>
+              <%= f.number_field :number %>
+           </div>
+           
+           <div class='field'>
+              <p><%= f.label :苗字 %>
+              <%= f.text_field :last_name %>
+              
+              <%= f.label :名前 %>
+              <%= f.text_field :first_name %></p>
+               
+              <p><%= f.label :苗字（カナ） %>
+              <%= f.text_field :last_name_kana %>
+              
+              <%= f.label :苗字（カナ）%>
+              <%= f.text_field :first_name_kana %></p>
+           </div>
+           
+           <div class='field'>
+              <%= f.label :年齢 %>
+              <%= f.number_field :age %>
+           </div>
+           
+           <div class='field'>
+              <%= f.label :性別 %>
+              <%= f.radio_button :gender, "男" %>M <%= f.radio_button :gender, "女" %>F
+           </div>
+           
+           <div class='field'>
+              <%= f.label :職歴 %>
+              <%= f.select :experience, [ ["1年目","1年目"], ["3年以下","3年以下"], ["6年以下", "6年以下"], 
+                                      ["10年以下", "10年以下"], ["10年以上", "10年以上"]], prompt: "職業を選択してください" %>
+           </div>
+           
+           <div class='field'>
+              <%= f.label :地位 %>
+              <%= f.select :status, [ ["店長", 1], ["副店長", 2], ["スタイリスト", 3]], prompt: "職業を選択してください" %>
+           </div>
+           
+           <div class='field'>
+              <%= f.label :自己紹介 %>
+              <%= f.text_area :self_introduction %>
+           </div>
+           
+           <div class='field'>
+              <%= f.label :画像 %>
+              <%= f.file_field :image %>
+           </div>
+           
+            <div class='field'>
+              <%= f.submit "登録" %>
+            </div>
+        </div>

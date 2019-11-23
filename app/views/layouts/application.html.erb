@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Myapp</title>
+    <%= csrf_meta_tags %>
+    <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload' %>
+    <!--<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>-->
+    <%= javascript_include_tag 'application', 'data-turbolinks-track': 'reload' %>
+  </head>
+  <body>
+    <div class='wrapper'>
+      <div class='container'>
+        
+          <%if notice %>
+            <p class= "alert alert-success"><%= notice %></p>
+          <% end %>
+          <%if alert %>
+            <p class= "alert alert-danger"><%= alert %></p>
+          <% end %>
+          
+          <%= yield %>
+      </div>
+      <div class='footer'>
+          <div class='back'>
+            <%= link_to 'back', :back %>
+            <%= link_to 'top', root_path %>
+          </div>
+      </div>
+    </div>
+  </body>
+</html>

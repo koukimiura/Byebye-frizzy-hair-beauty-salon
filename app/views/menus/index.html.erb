@@ -1,0 +1,44 @@
+<div class='menus'>
+    <div class='menu-index'>
+        <div class='menu'>
+            <div class='item-category'>
+                <div class='category'>
+                    <%= @haircut %>
+                </div>
+                    <% @menus.each do |menu| %>
+                        <%= render 'menus', menu: menu %>
+                    <% end %>
+                <div class='category'>
+                    <%= @colour %>
+                </div>
+                    <% @menus2.each do |menu2| %>
+                        <%= render 'menus', menu: menu2 %>
+                    <% end %>
+                <div class='category'>
+                    <%= @curl %>
+                </div>
+                    <% @menus3.each do |menu3| %>
+                        <%= render 'menus', menu: menu3  %>
+                    <% end %>
+                <div class='category'>
+                    <%= @treatment %>
+                </div>
+                    <% @menus4.each do |menu4| %>
+                        <%= render 'menus', menu: menu4 %>
+                    <% end %>
+                <div class='category'>
+                    <%= @setting_your_hair %>
+                </div>
+                    <% @menus5.each do |menu5| %>
+                        <%= render 'menus', menu: menu5 %>
+                    <% end %>
+                <div class='category'>
+                    <%= @other %>
+                </div>
+                    <% @menus6.each do |menu6| %>
+                        <%= render 'menus', menu: menu6 %>
+                    <% end %>
+            </div>
+        </div>
+    </div>
+</div>

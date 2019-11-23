@@ -1,0 +1,526 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or any plugin's vendor/assets/stylesheets directory can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the bottom of the
+ * compiled file so the styles you add here take precedence over styles defined in any other CSS/SCSS
+ * files in this directory. Styles in this file should be added after the last require_* statement.
+ * It is generally better to create a new file per style scope.
+ *
+ *= require_tree .
+ *= require_self
+*= require select2
+ */
+ 
+ 
+ *{
+     box-sizing: border-box;
+ }
+ 
+.wrapper {
+    min-height: 100vh;
+    position: relative;/*←相対位置*/
+    padding-bottom: 120px;/*←footerの高さ*/
+    box-sizing: border-box;/*←全て含めてmin-height:100vhに*/
+}
+ 
+ 
+.footer {
+    width: 100%;
+    padding :30px ;
+    position: absolute;/*←絶対位置*/
+    bottom: 0; /*下に固定*/
+}
+ 
+.container {
+    margin-top: 50px;
+}
+ 
+.form-error {
+    color: #ff4d75;
+}
+
+.number-alarm {
+    color: #ff4d75;
+}
+
+
+/**TOP**/
+
+.top {
+    max-width: 80px;
+    margin: auto;
+    
+}
+
+.top-image {
+    margin: auto;
+}
+
+
+
+
+
+/**staff一覧**/
+
+.staff {
+    margin: auto;
+}
+
+.all-staff {
+    margin: auto;
+}
+
+.staff-date {
+    border-bottom: 1px solid  #d9d9d9;
+    margin: auto;
+    padding: 35px;
+}
+
+.staff-image {
+    margin-top: 20px;
+}
+
+.staff-image img {
+    max-width: 30%;
+    max-height: 30%;
+}
+
+.staff-details {
+    margin-top: 20px;
+    width: 80%;
+}
+
+.staff-details p {
+    font-size: 16px;
+}
+
+.staff-details span {
+    margin-right: 10px;
+}
+
+.staff-introduction {
+    margin-top: 20px;
+}
+
+.content {
+    padding: 0px 20px;
+    word-wrap: break-word;
+}
+
+.staff-management {
+    margin-top: 20px;
+}
+
+
+/**staff登録**/
+
+.staff-new {
+   
+}
+
+.staff-form {
+    margin: auto;
+    padding: 10px;
+}
+
+.field {
+    margin-top: 10px;
+}
+
+/**メニュー一覧**/
+
+.menus {
+    
+}
+
+
+.menu-index {
+    margin: auto;
+    padding: 30px;
+}
+
+.menu {
+    margin: auto;
+    width: 100%;
+}
+
+
+.item-category {
+    line-height: 20px;
+    font-size: 12px;
+    width: 100%;
+    color: #343434;
+    background-color: white;
+    
+}
+
+.category {
+    padding: 10px;
+    font-size:15px;
+    background-color: #EEEEEE;
+    border-bottom: 1px solid #d9d9d9;
+    font-family: Arial,'ヒラギノ角ゴ Pro W3','Hiragino Kaku Gothic Pro','メイリオ',Meiryo,'ＭＳ Ｐゴシック','MS PGothic',sans-serif;
+}
+
+.item {
+    border-bottom: 1px solid #d9d9d9;
+    padding: 5px;
+    	
+}
+
+.item-slide {
+    display: none;
+    border-bottom: 1px solid #d9d9d9;
+    padding: 5px;
+}
+
+
+
+.item1 {
+    display:flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.item2 {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	-webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+    flex-direction: row;
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+    align-items: center;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
+    margin: 3px;
+}
+.name {
+    font-size: 13px;
+}
+
+.item-price-time {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+   
+}
+
+.price {
+   margin-right: 48px;
+}
+
+.required_time {
+    margin-right: 8px;
+}
+
+.item3 {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	-webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+    flex-direction: row;
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+    align-items: center;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
+}
+
+.detail {
+     width: 80%;
+     align-self: center;
+     -ms-flex-item-align: center;
+}
+
+.caution {
+    color: red;
+}
+
+
+.edit-delete {
+     margin-right: 8px;
+     align-self: flex-end;
+     -ms-flex-item-align: end;
+}
+
+
+/** reservation menus **/
+
+
+.item-wrapper {
+    display:flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	-webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+    flex-direction: row;
+    align-items: center;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+
+.leftside {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+    align-items: stretch;
+    -webkit-box-align: stretch;
+	-ms-flex-align: stretch;
+    justify-content: flex-start;
+    -webkit-box-pack: start;
+	-ms-flex-pack: start;
+}
+
+
+.rightside {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
+    flex-grow: 7;
+    -webkit-box-flex:1;
+	-ms-flex-positive:1;
+    margin-left: 10px;
+    
+}
+
+
+.upside {
+    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	-webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+    flex-direction: row;
+    justify-content: space-between;
+    -webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+    align-items: center;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
+    margin: 3px;
+}
+
+
+.menu-footer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+  	-webkit-box-pack: justify;
+	-ms-flex-pack: justify;
+}
+
+/** reservation_staff **/
+
+.pre-reservation {
+    max-width: 100%;
+    margin-bottom: 10px;
+}
+
+/** table**/
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 auto;
+    line-height: 20px;
+    border-color:  #DDDDDD;
+    color: black;
+}
+
+
+th {
+    background-color: #EEEEEE;
+    padding: 10px;
+}
+
+
+td {
+    background-color: #fff;
+     padding: 10px;
+}
+
+
+.staff-revervation {
+    width: 100%;
+}
+
+
+
+.staff-inner-r {
+    /*display: inline-block;**/
+    border-right: 1px solid #d9d9d9;
+    border-left: 1px solid #d9d9d9;
+    border-bottom: 1px solid #d9d9d9;
+    max-width: 100% ;
+}
+
+.staff-profile {
+    display: flex;
+    padding: 15px;
+    flex-direction: column;
+}
+
+.staff-upside {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    margin-bottom: 8px;
+}
+
+.staff-image-r {
+    max-width: 20%;
+    max-height: 20%;
+    margin-right: 20px;
+}
+
+.staff-image-r img {
+    height: auto;
+    max-width: 100%;
+}
+
+.staff-details-r{
+    font-size: 17px;
+}
+
+.staff-details-r span {
+    margin-right: 10px;
+}
+
+.staff-downside {
+    display: flex;
+    flex-direction: column;
+
+}
+
+.staff-introduction-r {
+    display: flex;
+    margin-bottom: 5px;
+    /**margin-left: auto;
+    margin-right: auto;**/
+    max-height: 100%;
+    height: 70px;
+    
+}
+
+.staff-introduction-r a {
+    align-self: flex-end;
+}
+
+.staff-click {
+    display: flex;
+}
+
+.staff-click input {
+    flex-grow: 7;
+}
+
+
+
+
+/*modal*/
+
+.staff-show {
+    /**display: none;**/
+    display: none;
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 100;
+    background-color: white;
+    background: rgba(45,45,45, 0.5);
+    /**opacity: 0.8;**/
+}
+
+.staff-show2 {
+    width: 100%;
+    
+}
+
+.staff-show3 {
+    position: absolute;
+    z-index: 0;
+    top: 50%;
+    /**bottom: 0; **/
+    left : 50%;
+   /** right: 0;**/
+   transform: translate(-50%, -50%);
+   -webkit-transform: translate(-50%, -50%);
+   -ms-transform: translate(-50%, -50%);
+    margin: 0px auto;
+    padding: 20px;
+    width: 700px;
+    background: #fff;
+    box-shadow: 2px 2px 2px 2px #bbb;
+}
+
+.staff-show4 {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.staff-show-upside {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.staff-show-name span {
+    margin-left: 15px;
+}
+
+.staff-show-midle {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 10px;
+    max-height: 40%;
+}
+
+.staff-show-image {
+    max-width:30%;
+    margin-right: 10px;
+}
+
+.staff-show-image img {
+    max-width: 180px;
+    max-height: 240px;
+}
+
+.staff-show-status-comment {
+    word-break: break-all;
+    overflow: hidden;
+
+}
+
+.close-btn {
+    font-size: 20px;
+}

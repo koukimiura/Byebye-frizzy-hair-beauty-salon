@@ -1,0 +1,26 @@
+<div class='login'>
+    <h2>入力画面</h2>
+        <div class='login_form'>
+            <% if @error_message %>
+                <div class="form-error">
+                    <%= @error_message %>
+                </div>
+            <% end %>
+            <%= form_tag(login_staffs_path, method: :post) do %>
+               <div class='field'>
+                      <p>苗字</p>
+                      <input name="last_name">
+                       
+                       <p>名前</p>
+                       <input name="first_name">
+               </div>
+               <div class='field'>
+                       <p>社員番号</p>
+                       <input name="number">
+                </div>
+                <div class='field'>
+                    <input type="submit" value="ログイン">
+               </div>
+            <% end %>
+        </div>
+</div>

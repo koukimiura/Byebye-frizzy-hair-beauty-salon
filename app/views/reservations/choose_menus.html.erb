@@ -1,0 +1,108 @@
+<div class='menus'>
+    <div class='menu-index'>
+        <%= form_tag(choosen_menus_reservations_path, method: :post) do %>
+            <div class='menu'>
+                <div class='item-category'>
+                    <div class='category'>
+                        <%= @haircut %>
+                    </div>
+                        <% @menus.each do |menu| %>
+                            <%= render 'menus', menu: menu %>
+                        <% end %>
+                    <div class='category'>
+                        <%= @colour %>
+                    </div>
+                        <% @menus2.each do |menu2| %>
+                            <%= render 'menus', menu: menu2 %>
+                        <% end %>
+                    <div class='category'>
+                        <%= @curl %>
+                    </div>
+                        <% @menus3.each do |menu3| %>
+                            <%= render 'menus', menu: menu3  %>
+                        <% end %>
+                    <div class='category'>
+                        <%= @treatment %>
+                    </div>
+                        <% @menus4.each do |menu4| %>
+                            <%= render 'menus', menu: menu4 %>
+                        <% end %>
+                    <div class='category'>
+                        <%= @setting_your_hair %>
+                    </div>
+                        <% @menus5.each do |menu5| %>
+                            <%= render 'menus', menu: menu5 %>
+                        <% end %>
+                    <div class='category'>
+                        <%= @other %>
+                    </div>
+                        <% @menus6.each do |menu6| %>
+                            <%= render 'menus', menu: menu6 %>
+                        <% end %>
+                    <div class='category'>
+                        選択済み
+                    </div>
+                        <div class='item' style="display:none" id="selectedMenu">
+                            <div class='item1'>
+                                <div class='item2'>
+                                    <div class='name' id='selected_Name'>
+                                          
+                                    </div>
+                                    <div class='item-price-time'>
+                                        <div class='price' id='selected_Price'>
+                                            ￥0    
+                                        </div>
+                                        <div class='required_time' id='selected_Time'>
+                                            0分
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='item3'>
+                                    <div class='detail'>
+                                    
+                                    </div>
+                                    <div class='edit-delete'>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+
+                        <div class='item' id='total'>
+                            <div class='item1'>
+                                <div class='item2'>
+                                    <div class='name'>
+                                        合計   
+                                    </div>
+                                    <div class='item-price-time'>
+                                        <div class='price' id='totalPrice', price='0'>
+                                            ￥0    
+                                        </div>
+                                        <div class='required_time' id='totalTime' time='0'>
+                                            0分
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class='item3'>
+                                    <div class='detail'>
+                                        <span class="caution">※実際のお支払い金額と異なる場合があります。</span>
+                                    </div>
+                                    <div class='edit-delete'>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                        </div> 
+                    </div>
+                </div>
+                <div class='menu-footer'>
+                    <%= link_to "戻る", :back, class: 'btn btn-success' %>
+                    <input type="submit" value="この内容で次へ" class='btn btn-info' id='submit-btn' >
+                    </div>
+        <% end %>
+    </div>
+</div>
+
+
+
+

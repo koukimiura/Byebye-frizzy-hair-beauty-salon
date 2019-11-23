@@ -1,0 +1,9 @@
+<div class='staff-new'>
+    <%= form_for @staff do |f| %>
+        <%= render 'layouts/error_message', model: f.object %>
+        <div class='staff-image'>
+            <%= image_tag @staff.image.to_s %>
+        </div>
+        <%= render 'form', {:f => f} %>
+    <% end %>
+</div>

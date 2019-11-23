@@ -1,0 +1,135 @@
+<div class='reservation-of-staff'>
+    <div class='main-title'>
+        <h2 class='text-center'>スタッフを選択してください。</h2>
+    </div>
+    <div class='main'>
+        <div class='pre-reservation'>
+            <table class="tacheck" border="1">
+                <tbody>
+                    <tr>
+                        <th>メニュー</th>
+                        <td><%= @menu_names %></td>
+                    </tr>
+                    <tr>
+                        <th>所要時間</th>
+                        <td><%= @menu_required_times %>分</td>
+                    </tr>
+                    <tr>
+                        <th>お支払い予定金額</th>
+                        <td><%= "￥#{@menu_prices.to_s(:delimited)}" %><br><span class="caution">※実際のお支払い金額と異なる場合があります。</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <%= form_tag(choosen_staff_reservations_path, method: :post) do %>
+            <div class='main-reservation'>
+                <div class='staff-reservation'>
+                    <% @staffs.each do |staff| %>
+                        <div class='staff-inner-r'>
+                            <div class='staff-profile'>
+                                <div class='staff-upside'>
+                                    <div class='staff-image-r'>
+                                        <%= image_tag staff.image.to_s %>
+                                    </div>
+                                    <div class='staff-details-r'>
+                                        <p><span><%= @name %></span><%= staff.last_name %><%= staff.first_name %></p>
+                                        <p><span>カナ</span><%= staff.last_name_kana %><%= staff.first_name_kana %></p>
+                                        <p><span><%= @age %></span><%= staff.age %></p>
+                                        <p><span><%= @gender %></span><%= staff.gender %></p>
+                                        <% case staff.status %>
+                                            <% when 1 then %>
+                                                <p><span><%= @status %></span>店長</p>
+                                            <% when 2 then %>
+                                                <p><span><%= @status %></span>副店長</p>
+                                            <% when 3 then %>
+                                                <p><span><%= @status %></span>スタイリスト</p>
+                                        <% end %>
+                                    </div>
+                                </div>
+                                <div class='staff-downside'>
+                                    <div class='staff-introduction-r'>
+                                        <a class='open-modal text-left' href="#" data-target='modal<%= staff.id %>'>詳細</a>
+                                    </div>
+                                    <div class='staff-click'>
+                                        <%= hidden_field_tag "staff_id", staff.id %>
+                                        <%= hidden_field_tag "menu_ids", @menu_ids %>
+                                        <%= hidden_field_tag "menu_names", @menu_names %>
+                                        <%= hidden_field_tag "menu_prices", @menu_prices %>
+                                        <%= hidden_field_tag "menu_required_times", @menu_required_times %>
+                                        <input type="submit" value="指名して予約" class='btn btn-info' >
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class='staff-show' id='modal<%= staff.id %>'>
+                            <div class='staff-show2'>    
+                                <div class='staff-show3'>
+                                    <div class='staff-show4'>
+                                        <div class='staff-show-upside'>
+                                            <div class='staff-show-name'>
+                                                <h4><%= staff.last_name %><span><%= staff.first_name %></span><span><%= staff.last_name_kana %><%= staff.first_name_kana %></span></h4>
+                                            </div>  
+                                            <div class='close-btn'>
+                                                <a class='close-modal' href="#">X</a>
+                                            </div>
+                                        </div>
+                                        <div class='staff-show-midle'>
+                                            <div class='staff-show-image'>
+                                                <%= image_tag staff.image.to_s %>
+                                            </div>
+                                            <div class='staff-show-status-comment'>
+                                                <% case staff.status %>
+                                                    <% when 1 then %>
+                                                        <p>店長</p>
+                                                    <% when 2 then %>
+                                                        <p>副店長</p>
+                                                    <% when 3 then %>
+                                                        <p>スタイリスト</p>
+                                                <% end %>
+                                                
+                                                <%= staff.self_introduction %>
+                                            </div>
+                                        </div>
+                                        <div class='staff-show-downside'>
+                                            <div class='staff-click'>
+                                                
+                                                <input type="submit" value="指名して予約" class='btn btn-info' >
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                  <% end %>  
+                </div>
+            </div>
+        <% end %>
+    </div>
+    <div class='menu-footer'>
+        <%= link_to "戻る", :back, class: 'btn btn-success' %>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function(){
+        //モーダルウィンドウ処理
+        $('.open-modal').each(function(){
+            $(this).on('click', function(){
+               var target =　$(this).data('target');
+               var  modal = document.getElementById(target);
+               $(modal).fadeIn();
+               // retun falseでモーダルが表示されてからすぐに非表示になるのを防ぐ    処理の中断
+                return false; 
+            });
+        });
+            
+        $('.close-modal').each(function(){
+            $(this).on('click', function(){
+                var target =　$(this).parent('.staff-show').attr('id');
+                var modal = document.getElementById(target);
+                $(target).fadeOut();
+            });
+        });
+    });
+</script>

@@ -1,0 +1,27 @@
+<div class='item'>
+    <div class='item1'>
+        <div class='item2'>
+            <div class='name'>
+                <strong><%= menu.name %></strong>    
+            </div>
+            <div class='item-price-time'>
+                <div class='price'>
+                    ￥<%= menu.price.to_s(:delimited) %>
+                </div>
+                <div class='required_time'>
+                    <%= menu.required_time %>分
+                </div>
+            </div>
+        </div>
+        <div class='item3'>
+            <div class='detail'>
+                <%= menu.detail %>
+            </div>
+            <div class='edit-delete'>
+                <%= link_to '編集', edit_menu_path(menu.id) %>
+                <%= link_to '削除', menu_path(menu.id), method: :delete, data: { confirm: 'Are you sure?' } %>
+            </div>
+        </div>
+    </div>
+</div>
+

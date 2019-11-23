@@ -1,0 +1,29 @@
+<div class='item'>
+    <div class='item-wrapper'>
+        <div class='leftside'>
+            <input type="checkbox" name="menus[]" value="<%= menu.id %>" id='check'  data-name="<%=menu.name%>" data-price="<%= menu.price %>" 
+                    data-time="<%= menu.required_time %>" >
+        </div>
+        <div class='rightside'>
+            <div class='upside'>
+                <div class='name'>
+                    <strong><%= menu.name %></strong>    
+                </div>
+                <div class='item-price-time'>
+                    <div class='price'>
+                        ￥<%= menu.price.to_s(:delimited) %>
+                    </div>
+                    <div class='required_time'>
+                        <%= menu.required_time %>分
+                    </div>
+                </div>
+            </div>
+            <div class='item3'>
+                <div class='detail'>
+                    <%= menu.detail %>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

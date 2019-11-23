@@ -1,0 +1,6 @@
+<div class='staff-new'>
+    <%= form_for @menu do |f| %>
+        <%= render 'layouts/error_message', model: f.object %>
+        <%= render 'form', {:f => f} %>
+    <% end %>
+</div>
