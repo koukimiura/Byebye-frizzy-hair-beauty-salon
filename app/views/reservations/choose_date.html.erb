@@ -18,12 +18,32 @@
                         <th>お支払い予定金額</th>
                         <td><%= "￥#{@price.to_s(:delimited)}" %><br><span class="caution">※実際のお支払い金額と異なる場合があります。</span></td>
                     </tr>
-                    <tr>
-                        <th><%= image_tag @staff.image.to_s %></th>
+                    <tr class='selected_staff_image'>
+                        <th class='text-center'><%= image_tag @staff.image.to_s %></th>
                         <td><%= @staff.last_name %><span><%= @staff.first_name %></span></td>
                     </tr>
                 </tbody>
             </table>
         </div>
+        <dvi class='main-reservation-date'>
+            <div class='menu-footer'>
+                <%= link_to "前の一週間", choose_date_reservations_path(previous_week: @prev, selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
+                                            menu_prices: @price, menu_required_times: @menuRequiredTimes), class: 'btn btn-info' %>
+                
+                <%= link_to "次の一週間", choose_date_reservations_path(next_week: @next, selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
+                                            menu_prices: @price, menu_required_times: @menuRequiredTimes), class: 'btn btn-success' %>
+            </div>
+            <div class='date-reservation'>
+                <table class='date-r' border="1" bordercolor="#DDDDDD">
+                    <%= @calenders.html_safe %>
+                    
+                </table>
+            </div>
+        </dvi>
+    </div>
+    <div class='menu-footer'>
+        <%= link_to "戻る", :back, class: 'btn btn-success' %>
     </div>
 </div>
+
+

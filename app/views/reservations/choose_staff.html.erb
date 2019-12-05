@@ -25,6 +25,7 @@
             <div class='main-reservation'>
                 <div class='staff-reservation'>
                     <% @staffs.each do |staff| %>
+                    <% logger.debug("-----@staffs=#{@staffs}") %>
                         <div class='staff-inner-r'>
                             <div class='staff-profile'>
                                 <div class='staff-upside'>
@@ -52,6 +53,7 @@
                                     </div>
                                     <div class='staff-click'>
                                         <%= hidden_field_tag "staff_id", staff.id %>
+                                        <% logger.debug("----------staff.id=#{staff.id}") %>
                                         <%= hidden_field_tag "menu_ids", @menu_ids %>
                                         <%= hidden_field_tag "menu_names", @menu_names %>
                                         <%= hidden_field_tag "menu_prices", @menu_prices %>

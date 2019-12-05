@@ -64,14 +64,11 @@ class StaffsController < ApplicationController
         
     end
     
-    
-    
+
     private
-    
         def staff_params
              params.require(:staff).permit(:last_name, :first_name, :last_name_kana, :first_name_kana, :number, :age, :gender,
                                            :experience, :status, :self_introduction, :image)
         end
-    
-    
+
 end

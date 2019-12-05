@@ -22,11 +22,11 @@ $(document).ready(function() {
                     <% @dates.each do |date| %>
                         <%= f.label :日にち %>
                         <%= date.strftime("%m月 %d日")%>
-                        <%= hidden_field_tag "date_and_time[][date]", date.strftime("%m月 %d日") %>
+                        <%= hidden_field_tag "date_and_time[][date]", date %> <!--- .strftime("%m月 %d日") -->
                         <%= hidden_field_tag "staff_id", @current_staff.id%>
                         <p>出勤時間</p>
                         <select name="date_and_time[][start_time]">
-                            <option value="break">休暇</option>
+                            <option value="0.0">休暇</option>
                             <option value="10.0" selected = "10:00">10:00</option>
                             <option value="10.5">10:30</option>
                             <option value="11.0">11:00</option>
@@ -39,7 +39,7 @@ $(document).ready(function() {
                             </select>
                         <p>退勤時間</p>
                         <select name="date_and_time[][end_time]">
-                            <option value="break">休暇</option>
+                            <option value="0.0">休暇</option>
                             <option value="16.0">16:00</option>
                             <option value="16.5">16:30</option>
                             <option value="17.0">17:00</option>

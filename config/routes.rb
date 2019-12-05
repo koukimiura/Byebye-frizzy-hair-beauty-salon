@@ -18,10 +18,11 @@ Rails.application.routes.draw do
   resources :menus, only: [:index, :new, :create, :edit, :update, :destroy]
   
   
-  resources :schedules, only: [:create] 
+  resources :schedules, only: [:create, :index] 
   get 'schedules/:staff_id/new' => 'schedules#new'
+  get 'schedules/date_workers' => 'schedules#date_workers'
   
-  resources :reservations, only: [:index, :destroy, :create, :new] do
+  resources :reservations, only: [:destroy, :create, :new] do
     collection do 
       get 'reserved_index'
       get 'choose_menus'
