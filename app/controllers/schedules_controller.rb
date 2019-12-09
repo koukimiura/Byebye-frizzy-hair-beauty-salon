@@ -8,8 +8,8 @@ class SchedulesController < ApplicationController
     
 
     def date_workers
-        if params[:date]
-            schedules = Schedule.where(date: params[:date]).where(frame_status: "break")
+        if params[:date]                                    #出勤者だけとってくる。
+            schedules = Schedule.where(date: params[:date]).where.not(frame_status: "break")
             
             staffs=[]
             
@@ -74,18 +74,18 @@ class SchedulesController < ApplicationController
             #start_hourとend_hourの間の時間を取得
             all_hour =[]
                 #logger.debug("----start_hour=#{start_hour}")
-                #logger.debug("----end_hour=#{end_hour}")
+                logger.debug("----end_hour=#{end_hour}")
                 
             #条件分で休暇なら０.０をpush
             if start_hour == 0.0 && end_hour ==0.0
                 all_hour << 0.0
             else    
-                until start_hour >= end_hour
+                until start_hour >= end_hour + 0.5
                     all_hour << start_hour
                     start_hour += 0.5
                 end
             end
-                #logger.debug("-----all_hour=#{all_hour}")
+                logger.debug("-----all_hour=#{all_hour}")
             #returnで少数をstringに
             string_times =all_hour.map{|float_time| time_to_string(float_time)}
             count << { date: dates, working_hour: string_times}
@@ -103,21 +103,23 @@ class SchedulesController < ApplicationController
             dates=value[:date]
             times= value[:working_hour]
                 #logger.debug("------dates=#{dates}")
-                #logger.debug("-----times=#{times}")
+                logger.debug("-----times=#{times}")
                 
             #originals.each do |original|
             dates.zip(times) do |date, time|
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
-                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
+                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
                  #elsif original != time   
                     #Schedule.create(staff_id: staffId, date: date, frame: original, frame_status: 'break')
                     
+                elsif time == "9:30" || "21:00"
+                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'preparation period')
+                
                 else
                         #logger.debug("------date=#{date}")
                         #logger.debug("------time=#{time}")
-                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
+                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
                 end
-            end
             end
         end
         

@@ -1,34 +1,28 @@
-<div class='staff'>
-    <div class='all-staff'>
-        <div class='staff-inner'>
+<div class='workers'>
+        <div class='workers-info'>
+            <h3>出勤者一覧</h3>
             <% if @uniq_staffs.present? %>
                 <% @uniq_staffs.each do |staff| %>
-                    <div class='staff-date'>
-                        <div class='staff-image'>
-                            <%= image_tag staff.image.to_s %>
-                        </div>
-                        <div class='staff-details'>
-                            <p><span><%= @name %></span><%= staff.last_name %><%= staff.first_name %></p>
-                            <p><span>カナ</span><%= staff.last_name_kana %><%= staff.first_name_kana %></p>
-                            <p><span><%= @age %></span><%= staff.age %></p>
-                            <p><span><%= @gender %></span><%= staff.gender %></p>
-                            <% case staff.status %>
-                                <% when 1 then %>
-                                    <p><span><%= @status %></span>店長</p>
-                                <% when 2 then %>
-                                    <p><span><%= @status %></span>副店長</p>
-                                <% when 3 then %>
-                                    <p><span><%= @status %></span>スタイリスト</p>
-                            <% end %>
-                        </div>
-                        <div class='staff-introduction'>
-                            <p>自己紹介</p>
-                            <div class='content'>
-                                <%= staff.self_introduction %>
+                    <div class='today-staff'>
+                        <div class='today-staff-date'>
+                            <div class='today-staff-image'>
+                                <%= image_tag staff.image.to_s %>
                             </div>
-                        </div>
-                        <div class='staff-management'>
-                            
+                            <div class='today-staff-details text-left'>
+                                <ul>
+                                    <% case staff.status %>
+                                        <% when 1 then %>
+                                            <li>店長</li>
+                                        <% when 2 then %>
+                                            <li>副店長</li>
+                                        <% when 3 then %>
+                                            <li>スタイリスト</li>
+                                    <% end %>
+                                    <li><span><%= staff.last_name %></span><%= staff.first_name %></li>
+                                    <li><%= staff.age %></li>
+                                    <li><%= staff.gender %></li>
+                                </ul>
+                            </div>
                         </div>
                     </div>
                 <% end %>
@@ -36,5 +30,4 @@
                 <h3>データがありません</h3>
             <% end %>
         </div>
-    </div>
 </div>

@@ -1,11 +1,64 @@
 <div class='custamer'>
     <div class='main-header'>
-        <h2>お客様情報を入力してください</h2>
+        <h2 class='text-center'>お客様情報を入力してください</h2>
     </div>
     <div class='custamer-detail'>
-        <div class='custamer'>
-            
+        <%= form_for @reservation, :url => {:controller => :reservations, :action => :new} do |f| %>
+            <div class='custamer row'>
+                <div class='col-xs-12 col-md-6 text-left'>    
+                    
+                    <div class='field'>
+                        <p>性<span class='must'>※</span></p>
+                        <%= f.text_field :last_name, class: 'form-control'%>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>性(カナ)<span class='must'>※</span></p>
+                        <%= f.text_field :last_name_kana, class: 'form-control' %>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>電話番号<span class='must'>※</span></p>
+                        <%= f.text_field :tel, class: 'form-control' %>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>性別<span class='must'>※</span></p>
+                        <span class='radio_button'><%= f.radio_button :gender, "女", checked: true %>女</span><%= f.radio_button :gender, "男" %>男
+                    </div>
+                    
+                </div>    
+                <div class='col-xs-12 col-md-6'>    
+                    
+                    <div class='field'>
+                        <p>名<span class='must'>※</span></p>
+                        <%= f.text_field :last_name, class: 'form-control' %>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>名(カナ)<span class='must'>※</span></p>
+                        <%= f.text_field :last_name, class: 'form-control' %>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>メールアドレス<span class='must'>※</span></p>
+                        <%= f.text_field :email, class: 'form-control' %>
+                    </div>
+                    
+                    <div class='field'>
+                        <p>ご来店は初めてですか?</p>
+                        <%= f.check_box :check, {}, 'true', 'false' %>
+                    </div>
+                </div> 
+        </div>    
+        <div class='custamer-request'>
+            <p>ご要望</p>
+            <%= f.text_area :request, class: 'form-control form-request' %>
         </div>
-        
+        <div class='menu-footer'>
+            <%= link_to "戻る", :back, class: 'btn btn-success' %>
+            <%= f.submit :この内容で次へ, class:'btn btn-info' %>
+        </div>
+        <% end %>
     </div>
 </div>

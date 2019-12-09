@@ -35,8 +35,7 @@
             </div>
             <div class='date-reservation'>
                 <table class='date-r' border="1" bordercolor="#DDDDDD">
-                    <%= @calenders.html_safe %>
-                    
+                    <%= reservation_calender(@d, @staff, @menuRequiredTimes).html_safe %>
                 </table>
             </div>
         </dvi>
