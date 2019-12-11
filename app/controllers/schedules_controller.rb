@@ -1,4 +1,5 @@
 class SchedulesController < ApplicationController
+    before_action :basic, if: :production?
     
     def index
         @before = Date.today - 1.months

@@ -1,6 +1,6 @@
 <div class='staff-new'>
     <%= form_for @staff do |f| %>
         <%= render 'layouts/error_message', model: f.object %>
-        <%= render 'form', {:f => f} %>
+        <%= render 'form', {:f => f, staff_number: @staff_number} %>
     <% end %>
 </div>

@@ -65,14 +65,14 @@ class ReservationsController < ApplicationController
     
         #logger.debug("-------menus=#{menus}")
     
-        @menu_ids=[]
+        @menuIds=[]
         names=[]
         prices=[]
         required_times=[]
     
     
         menus.each do |menu|
-            @menu_ids.push(menu.id)
+            @menuIds.push(menu.id)
             names.push(menu.name)
             prices.push(menu.price)
             required_times.push(menu.required_time)
@@ -82,13 +82,14 @@ class ReservationsController < ApplicationController
         #logger.debug("-------@menu_ids=#{@menu_ids}")
         
         #文字列をまとめる
-        @menu_names = names.join(',')
+        @menuNames = names.join(',')
         
         #各文字列をintegerにして合計金額と時間を出す。
         prices_integer = prices.map{|x| x.to_i}
-        @menu_prices = prices_integer.sum
+        @menuPrices = prices_integer.sum
+        
         required_times_integer = required_times.map{|x| x.to_i}
-        @menu_required_times = required_times_integer.sum
+        @menuRequiredTimes = required_times_integer.sum
         #logger.debug("----- @selected_Menus=#{ @selected_Menus}")
         
     end
@@ -123,13 +124,13 @@ class ReservationsController < ApplicationController
         staffId = params[:selected_Staff]
         @menuIds = params[:menu_ids]
         @menuNames = params[:menu_names]
-        @menuPrices = params[:menu_prices]
+        menuPrices = params[:menu_prices]
         @menuRequiredTimes = params[:menu_required_times]
         receivedNext = params[:next_week]
         receivedPrev = params[:previous_week]
         
         #文字列で受け取ったので数値に直す。
-        @price = @menuPrices.to_i
+        @menuPrices = menuPrices.to_i
         @staff = Staff.find(staffId)
         
         
@@ -213,9 +214,9 @@ class ReservationsController < ApplicationController
     end
     
     
-    def confirmation
+    #def confirmation
         
-    end
+    #end
     
     def new  #confirmation
         

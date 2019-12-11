@@ -3,10 +3,10 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
   
   
-  root 'home#admin'
+  root 'home#basic'
   
   get 'home/top' => 'home#top'
-  get 'home/admin' => 'home#admin'
+  #get 'home/admin' => 'home#admin'
   
   resources :staffs do
     collection do
@@ -32,7 +32,7 @@ Rails.application.routes.draw do
       get 'choose_date'
       post 'choosen_date'
       get 'custamer_detail'
-      post 'confirmation'
+      #post 'confirmation'
     end
     
   end

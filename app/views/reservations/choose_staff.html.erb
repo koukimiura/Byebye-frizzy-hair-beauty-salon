@@ -6,18 +6,7 @@
         <div class='pre-reservation'>
             <table class="tacheck" border="1">
                 <tbody>
-                    <tr>
-                        <th>メニュー</th>
-                        <td><%= @menu_names %></td>
-                    </tr>
-                    <tr>
-                        <th>所要時間</th>
-                        <td><%= @menu_required_times %>分</td>
-                    </tr>
-                    <tr>
-                        <th>お支払い予定金額</th>
-                        <td><%= "￥#{@menu_prices.to_s(:delimited)}" %><br><span class="caution">※実際のお支払い金額と異なる場合があります。</span></td>
-                    </tr>
+                    <%= render 'table', menuNames: @menuNames, menuRequiredTimes: @menuRequiredTimes, menuPrices: @menuPrices %>
                 </tbody>
             </table>
         </div>
@@ -54,10 +43,10 @@
                                     <div class='staff-click'>
                                         <%= hidden_field_tag "staff_id", staff.id %>
                                         <% logger.debug("----------staff.id=#{staff.id}") %>
-                                        <%= hidden_field_tag "menu_ids", @menu_ids %>
-                                        <%= hidden_field_tag "menu_names", @menu_names %>
-                                        <%= hidden_field_tag "menu_prices", @menu_prices %>
-                                        <%= hidden_field_tag "menu_required_times", @menu_required_times %>
+                                        <%= hidden_field_tag "menu_ids", @menuIds %>
+                                        <%= hidden_field_tag "menu_names", @menuNames %>
+                                        <%= hidden_field_tag "menu_prices", @menuPrices %>
+                                        <%= hidden_field_tag "menu_required_times", @menuRequiredTimes %>
                                         <input type="submit" value="指名して予約" class='btn btn-info' >
                                     </div>
                                 </div>

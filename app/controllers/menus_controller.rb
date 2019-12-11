@@ -1,5 +1,5 @@
 class MenusController < ApplicationController
-  
+  before_action :basic, if: :production?
   
   
   def index
@@ -17,8 +17,6 @@ class MenusController < ApplicationController
     @treatment = 'トリートメント'
     @setting_your_hair = 'ヘアセット'
     @other = 'その他'
-    
-    
     
     
   end

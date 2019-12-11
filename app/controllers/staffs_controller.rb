@@ -1,5 +1,5 @@
 class StaffsController < ApplicationController
-    
+    before_action :basic, if: :production?
     
     def index
         @staffs = Staff.all.order(status: :asc)
@@ -12,6 +12,9 @@ class StaffsController < ApplicationController
     
     def new
         @staff = Staff.new
+        staffIds = Staff.pluck(:id)
+        @staff_number = "推奨ナンバー00#{staffIds.last + 1}"
+        #logger.debug("----------@staff_number=#{@staff_number}")
     end
     
     
