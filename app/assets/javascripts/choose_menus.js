@@ -1,13 +1,17 @@
 $(document).ready(function() {
 
+    //$(document).on('change','input:checkbox', function() { //
     $(document).on('change','input:checkbox', function() {
-        
+    
+      
         //金額合計と時間
         price = [];
         required_time = [];
         
         //checkboxがcheckされているかどうか//
-        $('input[name="menus[]"]:checked').each(function() {
+        $('input[name="menus[]"]:checked').each(function() { 
+             console.log($('input[name="menus[]"]:checked').length);
+        //$('input[name="menus[]"]').each(function() { //
             //文字列を整数に直す valueを取得//
             var number= parseInt($(this).attr('data-price'));
             var time = parseInt($(this).attr('data-time'));
@@ -57,16 +61,18 @@ $(document).ready(function() {
     });
     
     
+    
+    
     // rubyのrenderだと@menusを保持したまま再表示するのが面倒だから
     $(document).on('click', '#submit-btn', function(){
         
-        if($('#check').val() === ''){
-            
-            alert('メニューを洗濯してください。');
-            return false;
-        }
+            //lengthメソッドでチェックされているinputの数がわかる。
+            if($('input[name="menus[]"]:checked').length === 0){
+                console.log($('input[name="menus[]"]:checked').length);
+                
+                alert('メニューを選択して下さい');
+				return false;
+            }
     });
     
-    
 });
-

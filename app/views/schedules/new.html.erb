@@ -15,13 +15,13 @@ $(document).ready(function() {
         </div>
         <div class='timesheet'>
             <% d= Date.today %>
-            <h2><%= d.strftime("%Y年") %><%= d.next_month.strftime("%m月")%></h2>
+            <h2><%= d.strftime("%Y年") %><%= d.next_month.strftime("%m月") %></h2>
             <hr>
             <%= form_for @schedule do |f| %>
                 <%= render 'layouts/error_message', model: f.object %>
                     <% @dates.each do |date| %>
                         <%= f.label :日にち %>
-                        <%= date.strftime("%m月 %d日")%>
+                        <%= date.strftime("%m月 %d日") %>
                         <%= hidden_field_tag "date_and_time[][date]", date %> <!--- .strftime("%m月 %d日") -->
                         <%= hidden_field_tag "staff_id", @current_staff.id%>
                         <p>出勤時間</p>

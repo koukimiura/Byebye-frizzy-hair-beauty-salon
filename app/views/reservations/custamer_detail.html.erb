@@ -3,9 +3,20 @@
         <h2 class='text-center'>お客様情報を入力してください</h2>
     </div>
     <div class='custamer-detail'>
-        <%= form_for @reservation, :url => {:controller => :reservations, :action => :new} do |f| %>
+        <%= form_for @reservation, :url => {:controller => :reservations, :action => :custamer_info} do |f| %>
             <div class='custamer row'>
                 <div class='col-xs-12 col-md-6 text-left'>    
+                    <%= hidden_field_tag "selectedStaff", @staffId %>
+                    <%= f.hidden_field :date, :value => @date %>
+                    
+                    <% @menuIds.each do |menuId| %>
+                        <input type ='hidden' name="menus[]", value="<%= menuId %>" >
+                    <% end %>
+                    
+                    <% @total_frames.each do |frame| %>
+                        <% logger.debug("---------frame=#{frame}") %>
+                        <input type ='hidden' name="frames[]", value="<%= frame %>" >
+                    <% end %>
                     
                     <div class='field'>
                         <p>性<span class='must'>※</span></p>
@@ -18,7 +29,7 @@
                     </div>
                     
                     <div class='field'>
-                        <p>電話番号<span class='must'>※</span></p>
+                        <p>電話番号<span class='must'>※ハイフンなしで記入下さい。</span></p>
                         <%= f.text_field :tel, class: 'form-control' %>
                     </div>
                     
@@ -32,12 +43,12 @@
                     
                     <div class='field'>
                         <p>名<span class='must'>※</span></p>
-                        <%= f.text_field :last_name, class: 'form-control' %>
+                        <%= f.text_field :first_name, class: 'form-control' %>
                     </div>
                     
                     <div class='field'>
                         <p>名(カナ)<span class='must'>※</span></p>
-                        <%= f.text_field :last_name, class: 'form-control' %>
+                        <%= f.text_field :first_name_kana, class: 'form-control' %>
                     </div>
                     
                     <div class='field'>
@@ -56,9 +67,10 @@
             <%= f.text_area :request, class: 'form-control form-request' %>
         </div>
         <div class='menu-footer'>
-            <%= link_to "戻る", :back, class: 'btn btn-success' %>
+            <%= link_to "戻る", choose_date_reservations_path(menus: @menuIds, selectedStaff: @staffId), class: 'btn btn-success' %>
             <%= f.submit :この内容で次へ, class:'btn btn-info' %>
         </div>
         <% end %>
     </div>
 </div>
+

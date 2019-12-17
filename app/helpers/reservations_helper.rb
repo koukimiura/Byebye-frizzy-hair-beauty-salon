@@ -3,7 +3,7 @@ module ReservationsHelper
     def reservation_calender(d, staff, menuRequiredTimes)
         logger.debug("-------d=#{d}")
         
-        next_week = d -1 + 1.week
+        next_week = d - 1 + 1.week
         q = d.beginning_of_month.next_month  #来月のyearとmonth
         
         range = (d..next_week) #一週間分のyear month dateを取得し
@@ -26,7 +26,7 @@ module ReservationsHelper
                     specified_dates.push(r)
                 end
                 
-                rangeDates << r    #range[0]のようにrangeをインデックス 指定して取り出しできないので配列の作り直し。
+                rangeDates << r    #range[0]のようにrangeをインデックス 指定して取り出しできないので配列の作り直し。 .ex 2019-12-12
             end
        # end
         
@@ -44,9 +44,10 @@ module ReservationsHelper
     
         #Float化して少数点まで求める。    menuRequiredTimesは選択されたメニューの時間
         calumn_number = menuRequiredTimes.to_f / 30 #- 1
+        
         logger.debug("----------menuRequiredTimes.to_i=#{menuRequiredTimes.to_f}")
         
-        staffSchedules = Schedule.where(staff_id: 1, date: range, frame_status: "available")
+        staffSchedules = Schedule.where(staff_id: 1, date: range).where.not(frame_status: "preparation_period")
         
         
         
@@ -253,68 +254,359 @@ module ReservationsHelper
         calender << '</thead>'
 
         
-                    
-        #予約カレンダーアルゴリズム----------------------------------------------------------------
+
+        #------------予約カレンダーアルゴリズム(処理)----------------------------------------------------------------
         
         calender << '<tbody>'
         
         #カレンダーのマス個数決め   あくまで予約時間　9:30と21:00は準備　preparation period
         working_hours = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
                         "16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30"]
-                        
+             
+             
+         #その日の出勤時間が出る。  予約可か予約済みかで配列分ている。             
         firstDatesFrames=[]
+        firstDatesReservedFrames=['15:00', '18:00', '18:30']
+        
         secondDatesFrames=[]
+        secondDatesReservedFrames=[]
+        
         thirdDatesFrames=[]
+        thirdDatesReservedFrames=[]
+        
         fouseDatesFrames=[]
+        fouseDatesReservedFrames=[]
+        
         fifthDatesFrames=[]
+        fifthDatesReservedFrames=[]
+        
         sixthDatesFrames=[]
+        sixthDatesReservedFrames=[]
+        
         seventhDatesFrames=[]
+        seventhDatesReservedFrames=[]
+        
+        
         
         #calenderを回す前にある。
-        
         staffSchedules.each do |schedule|
             
-            #if schedule.date == rangeDates[0]
-            #logger.debug("------schedule.date=#{schedule.date}")
-            #logger.debug("---------rangeDates=#{rangeDates[0]}")
+            logger.debug("------schedule.frame_status=#{schedule.frame_status}")
+            #logger.debug("---------schedule.frame=#{Time.parse(schedule.frame)}")
             
             date = Date.parse(schedule.date) #parseで文字列を直す。
+            logger.debug("---------date=#{date}")
             case date 
                 
                 when rangeDates[0] then
-                    logger.debug("-------schedule.frame=#{schedule.frame}")
-                    firstDatesFrames.push(schedule.frame)
+                    #logger.debug("-------schedule.frame=#{schedule.frame}")
+                    firstDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    
+                    firstDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    
                     
                 when rangeDates[1] then
                     
-                    secondDatesFrames.push(schedule.frame)
+                    secondDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    
+                    secondDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
                     
                 when rangeDates[2] then
 
-                    thirdDatesFrames.push(schedule.frame)
+                    thirdDatesFrames.push(schedule.frame)  if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    
+                    thirdDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
 
                 when rangeDates[3] then
                     
-                    fouseDatesFrames.push(schedule.frame)
+                    fouseDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    
+                    fouseDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
                     
                 when rangeDates[4] then
                     
-                    fifthDatesFrames.push(schedule.frame)
+                    fifthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    
+                    fifthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
                     
                 when rangeDates[5] then
                     
-                    sixthDatesFrames.push(schedule.frame)
+                    sixthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    
+                    sixthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
                     
                 when rangeDates[6] then  
                     
-                    seventhDatesFrames.push(schedule.frame)
+                    seventhDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    
+                    seventhDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
                     
             end
         end
+   
+   
+   
+        
+#-------初日----------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        firstDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        firstDatesReservedFrames.each do |f|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                #calumnメソッドを呼び出す。これは取得する要素数
+                firstDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------firstDatePreviousReservedFrames=#{firstDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        firstDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        firstDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                firstDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------firstDatePRF=#{firstDatePRF}")
+        
+ 
+#-------2日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        secondDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        secondDatesReservedFrames.each do |s|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(s) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                #calumnメソッドを呼び出す。これは取得する要素数
+                secondDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------secondDatePreviousReservedFrames=#{secondDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        secondDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        secondDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                secondDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------fsecondDatePRF=#{secondDatePRF}")
+ 
+#-------3日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        thirdDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        thirdDatesReservedFrames.each do |t|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(t) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                #calumnメソッドを呼び出す。これは取得する要素数
+                thirdDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------thirdDatePreviousReservedFrames=#{thirdDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        thirdDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        thirdDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                thirdDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------thirdDatePRF=#{thirdDatePRF}")
+ 
+ 
+#-------4日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        fouseDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        fouseDatesReservedFrames.each do |f|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                #calumnメソッドを呼び出す。これは取得する要素数
+                fouseDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------fouseDatePreviousReservedFrames=#{fouseDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        fouseDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        fouseDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                fouseDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------fouseDatePRF=#{fouseDatePRF}")
+        
+        
+#-------5日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        fifthDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        fifthDatesReservedFrames.each do |f|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                      #calumnメソッドを呼び出す。これは取得する要素数
+                fifthDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------fifthDatePreviousReservedFrames=#{fifthDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        fifthDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        fifthDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                fifthDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------fifthDatePRF=#{fifthDatePRF}")
+        
+        
+#-------6日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        sixthDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        sixthDatesReservedFrames.each do |f|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                    #calumnメソッドを呼び出す。これは取得する要素数
+                sixthDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------sixthDatePreviousReservedFrames=#{sixthDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        sixthDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        sixthDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                sixthDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------sixthDatePRF=#{sixthDatePRF}")
+        
+         
+#-------7日目------------------------------------------------------------------------
+        
+        #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
+        seventhDatePreviousReservedFrames=[]
+        
+        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
+        seventhDatesReservedFrames.each do |s|
+            #until Time.parse(whour) < Time.parse(f)
+            
+                #firstDate_before_reserved_times.push(whour)
+                previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(s) }
+                #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
+                logger.debug("----------previousTimes=#{previousTimes}")
+                
+                                                                    #calumnメソッドを呼び出す。これは取得する要素数
+                seventhDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
+              
+            #end
+        end
+
+        logger.debug("----------seventhDatePreviousReservedFrames=#{seventhDatePreviousReservedFrames}")
+        
+        #二次元配列を一次元配列に直す。
+        seventhDatePRF=[]
+        
+        #firstDatePreviousReservedFrames.each_with_index do |v, idx|
+        
+        seventhDatePreviousReservedFrames.each do | v |  
+            v.each do |x|
+                firstDatePRF << x
+            end
+        end
+     
+        logger.debug("--------------seventhDatePRF=#{seventhDatePRF}")
+        
+        
+        
+        
+        
+        
         
         
          #配列から"-"分のカラム数に対応する配列の要素を取得
-                                                        #privateのreturn            
+         #退勤時間からcalumn_number数分表示をかえる。
+                                    
          firstunavailableCalumns = firstDatesFrames.last(calumn(calumn_number))
          secondunavailableCalumns = secondDatesFrames.last(calumn(calumn_number))
          thirdunavailableCalumns = thirdDatesFrames.last(calumn(calumn_number))
@@ -324,85 +616,66 @@ module ReservationsHelper
          seventhunavailableCalumns = seventhDatesFrames.last(calumn(calumn_number))
          
          #logger.debug("----------calumn_number=#{calumn_number}")
-         logger.debug("-------------firstDatesFrames=#{firstDatesFrames}")
-         logger.debug("--------firstunavailableCalumns=#{firstunavailableCalumns}")
-            
-        
-        
+         #logger.debug("-------------firstDatesFrames=#{firstDatesFrames}")
+         #logger.debug("--------firstunavailableCalumns=#{firstunavailableCalumns}")
+         
+    
+         
+
+        #------------viewに出ている処理。まる、バツ、ハイフンはここで作ってます。--------------------
         
         calender_size = working_hours.length* 7
        
         #マスの数を一週間でわる　i= 0から21まで
         (calender_size/7).times do |i|
             calender << "\t" + '<tr>'
+            
             hour = working_hours[i]
+            
             calender << '<td>'
+            
             calender << hour
+            
             calender <<'</td>' 
             
-           #7.times do 
-            #schs.each do |sch| 
-            #logger.debug("-----schs=#{schs.inspect}")
-               #first = schs[0]
-               #first[:frame].zip(first[:status]) do |f, s|
-               #first[:status].each do |s|
-                   #ogger.debug("----time=#{Time.parse(f)}")
-               #if first[:frame].include?(working_hours[i]) && t_monthes[0] == first[:date] && s == "available"
-                   #logger.debug("-----f=#{f}")
-               #elsif f == working_hours[i] && t_monthes[0] == first[:date] && s == "reserved"
-                   # calender << 'バツ'
-                #elsif first[:frame].exclude?(working_hours[i]) && t_monthes[0] == first[:date] 
-                #7.times do 
-                
-                                            #9:30と21:00は準備　preparation periodを撮ってこないため   availableしてなので#9:30と21:00はとってこない
-            #staffSchedules = Schedule.where(staff_id: 1, date: rangeDates[0], frame_status: "available")
-            
-            
-            
-            
-            #scheduleDateFrmaes = staffSchedules.map{|schedule| {date: schedule.date, frame: [schedule.frame]}}
-            
-            #logger.debug("-------scheduleDateFrmaes=#{scheduleDateFrmaes}")
-            #logger.debug("--------calumn=#{calumn(calumn_number)}")
-            #if  scheduleFrmaes.include?("9:30","21:00")
-                #newFrames = scheduleFrmaes.map{|schedule| }
-            #end
-            
-            #frame_number = scheduleFrmaes.length
-            #requiredTime = frame_number * 30 
         
-            #availableCalum = menuRequiredTimes.to_i - calumn_number
-            
-            
-            
-            
-                
-            #初日    
+#------------初日-----------------------------------------------------------------   
+
             calender << '<td>'
                  
-                #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "reserved")
+                #Required_timeに応じたreservedの前の時間   必ず "reserved"の上
+                if firstDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'
+                 
+                 
+                #予約済み    frame_status: "reserved" または　pre-reserved
+                
+                elsif firstDatesReservedFrames.include?(working_hours[i])
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "reserved")
 
                     calender << '✖'
 
-                    
-                #予約不可
+
+                
+                #予約不可  RequiredTimeに応じた退勤時間からの処理  
                 elsif firstunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "available")
 
                    calender << '-'    
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "available")                    
+                #予約可    firstDatesFrames.include?(working_hours[i])  frame_status: 'avaiable'
+                elsif firstDatesFrames.include?(working_hours[i])
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "available")                    
                     
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[0], frame: working_hours[i]), class:'date-link'
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id, menu_required_times: @menuRequiredTimes,
+                                        menus: @menuIds, date: rangeDates[0], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
                    
-                #出勤しない時間   
+                #出勤しない時間     'break'とデータベースに指定の時間(working_hours[i])がない。
                 else
                 
                     calender << "-"
@@ -412,11 +685,19 @@ module ReservationsHelper
             
             
             
-            #二日目
+#------------二日目----------------------------------
+
             calender << '<td>'
-            
-                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[1], frame_status: "reserved")
+                
+                
+                if secondDatePRF.include?(working_hours[i])
+                    
+                    calender << '✖'
+                
+                
+                #予約済み   
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[1], frame_status: "reserved")
+                elsif secondDatesReservedFrames.include?(working_hours[i])
                     
                     calender << '✖'
 
@@ -428,11 +709,12 @@ module ReservationsHelper
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[1], frame_status: "available")                    
+                #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[1], frame_status: "available")  
+                elsif secondDatesFrames.include?(working_hours[i])
                     
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[1], frame: working_hours[i]), class:'date-link'
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id,  menu_required_times: @menuRequiredTimes,
+                                       menus: @menuIds, date: rangeDates[1], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
@@ -447,11 +729,19 @@ module ReservationsHelper
               
               
               
-            #3日目
+#-----------3日目-----------------------------
+
             calender << '<td>'
             
+                #Required_timeに応じたreservedの前の時間   
+                if thirdDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'
+            
+            
                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[2], frame_status: "reserved")
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[2], frame_status: "reserved")
+                elsif thirdDatesReservedFrames.include?(working_hours[i])
                     
                     calender << '✖'
 
@@ -463,11 +753,13 @@ module ReservationsHelper
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[2], frame_status: "available")                    
-                    
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[2], frame: working_hours[i]), class:'date-link'
+                #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[2], frame_status: "available")                    
+                elsif thirdDatesFrames.include?(working_hours[i])
+                
+                
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id,menu_required_times: @menuRequiredTimes,
+                                        menus: @menuIds, date: rangeDates[2], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
@@ -482,11 +774,21 @@ module ReservationsHelper
 
 
 
-            #4日目
+#------------4日目------------------------------------
+
             calender << '<td>'
             
+                #Required_timeに応じたreservedの前の時間   
+                if fouseDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'
+                    
+                    
+                    
                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[3], frame_status: "reserved")
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[3], frame_status: "reserved")
+                elsif fouseDatesReservedFrames.include?(working_hours[i])
+                    
                     
                     calender << '✖'
 
@@ -498,11 +800,11 @@ module ReservationsHelper
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[3], frame_status: "available")                    
-                    
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[3], frame: working_hours[i]), class:'date-link'
+                 #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[3], frame_status: "available")                    
+                elsif fouseDatesFrames.include?(working_hours[i])
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id, menu_required_times: @menuRequiredTimes, 
+                                       menus: @menuIds,  date: rangeDates[3], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
@@ -517,11 +819,19 @@ module ReservationsHelper
 
 
 
-            #5日目
+#------------5日目-------------------------------------------
+
             calender << '<td>'
             
-                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[4], frame_status: "reserved")
+                #Required_timeに応じたreservedの前の時間   
+                if fifthDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'
+                    
+        
+                #予約済み   
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[4], frame_status: "reserved")
+                elsif fifthDatesReservedFrames.include?(working_hours[i])
                     
                     calender << '✖'
 
@@ -533,11 +843,12 @@ module ReservationsHelper
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[4], frame_status: "available")                    
+                #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[4], frame_status: "available") 
+                elsif fifthDatesFrames.include?(working_hours[i])
                     
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[4], frame: working_hours[i]), class:'date-link'
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id,  menu_required_times: @menuRequiredTimes, 
+                                       menus: @menuIds, date: rangeDates[4], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
@@ -552,11 +863,19 @@ module ReservationsHelper
 
 
 
-            #6日目
+#------------6日目------------------------------------
+
             calender << '<td>'
             
-                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[5], frame_status: "reserved")
+                #Required_timeに応じたreservedの前の時間   
+                if sixthDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'           
+            
+            
+                #予約済み   
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[5], frame_status: "reserved")
+                elsif sixthDatesReservedFrames.include?(working_hours[i])
                     
                     calender << '✖'
 
@@ -568,11 +887,12 @@ module ReservationsHelper
                     
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[5], frame_status: "available")                    
+                #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[5], frame_status: "available")
+                elsif sixthDatesFrames.include?(working_hours[i])
                     
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[5], frame: working_hours[i]), class:'date-link'
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id, menu_required_times: @menuRequiredTimes, 
+                                       menus: @menuIds, date: rangeDates[5], frame: working_hours[i]), class:'date-link'
                     
                     calender << circle
                     
@@ -587,12 +907,22 @@ module ReservationsHelper
 
 
 
-            #7日目
+#-----------7日目------------------------------------
+
+
             calender << '<td>'
-            
+                
+                
+                #Required_timeに応じたreservedの前の時間   
+                if seventhDatePRF.include?(working_hours[i])
+                 
+                    calender << '✖'  
+                
+                
                 #予約済み   
-                if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[6], frame_status: "reserved")
-                    
+                #if  Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[6], frame_status: "reserved")
+                elsif seventhDatesReservedFrames.include?(working_hours[i])
+                
                     calender << '✖'
 
                     
@@ -602,12 +932,13 @@ module ReservationsHelper
                    calender << '-'    
                     
                     
-                  #予約可   
-                elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "available")                    
+                #予約可   
+                #elsif Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[6], frame_status: "available")
+                elsif seventhDatesFrames.include?(working_hours[i])
                     
-                    circle = link_to '◎', custamer_detail_reservations_path(selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes, date: rangeDates[6], frame: working_hours[i]), class:'date-link'
-                    
+                    circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id, menu_required_times: @menuRequiredTimes, 
+                                       menus: @menuIds, date: rangeDates[6], frame: working_hours[i]), class:'date-link'
+                                       
                     calender << circle
                     
                    
@@ -633,6 +964,7 @@ module ReservationsHelper
     
     
     
+   # --------------------private-----------------------------------------------
     
     
     private
@@ -643,20 +975,28 @@ module ReservationsHelper
     #例　menuRequiredTimes(120)から30で割って4カラム必要となる。そこから表示するのは先頭の1カラムで良いので残り3つは"-"
     
     def calumn(calumn_number)
+        toInteger = calumn_number.to_i
         logger.debug("-------calumn_number=#{calumn_number}")
-        if calumn_number < 1
-            number_integer = 0
+        logger.debug("-------toInteger=#{toInteger}")
         
-                              #整数かどうか判定。calumn_numberが30で割り切れた場合
-        elsif calumn_number =~ /^[0-22]+$/    
-            number_integer = calumn_number.to_i - 1  #表示を変えなければならいないマスの数がわかる。 １ひく　4ならケツの３カラムを"-"にする。
-                            
-        else  #Flootの場合。
-                            
-            number_integer = calumn_number.to_i
-        end
+        #必要時間30min以下
+        if calumn_number < 1   
             
-        logger.debug("--------number_integer=#{number_integer}")        
+            number_integer = 0
+            
+        #整数かどうか判定。calumn_numberが30で割り切れた場合　　calumn_number =~ /^[0-22]+$/   
+        elsif 0 == calumn_number % toInteger 
+        
+            number_integer = calumn_number.to_i - 1  #表示を変えなければならいないマスの数がわかる。 １ひく　4ならケツの３カラムを"-"にする。
+          
+        #Flootの場合。                    
+        else  
+                            
+            number_integer = toInteger
+            
+        end
+        
+        logger.debug("--------number_integer=#{number_integer}")
         return number_integer  
     end
 end

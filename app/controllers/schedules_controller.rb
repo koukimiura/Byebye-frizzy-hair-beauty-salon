@@ -109,17 +109,20 @@ class SchedulesController < ApplicationController
             #originals.each do |original|
             dates.zip(times) do |date, time|
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
-                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
+                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
+                    
                  #elsif original != time   
                     #Schedule.create(staff_id: staffId, date: date, frame: original, frame_status: 'break')
                     
                 elsif time == "9:30" || "21:00"
-                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'preparation period')
+                
+                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'preparation_period')
                 
                 else
                         #logger.debug("------date=#{date}")
                         #logger.debug("------time=#{time}")
-                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
+                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
+                    
                 end
             end
         end

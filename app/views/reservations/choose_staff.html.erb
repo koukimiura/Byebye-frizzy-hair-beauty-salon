@@ -10,11 +10,9 @@
                 </tbody>
             </table>
         </div>
-        <%= form_tag(choosen_staff_reservations_path, method: :post) do %>
             <div class='main-reservation'>
                 <div class='staff-reservation'>
                     <% @staffs.each do |staff| %>
-                    <% logger.debug("-----@staffs=#{@staffs}") %>
                         <div class='staff-inner-r'>
                             <div class='staff-profile'>
                                 <div class='staff-upside'>
@@ -41,13 +39,10 @@
                                         <a class='open-modal text-left' href="#" data-target='modal<%= staff.id %>'>詳細</a>
                                     </div>
                                     <div class='staff-click'>
-                                        <%= hidden_field_tag "staff_id", staff.id %>
+                                        <%= link_to '指名して予約', choose_date_reservations_path(selectedStaff: staff.id, menus: @menuIds),
+                                                                                                            class: 'btn btn-info' %>
                                         <% logger.debug("----------staff.id=#{staff.id}") %>
-                                        <%= hidden_field_tag "menu_ids", @menuIds %>
-                                        <%= hidden_field_tag "menu_names", @menuNames %>
-                                        <%= hidden_field_tag "menu_prices", @menuPrices %>
-                                        <%= hidden_field_tag "menu_required_times", @menuRequiredTimes %>
-                                        <input type="submit" value="指名して予約" class='btn btn-info' >
+                                        <!--<input type="submit" value="指名して予約" class='btn btn-info' > -->
                                     </div>
                                 </div>
                             </div>
@@ -83,21 +78,20 @@
                                         </div>
                                         <div class='staff-show-downside'>
                                             <div class='staff-click'>
-                                                
-                                                <input type="submit" value="指名して予約" class='btn btn-info' >
+                                                <%= link_to '指名して予約', choose_date_reservations_path(selectedStaff: staff.id, menus: @menuIds),
+                                                                                                            class: 'btn btn-info' %>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                  <% end %>  
+                    <% end %>
                 </div>
             </div>
-        <% end %>
     </div>
     <div class='menu-footer'>
-        <%= link_to "戻る", :back, class: 'btn btn-success' %>
+        <%= link_to "戻る", choose_menus_reservations_path, class: 'btn btn-success' %>
     </div>
 </div>
 
@@ -124,3 +118,6 @@
         });
     });
 </script>
+
+
+

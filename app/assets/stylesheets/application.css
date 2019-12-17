@@ -13,7 +13,6 @@
   *= require_tree .
  *= require_self
 *= require select2
-*= require font-awesome
  */
 
 
@@ -54,6 +53,11 @@
 .font-color {
     color: #ff4d75;
 }
+
+.name-margin {
+    margin-left: 20px;
+}
+
 
 
 /**TOP**/
@@ -439,7 +443,7 @@ td {
     display: flex;
 }
 
-.staff-click input {
+.staff-click a {
     flex-grow: 7;
 }
 
@@ -684,5 +688,19 @@ td {
 
 .today-staff-details span {
     margin-right: 20px;
+}
+
+
+
+/** confirmation **/
+
+.confirm-p {
+    font-size: 18px;
+}
+
+
+.reserved {
+    margin-bottom: 20px;
+    /**width: 100px; **/
 }
 

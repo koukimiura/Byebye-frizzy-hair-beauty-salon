@@ -1,0 +1,92 @@
+<div class='confirmation'>
+    <div class='main-title'>
+        <h2 class='text-center'>予約内容を確認してください</h2>
+    </div>
+    <div class='main'>
+        <div class='pre-reservation'>
+            <div class='reserved'>
+                <p class='confirm-p'>予約内容</p>
+                <table class="tacheck" border="1">
+                    <tbody>
+                        <tr>
+                            <th>メニュー</th>
+                            <td><%= @menuNames %></td>
+                        </tr>
+                        <tr>
+                            <th>指名スタッフ</th>
+                            <td><%= @staff.last_name %><span class='name-margin'><%= @staff.first_name %></span></td>
+                        </tr>
+                        <tr>
+                            <th>所要時間</th>
+                            <td><%= @menuRequiredTimes %>分</td>
+                        </tr>
+                        <tr>
+                            <th>お支払い予定金額</th>
+                            <td><%= "￥#{@menuPrices.to_s(:delimited)}" %><br><span class="caution">※実際のお支払い金額と異なる場合があります。</span></td>
+                        </tr>
+                        <tr>
+                            <th>来店日時</th>
+                            <td><%= @date.strftime("%Y年") %><%= @date.strftime("%m月") %><%= @date.strftime("%d日") %><%= @frames.first %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class='reserved'>
+                <p class='confirm-p'>お客様情報</p>
+                <table class="tacheck" border="1">
+                    <tbody>
+                        <tr>
+                            <th>氏名</th>
+                            <td><%= @reservation.last_name %><span class='name-margin'><%= @reservation.first_name %></span></td>
+                        </tr>
+                        <tr>
+                            <th>氏名(カナ)</th>
+                            <td><%= @reservation.last_name_kana %><span class='name-margin'><%= @reservation.first_name_kana %></span></td>
+                        </tr>
+                        <tr>
+                            <th>電話番号</th>
+                            <td><%= @reservation.tel %></td>
+                        </tr>
+                        <tr>
+                            <th>メールアドレス</th>
+                            <td><%= @reservation.email %></td>
+                        </tr>
+                        <tr>
+                            <th>性別</th>
+                            <td><%= @reservation.gender %></td>
+                        </tr>
+                        <tr>
+                            <th>来店履歴</th>
+                            <td><%= @check %></td>
+                        </tr>
+                        <tr>
+                            <th>ご要望</th>
+                            <td><%= @reservation.request %></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+        <%= form_for @reservation do |f| %>
+            <%= f.hidden_field :staff_id, :value => @staff.id %>
+            <%= f.hidden_field :last_name, :value => @reservation.last_name %>
+            <%= f.hidden_field :first_name, :value => @reservation.first_name %>
+            <%= f.hidden_field :last_name_kana, :value => @reservation.last_name_kana %>
+            <%= f.hidden_field :first_name_kana, :value => @reservation.first_name_kana %>
+            <%= f.hidden_field :tel, :value => @reservation.tel %>
+            <%= f.hidden_field :email, :value => @reservation.email %>
+            <%= f.hidden_field :gender, :value => @reservation.gender %>
+            <%= f.hidden_field :check, :value => @reservation.check %>
+            <%= f.hidden_field :request, :value => @reservation.request %>
+            <%= f.hidden_field :date, :value => @reservation.date %>
+            
+    <div class='menu-footer'>
+            <%= link_to "戻る", :back, class: 'btn btn-success' %>
+            <%= f.submit :この内容で次へ, class:'btn btn-info' %>
+        <% end %>
+    </div>
+</div>
+
+

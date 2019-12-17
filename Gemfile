@@ -72,4 +72,8 @@ gem "select2-rails"
 
 #gem 'font-awesome5-rails'
 #gem 'font-awesome-sass'
-gem 'font-awesome-rails'
+#gem 'font-awesome-rails'
+
+
+#定期的共通処理
+gem 'whenever'

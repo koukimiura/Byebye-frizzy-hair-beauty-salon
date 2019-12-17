@@ -16,11 +16,11 @@
         </div>
         <dvi class='main-reservation-date'>
             <div class='menu-footer'>
-                <%= link_to "前の一週間", choose_date_reservations_path(previous_week: @prev, selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes), class: 'btn btn-info' %>
+                <%= link_to "前の一週間", choose_date_reservations_path(previous_week: @prev, selectedStaff: @staff.id, 
+                                        menus: @menuIds), class: 'btn btn-success' %>
                 
-                <%= link_to "次の一週間", choose_date_reservations_path(next_week: @next, selected_Staff: @staff.id, menu_ids: @menuIds, menu_names: @menuNames,
-                                            menu_prices: @price, menu_required_times: @menuRequiredTimes), class: 'btn btn-success' %>
+                <%= link_to "次の一週間", choose_date_reservations_path(next_week: @next, selectedStaff: @staff.id, 
+                                        menus: @menuIds), class: 'btn btn-success' %>
             </div>
             <div class='date-reservation'>
                 <table class='date-r' border="1" bordercolor="#DDDDDD">
@@ -30,8 +30,7 @@
         </dvi>
     </div>
     <div class='menu-footer'>
-        <%= link_to "戻る", :back, class: 'btn btn-success' %>
+        <%= link_to "戻る", choose_staff_reservations_path(menus: @menuIds), class: 'btn btn-success' %>
     </div>
 </div>
-
 
