@@ -335,19 +335,26 @@ class ReservationsController < ApplicationController
         @reservation = Reservation.new(reservation_params)
         
         #@hash_frames = {h_frames: {key_frames: @frames}}
-        @hash_frames = {key_frames: @frames}
         #@hash_frames = JSON.parse(hash_frames.to_json)
+        
+        #hash化した
+        @hash_frames = {key_frames: @frames}
+        @hash_menuIds = {key_menuIds: @menuIds}
+        
+        
         
         logger.debug("-------@menuIds=#{@menuIds}")
         logger.debug("-------@frames=#{@frames}")
+        
+        #ストロングパラメータのclassは
         logger.debug("-----------reservation_params.class=#{reservation_params.class}")
+       
        
         @date = Date.parse(@reservation.date)
         
         @check = '初来店' if @reservation.check == 'true'
         @check = '再来店' if @reservation.check == 'false'
         @staff = Staff.find(staffId)
-       
        
        
         #------------------------------------
@@ -379,33 +386,44 @@ class ReservationsController < ApplicationController
     def create
         #json = params[:frames]
         #@reservation = Reservation.new(reservation_params)
-        reservation = Reservation.new
         
         #json_frames = JSON.parse(params[:frames].to_json)
         #json_frames = JSON.parse(reservation_params[:frames].to_json)
-        
-        
+    
         #reservation_paramsをjson化しないとhashとして扱えない。 各カラムだけやるとStringになってしまう。
-        hash_reservation_params = JSON.parse(reservation_params.to_json, {symbolize_names: true})
+        #hash_reservation_params = JSON.parse(reservation_params.to_json, {symbolize_names: true})
         #hash_frames = hash_reservation_params.as_json(only: [:frames])
-        
         #string_frames = hash_reservation_params[:frames]
         #hash_frames = to_hash(string_frames)
         
-        hash_frames = JSON.parse(hash_reservation_params[:frames], {symbolize_names: true})
-        array_frames = hash_frames[:key_frames]
         
+        
+        reservation = Reservation.new(reservation_params)
+        
+        
+        #JSON文字列で受け取りhashとして扱いvalueを必要な形に崩していく
+        
+        #framesのJSON文字列{key_frames: @frames}をparseしてhashとして扱えるようにする。
+        hash_frames = JSON.parse(reservation_params[:frames], {symbolize_names: true})
+        #hash　:key_framesのvalueを取得
+        array_frames = hash_frames[:key_frames]
         reservation.frames = array_frames
         
-        logger.debug("----------------reservation_params=#{reservation_params}")
-        logger.debug("----------hash_reservation_params=#{hash_reservation_params.class}")
-        logger.debug("--------hash_reservation_params=#{hash_reservation_params}")
+        hash_menuIds = JSON.parse(reservation_params[:menu_ids], {symbolize_names: true})
+        logger.debug("--------hash_menuIds=#{hash_menuIds}")
+        #array_menuIds = hash_menuIds[:key_menuIds]
+        #reservation.menu_ids = array_menuIds
+        
+        
+        logger.debug("--------reservation_params=#{reservation_params}")
+        #logger.debug("--------hash_reservation_params=#{hash_reservation_params.class}")
+        #logger.debug("--------hash_reservation_params=#{hash_reservation_params}")
 
         logger.debug("--------hash_frames.class=#{hash_frames.class}")
         logger.debug("--------hash_frames=#{hash_frames}")
         logger.debug("--------array_frames=#{array_frames}")
-        logger.debug("------------ Reservation.frames=#{reservation.frames}")
-        
+        logger.debug("--------reservation.frames=#{reservation.frames}")
+        logger.debug("--------reservation.menu_ids=#{reservation.menu_ids}")
 
            # product_params['type'].each do |t|
            # product.name = product_params['name']
@@ -413,20 +431,14 @@ class ReservationsController < ApplicationController
            # product.type = t
             #product.save 
         
-        
-        #logger.debug("--------some_params=#{some_params}")
-        #logger.debug("-----------reservation=#{reservation_params}")
-        #logger.debug("-----------@reservation.frames=#{@reservation.frames}")
-        
         if reservation
             flash[:notice] ='予約が確定しました。'
             redirect_to root_path
             
         else
             flash[:alert] ='記入が漏れがあります。'
-            
+            redirect_to :back
         end
-    
     end
     
     
@@ -437,6 +449,8 @@ class ReservationsController < ApplicationController
         redirect_to :back
         
     end
+    
+    
     
     private
     
@@ -455,32 +469,16 @@ class ReservationsController < ApplicationController
         
         #ストロングパラメータは制限かけてるですーー
         def reservation_params
-            
             #json_request = ActionController::Parameters.new(JSON.parse(request.body.read))
             #json_request.permit(:staff_id, :last_name, :first_name, :last_name_kana, :first_name_kana, :tel, 
                                 #:email, :gender, :request, :check, :date, :frames)
-            
-            
             params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana,
-                                                :first_name_kana, :tel, :email, :gender, :request, :check, :date, :frames)
-            
+                                                :first_name_kana, :tel, :email, :gender, :request, :check, :date, :frames, :menu_ids)
         end
-        
-        
-        def to_hash(string_frames)
-            
-            hash = string_frames.delete(' ').to_hash
-            #array.each_slice(2).map {|k, v| [k.to_sym, v.to_i] }.to_h 
-            
-            return hash
-            
-        end
-    
-        
+
 #------------------------------------menu----------------------------------------
 
 
-        
         def totalMenus(menuId)
             menu = Menu.find_by(id: menuId)
             return menu

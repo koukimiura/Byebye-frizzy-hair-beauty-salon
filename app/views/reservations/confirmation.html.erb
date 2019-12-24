@@ -82,18 +82,16 @@
             <%= f.hidden_field :check, :value => @reservation.check %>
             <%= f.hidden_field :request, :value => @reservation.request %>
             <%= f.hidden_field :date, :value => @reservation.date %>
-            <%= f.hidden_field :menu_id, :value => @menuIds %>
+            
+            <!-- 渡すvalueをjson文字列にしてます。-->
+            <%= f.hidden_field :menu_ids, :value => @hash_menuIds.to_json %>
+            <%= f.hidden_field :frames, value: @hash_frames.to_json %>
+            <% logger.debug("---------@hash_menuIds#{@hash_menuIds}") %>
+            <% logger.debug("---------@hash_frames#{@hash_frames}") %>
 
-            
-                <% logger.debug("---------@hash_frames#{@hash_frames}") %>
-            
-           
-                <%= f.hidden_field :frames, value: @hash_frames.to_json %>
-                                               <!--- { name: "item[#{index}][name]" } -->        
-                    <!--<input type ='hidden' name="frames[]", value=" frame " > -->
-                    <!--f.hidden_field :frames, :value => frame -->
-           
-            
+            <!--- { name: "item[#{index}][name]" } -->        
+            <!--<input type ='hidden' name="frames[]", value=" frame " > -->
+            <!--f.hidden_field :frames, :value => frame -->
     <div class='menu-footer'>
             <%= link_to "戻る", :back, class: 'btn btn-success' %>
             <%= f.submit :この内容で次へ, class:'btn btn-info' %>
