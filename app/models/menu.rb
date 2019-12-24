@@ -2,7 +2,7 @@ class Menu < ApplicationRecord
     
     require 'active_support/core_ext/numeric/conversions'
     
-    has_many :reservations
+    #has_many :reservations
     
     validates :name, :category, :price, :required_time, presence: true
     validates :name, uniqueness: true

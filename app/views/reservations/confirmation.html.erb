@@ -71,6 +71,9 @@
     </div>
         <%= form_for @reservation do |f| %>
         
+        
+        <%= render 'layouts/error_message', model: f.object %>
+        
             <%= f.hidden_field :staff_id, :value => @staff.id %>
             <%= f.hidden_field :last_name, :value => @reservation.last_name %>
             <%= f.hidden_field :first_name, :value => @reservation.first_name %>

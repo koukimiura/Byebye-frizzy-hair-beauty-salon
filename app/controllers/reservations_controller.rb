@@ -11,13 +11,35 @@ class ReservationsController < ApplicationController
         #logger.debug("----------dates=#{dates}")
         
         @reservations = Reservation.search(params[:search_last_kana], params[:search_first_kana], params[:search_staff], params[:search_date])
+    #@reservation = Reservation.find_by(id: 2)
+    #@frames = JSON.parse(@reservation.frames)
+    #logger.debug("------------frames=#{frames.class}")
+    
+    
     end
     
     
     def index
         
-        @reservations = Reservation.all.order(date: Date.today)
+        end_this_month = Date.today.end_of_month
         
+        d = (Date.today..end_this_month)
+        @this_month_reservations = Reservation.where(date: d)
+        @after_this_month_reservations = Reservation.all.order(date: :desc)
+        
+        mixed_reservations = @this_month_reservations | @after_this_month_reservations
+        @reservations = mixed_reservations.uniq
+        
+#--------------検索-----------------        
+        
+        @staffs = Staff.all.order(status: :asc)
+        
+        date = Date.today
+        @dates = (date..date + 2.month)
+        #logger.debug("----------dates=#{dates}")
+        
+        @searchedReservations = Reservation.search(params[:search_last_kana], params[:search_first_kana], params[:search_staff], params[:search_date])
+
     end
     
     def choose_menus
@@ -398,7 +420,6 @@ class ReservationsController < ApplicationController
         
         
         
-        reservation = Reservation.new(reservation_params)
         
         
         #JSON文字列で受け取りhashとして扱いvalueを必要な形に崩していく
@@ -407,12 +428,12 @@ class ReservationsController < ApplicationController
         hash_frames = JSON.parse(reservation_params[:frames], {symbolize_names: true})
         #hash　:key_framesのvalueを取得
         array_frames = hash_frames[:key_frames]
-        reservation.frames = array_frames
-        
+
+        #framesのJSON文字列{key_menuIds: @menuIds}をparseしてhashとして扱えるようにする。
         hash_menuIds = JSON.parse(reservation_params[:menu_ids], {symbolize_names: true})
-        logger.debug("--------hash_menuIds=#{hash_menuIds}")
-        #array_menuIds = hash_menuIds[:key_menuIds]
-        #reservation.menu_ids = array_menuIds
+        #配列を取得
+        array_menuIds = hash_menuIds[:key_menuIds]
+
         
         
         logger.debug("--------reservation_params=#{reservation_params}")
@@ -422,22 +443,37 @@ class ReservationsController < ApplicationController
         logger.debug("--------hash_frames.class=#{hash_frames.class}")
         logger.debug("--------hash_frames=#{hash_frames}")
         logger.debug("--------array_frames=#{array_frames}")
-        logger.debug("--------reservation.frames=#{reservation.frames}")
-        logger.debug("--------reservation.menu_ids=#{reservation.menu_ids}")
+
+        logger.debug("--------array_menuIds=#{array_menuIds} ")
 
            # product_params['type'].each do |t|
            # product.name = product_params['name']
             #product.about = product_params['about']
            # product.type = t
             #product.save 
-        
-        if reservation
+            
+        reservation = Reservation.new(staff_id: reservation_params[:staff_id],
+                                  date: reservation_params[:date],
+                                  last_name: reservation_params[:last_name],
+                                  first_name: reservation_params[:first_name],
+                                  last_name_kana: reservation_params[:last_name_kana],
+                                  first_name_kana: reservation_params[:first_name_kana],
+                                  tel: reservation_params[:tel],
+                                  email: reservation_params[:email],
+                                  check: reservation_params[:check],
+                                  gender: reservation_params[:gender],
+                                  request: reservation_params[:request],
+                                  frames: array_frames, 
+                                  menu_ids: array_menuIds)
+
+        if reservation.save
             flash[:notice] ='予約が確定しました。'
             redirect_to root_path
             
         else
             flash[:alert] ='記入が漏れがあります。'
             redirect_to :back
+            #redirect_back(fallback_location: fallback_location)
         end
     end
     

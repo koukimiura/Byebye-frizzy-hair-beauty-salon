@@ -26,6 +26,7 @@ every 1.monthes do
     date = Date.today- 2.months
     first_date = Date.new(date 1) #指定した月の初日
     last_date = Date.new(date -1) #指定した月の最終日
+    
     range = (first_date..last_date)
     
     runner  Schedule.destroy(date: range)
@@ -37,7 +38,7 @@ end
 
 
 every 30.monthes do 
-    @reservation = Reservation.where(frame_status: 'pre-reserved')
+    @reservation = Reservation.where(frame_status: 'keep')
     
     runner @reservation.update(frame_status: 'available')
     
