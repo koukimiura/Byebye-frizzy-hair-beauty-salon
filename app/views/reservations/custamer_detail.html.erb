@@ -15,7 +15,7 @@
                     
                     <% @total_frames.each do |frame| %>
                         <% logger.debug("---------frame=#{frame}") %>
-                        <input type ='hidden' name="frames[]", value="<%= frame %>" >
+                        <input type ='hidden' name="frame[]", value="<%= frame %>" >
                     <% end %>
                     
                     <div class='field'>
@@ -30,12 +30,12 @@
                     
                     <div class='field'>
                         <p>電話番号<span class='must'>※ハイフンなしで記入下さい。</span></p>
-                        <%= f.text_field :tel, class: 'form-control' %>
+                        <%= f.number_field :tel, class: 'form-control' %>
                     </div>
                     
                     <div class='field'>
                         <p>性別<span class='must'>※</span></p>
-                        <span class='radio_button'><%= f.radio_button :gender, "女", checked: true %>女</span><%= f.radio_button :gender, "男" %>男
+                        <span class='radio_button'><%= f.radio_button :gender, "女性", checked: true %>女</span><%= f.radio_button :gender, "男性" %>男
                     </div>
                     
                 </div>    
@@ -53,7 +53,7 @@
                     
                     <div class='field'>
                         <p>メールアドレス<span class='must'>※</span></p>
-                        <%= f.text_field :email, class: 'form-control' %>
+                        <%= f.email_field :email, class: 'form-control' %>
                     </div>
                     
                     <div class='field'>

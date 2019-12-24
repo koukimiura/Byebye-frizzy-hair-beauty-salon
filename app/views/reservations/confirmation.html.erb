@@ -31,7 +31,6 @@
                     </tbody>
                 </table>
             </div>
-            
             <div class='reserved'>
                 <p class='confirm-p'>お客様情報</p>
                 <table class="tacheck" border="1">
@@ -46,6 +45,7 @@
                         </tr>
                         <tr>
                             <th>電話番号</th>
+                            <%= logger.debug("---------@reservation.tel=#{@reservation.tel}") %>
                             <td><%= @reservation.tel %></td>
                         </tr>
                         <tr>
@@ -70,6 +70,7 @@
         </div>
     </div>
         <%= form_for @reservation do |f| %>
+        
             <%= f.hidden_field :staff_id, :value => @staff.id %>
             <%= f.hidden_field :last_name, :value => @reservation.last_name %>
             <%= f.hidden_field :first_name, :value => @reservation.first_name %>
@@ -81,6 +82,17 @@
             <%= f.hidden_field :check, :value => @reservation.check %>
             <%= f.hidden_field :request, :value => @reservation.request %>
             <%= f.hidden_field :date, :value => @reservation.date %>
+            <%= f.hidden_field :menu_id, :value => @menuIds %>
+
+            
+                <% logger.debug("---------@hash_frames#{@hash_frames}") %>
+            
+           
+                <%= f.hidden_field :frames, value: @hash_frames.to_json %>
+                                               <!--- { name: "item[#{index}][name]" } -->        
+                    <!--<input type ='hidden' name="frames[]", value=" frame " > -->
+                    <!--f.hidden_field :frames, :value => frame -->
+           
             
     <div class='menu-footer'>
             <%= link_to "戻る", :back, class: 'btn btn-success' %>

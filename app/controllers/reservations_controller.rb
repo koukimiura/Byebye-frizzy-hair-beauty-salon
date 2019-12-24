@@ -1,5 +1,6 @@
 class ReservationsController < ApplicationController
     
+   # before_action:reservation_params_for_json, only: [:create]
     
     
     def search
@@ -15,6 +16,7 @@ class ReservationsController < ApplicationController
     
     def index
         
+        @reservations = Reservation.all.order(date: Date.today)
         
     end
     
@@ -218,11 +220,10 @@ class ReservationsController < ApplicationController
     
     
     def custamer_detail
-       # params[:scheduleId]
+       # 日付
         @date = params[:date]
-        
+        #必要時間
         menuRequiredTimes = params[:menu_required_times]
-        
         
         @staffId = staffId_params
         @menuIds = menuIds_params
@@ -259,8 +260,8 @@ class ReservationsController < ApplicationController
         #updateNumbeはupdateするDBのカラム数。
         
         logger.debug("---------- updateNumber=#{updateNumber}")
-                                            #@staffId                        
-       selectedSchedule =  Schedule.find_by(staff_id: 1, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
+                                                                   
+       selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
        
        
 
@@ -279,7 +280,7 @@ class ReservationsController < ApplicationController
            
            schedule = Schedule.find_by(id: scheduleId)
            logger.debug("------schedule.id=#{schedule.id}")
-           #schedule.update(frame_status: "pre-reserved")
+           #schedule.update(frame_status: "keep")
            
            @total_frames.push(schedule.frame)
            
@@ -300,59 +301,59 @@ class ReservationsController < ApplicationController
         times = frames_params
         
         logger.debug("-------menuIds=#{menuIds}")
-        logger.debug("-------frames=#{@frames}")
-        
+        logger.debug("-------times=#{times}")
+        logger.debug("-----------staffId=#{staffId}")
         @reservation = Reservation.new(reservation_params)
-        
-        
+    
         #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
+        if @reservation.last_name.present? && @reservation.first_name.present?  && @reservation.last_name_kana.present? && 
+           @reservation.first_name_kana.present? && @reservation.tel.present? && @reservation.email.present? &&
+           staffId.present? && menuIds.present?  && times.present?
         
-       # if @reservation.last_name == "" || @reservation.first_name == "" || @reservation.last_name_kana == "" ||
-            #@reservation.first_name_kana == "" || @reservation.tel == "" || @reservation.email == ""  ||
-            #staffId.present? || menuIds.present?  || frames.present?
-            
-        if @reservation.last_name  || @reservation.first_name || @reservation.last_name_kana ||
-            @reservation.first_name_kana  || @reservation.tel  || @reservation.email  ||
-            staffId.present? || menuIds.present?  || times.present?
            
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
-                                                                                    frames: frames_params, reservation: reservation_params)
-    
+                                        frame: frames_params, reservation: reservation_params)
+                                        
+
         else
             
-            #flash.now[:alert] ='記入が漏れがあります。'
-            #render :custamer_detail
-            flash.now[:alert] ='記入が漏れがあります。'
-            
-            render :custamer_detail
-            
+            flash[:alert] ='記入が漏れがあります。'
+            redirect_to :back
+         
             
         end
     end
     
     
     
-    def confirmation #newアクションがわり
+    def confirmation #newアクションのかわり
         
         staffId = staffId_params
-        menuIds = menuIds_params
+        @menuIds = menuIds_params
         @frames = frames_params
         @reservation = Reservation.new(reservation_params)
         
-        logger.debug("-------menuIds=#{menuIds}")
-        logger.debug("-------frames=#{@frames}")
-        logger.debug("-----------reservation_params=#{reservation_params}")
+        #@hash_frames = {h_frames: {key_frames: @frames}}
+        @hash_frames = {key_frames: @frames}
+        #@hash_frames = JSON.parse(hash_frames.to_json)
+        
+        logger.debug("-------@menuIds=#{@menuIds}")
+        logger.debug("-------@frames=#{@frames}")
+        logger.debug("-----------reservation_params.class=#{reservation_params.class}")
        
         @date = Date.parse(@reservation.date)
+        
         @check = '初来店' if @reservation.check == 'true'
         @check = '再来店' if @reservation.check == 'false'
         @staff = Staff.find(staffId)
        
+       
+       
         #------------------------------------
         
         
-        menus = menuIds.map{|menuId|totalMenus(menuId)}
+        menus = @menuIds.map{|menuId|totalMenus(menuId)}
         names = menus.map{|menu| name(menu)}
         #文字列をまとめる
         @menuNames = names.join(',')
@@ -367,6 +368,8 @@ class ReservationsController < ApplicationController
         @menuPrices = prices_integer.sum
     
         @menuRequiredTimes = required_times_integer.sum
+        
+        #render :json => @reservation
     
     end
     
@@ -374,10 +377,50 @@ class ReservationsController < ApplicationController
     
 
     def create
-        
+        #json = params[:frames]
         #@reservation = Reservation.new(reservation_params)
-        if @reservation.save
+        reservation = Reservation.new
+        
+        #json_frames = JSON.parse(params[:frames].to_json)
+        #json_frames = JSON.parse(reservation_params[:frames].to_json)
+        
+        
+        #reservation_paramsをjson化しないとhashとして扱えない。 各カラムだけやるとStringになってしまう。
+        hash_reservation_params = JSON.parse(reservation_params.to_json, {symbolize_names: true})
+        #hash_frames = hash_reservation_params.as_json(only: [:frames])
+        
+        #string_frames = hash_reservation_params[:frames]
+        #hash_frames = to_hash(string_frames)
+        
+        hash_frames = JSON.parse(hash_reservation_params[:frames], {symbolize_names: true})
+        array_frames = hash_frames[:key_frames]
+        
+        reservation.frames = array_frames
+        
+        logger.debug("----------------reservation_params=#{reservation_params}")
+        logger.debug("----------hash_reservation_params=#{hash_reservation_params.class}")
+        logger.debug("--------hash_reservation_params=#{hash_reservation_params}")
+
+        logger.debug("--------hash_frames.class=#{hash_frames.class}")
+        logger.debug("--------hash_frames=#{hash_frames}")
+        logger.debug("--------array_frames=#{array_frames}")
+        logger.debug("------------ Reservation.frames=#{reservation.frames}")
+        
+
+           # product_params['type'].each do |t|
+           # product.name = product_params['name']
+            #product.about = product_params['about']
+           # product.type = t
+            #product.save 
+        
+        
+        #logger.debug("--------some_params=#{some_params}")
+        #logger.debug("-----------reservation=#{reservation_params}")
+        #logger.debug("-----------@reservation.frames=#{@reservation.frames}")
+        
+        if reservation
             flash[:notice] ='予約が確定しました。'
+            redirect_to root_path
             
         else
             flash[:alert] ='記入が漏れがあります。'
@@ -406,25 +449,37 @@ class ReservationsController < ApplicationController
         end
         
         def frames_params
-             params[:frames]
+             params[:frame]
         end
+    
         
-        
-        
-        def custamer_params
-            
-            #params.require(:reservation).permit(:last_name, :first_name, :last_name_kana, :first_name_kana, :tel, :email, :gender, :request, :check)
-            
-        end
-        
+        #ストロングパラメータは制限かけてるですーー
         def reservation_params
             
-            params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana, :first_name_kana, :tel,
-                                                :email, :gender, :request, :check, :date) #, :menu_id [], :frames [])
+            #json_request = ActionController::Parameters.new(JSON.parse(request.body.read))
+            #json_request.permit(:staff_id, :last_name, :first_name, :last_name_kana, :first_name_kana, :tel, 
+                                #:email, :gender, :request, :check, :date, :frames)
+            
+            
+            params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana,
+                                                :first_name_kana, :tel, :email, :gender, :request, :check, :date, :frames)
             
         end
         
-        #------------------------------------
+        
+        def to_hash(string_frames)
+            
+            hash = string_frames.delete(' ').to_hash
+            #array.each_slice(2).map {|k, v| [k.to_sym, v.to_i] }.to_h 
+            
+            return hash
+            
+        end
+    
+        
+#------------------------------------menu----------------------------------------
+
+
         
         def totalMenus(menuId)
             menu = Menu.find_by(id: menuId)
@@ -450,5 +505,5 @@ class ReservationsController < ApplicationController
         def integer(y)
             return y.to_i
         end
-    
+
 end

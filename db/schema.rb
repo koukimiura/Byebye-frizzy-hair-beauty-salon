@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191104103521) do
+ActiveRecord::Schema.define(version: 20191219123147) do
 
   create_table "menus", force: :cascade do |t|
     t.string   "name"
@@ -26,12 +26,12 @@ ActiveRecord::Schema.define(version: 20191104103521) do
     t.integer  "staff_id"
     t.integer  "menu_id"
     t.string   "date"
-    t.string   "frames"
+    t.text     "frames"
     t.string   "last_name"
     t.string   "first_name"
     t.string   "last_name_kana"
     t.string   "first_name_kana"
-    t.string   "tel"
+    t.integer  "tel"
     t.string   "email"
     t.string   "gender"
     t.text     "request"

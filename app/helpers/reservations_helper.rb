@@ -47,7 +47,7 @@ module ReservationsHelper
         
         logger.debug("----------menuRequiredTimes.to_i=#{menuRequiredTimes.to_f}")
         
-        staffSchedules = Schedule.where(staff_id: 1, date: range).where.not(frame_status: "preparation_period")
+        staffSchedules = Schedule.where(staff_id: staff, date: range).where.not(frame_status: "preparation_period")
         
         
         
@@ -302,51 +302,50 @@ module ReservationsHelper
                     #logger.debug("-------schedule.frame=#{schedule.frame}")
                     firstDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
                     
-                    firstDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    firstDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                     
                 when rangeDates[1] then
                     
                     secondDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
                     
-                    secondDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    secondDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[2] then
 
                     thirdDatesFrames.push(schedule.frame)  if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
                     
-                    thirdDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    thirdDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
 
                 when rangeDates[3] then
                     
                     fouseDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
                     
-                    fouseDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    fouseDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[4] then
                     
                     fifthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
                     
-                    fifthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    fifthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[5] then
                     
                     sixthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
                     
-                    sixthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    sixthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[6] then  
                     
                     seventhDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
                     
-                    seventhDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'pre-reserved'
+                    seventhDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
             end
         end
    
    
-   
-        
+ #
 #-------初日----------------------------------------------------------------------------
         
         #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
@@ -622,6 +621,12 @@ module ReservationsHelper
     
          
 
+
+
+#----------------------view------------------
+
+
+
         #------------viewに出ている処理。まる、バツ、ハイフンはここで作ってます。--------------------
         
         calender_size = working_hours.length* 7
@@ -659,7 +664,7 @@ module ReservationsHelper
 
                 
                 #予約不可  RequiredTimeに応じた退勤時間からの処理  
-                elsif firstunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[0], frame_status: "available")
+                elsif firstunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[0], frame_status: "available")
 
                    calender << '-'    
                     
@@ -703,7 +708,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif secondunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[1], frame_status: "available")
+                elsif secondunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[1], frame_status: "available")
 
                    calender << '-'    
                     
@@ -747,7 +752,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif thirdunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[2], frame_status: "available")
+                elsif thirdunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[2], frame_status: "available")
 
                    calender << '-'    
                     
@@ -794,7 +799,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif fouseunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[3], frame_status: "available")
+                elsif fouseunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[3], frame_status: "available")
 
                    calender << '-'    
                     
@@ -837,7 +842,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif fifthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[4], frame_status: "available")
+                elsif fifthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[4], frame_status: "available")
 
                    calender << '-'    
                     
@@ -881,7 +886,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif sixthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[5], frame_status: "available")
+                elsif sixthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[5], frame_status: "available")
 
                    calender << '-'    
                     
@@ -927,7 +932,7 @@ module ReservationsHelper
 
                     
                 #予約不可
-                elsif seventhunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: 1, frame: working_hours[i], date: rangeDates[6], frame_status: "available")
+                elsif seventhunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[6], frame_status: "available")
 
                    calender << '-'    
                     
