@@ -706,3 +706,123 @@ td {
     /**width: 100px; **/
 }
 
+/** 予約一覧**/
+.reservation-all {
+    margin: auto;
+}
+
+.reservations-inners {
+    padding: 20px;
+}
+
+.reservation-inner {
+    box-shadow: 0 2px 6px #c1ced7;
+}
+
+.reservation-inner2 {
+    padding: 15px;
+}
+
+.reservation-inner3 {
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.reservations-top-side {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    /**justify-content: space-between;**/
+    margin-bottom: 8px;
+}
+
+.reservation-date {
+    margin-right: 20px;
+}
+
+.reservation-date p {
+    color: red;
+    font-size: 25px;
+}
+
+.reservation-frames-menus {
+    /**margin-right: 15px;**/
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+
+.reservation-frames {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.reservation-menus{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+
+.frames-ptagu {
+    margin-left: 8px;
+}
+
+.reservations-middle {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.reservation-in-charge-staff-image {
+    max-width: 15%;
+    max-height: 15%;
+    margin-right: 20px;
+}
+
+.reservation-in-charge-staff-image img {
+    max-width: 100%;
+}
+
+.reservation-in-charge-staff-name i {
+    margin-right: 10px;
+} 
+
+.reservation-in-charge-staff-name p {
+    font-size: 18px;
+}
+
+.reservation-down-side {
+    border: 1px dotted #7f4600;
+}
+
+
+.reservation-custamer_detail {
+    padding: 10px;
+}
+
+
+.reservation-tel-email {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+/**予約削除　search.html**/
+.reservation-down-side-search {
+    border: 1px dotted #7f4600;
+}
+
+
+.reservation-destroy {
+    display: flex;
+    justify-content: flex-end;
+    font-size: 17px;
+}

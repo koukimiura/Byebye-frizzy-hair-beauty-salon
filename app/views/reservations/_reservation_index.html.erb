@@ -1,0 +1,54 @@
+<div class='reservation-inner'>
+    <div class='reservation-inner2'>
+        <div class='reservation-inner3'>
+            <div class='reservations-top-side'>
+                <div class='reservation-date'>
+                    <% date = Date.parse(reservation.date) %>
+                    <p><strong><%= date.strftime("%m月 %d日") %></strong></p>
+                </div>
+                <div class='reservation-frames-menus'>
+                    <div class='reservation-frames'>   
+                    <!-----時間 -->    
+                        <p>活用時間</p>
+                        <!----- StringをJSON.parseでArray化 -->
+                        <% frames = JSON.parse(reservation.frames) %>
+                        <% frames.each do |frame| %>
+                        <p class='frames-ptagu'><%= frame %></p>
+                        <% end %>
+                    </div>    
+                    <div class='reservation-menus'>
+                    <!-----メニュー-->
+                        <p>選択メニュー</p>
+                        <% menuIds = JSON.parse(reservation.menu_ids) %>
+                        <% menuIds.each do |menuId| %>
+                            <% menu = Menu.find_by(id: menuId) %>
+                            <p class='frames-ptagu'><%= menu.name %></p>
+                        <% end %>
+                    </div>    
+                </div>
+            </div>
+            <div class='reservations-middle'>
+                <div class='reservation-in-charge-staff-image'>
+                    <% staff = Staff.find_by(id: reservation.staff_id) %>
+                    <%= image_tag staff.image.to_s %>
+                </div>
+                <div class='reservation-in-charge-staff-name'>
+                    <p><i><%= @name %></i><%= staff.last_name %><span class='name-margin'><%= staff.first_name %></span></p>
+                </div>
+            </div>
+            <div class='reservation-down-side'>
+                <div class='reservation-custamer_detail'>
+                    <p class='font-color'>詳細</p>
+                    <div class='reservation_custermer_name'>
+                        <p><%= reservation.last_name_kana %><span class='name-margin'><%= reservation.first_name_kana %></span></p>
+                        <p><%= reservation.last_name %><span class='name-margin'><%= reservation.first_name %></span></p>
+                    </div>
+                    <div class='reservation-tel-email'>
+                        <p>電話<span class='name-margin'><%= reservation.tel %></span></p>
+                        <p class='name-margin'>メールアドレス<span class='name-margin'><%= reservation.email %></span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>    
+</div>

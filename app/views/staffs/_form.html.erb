@@ -45,6 +45,10 @@
               <%= f.text_area :self_introduction %>
            </div>
            
+           <div class='staff-image'>
+               <%= image_tag @staff_image.to_s %>
+            </div>
+           
            <div class='field'>
               <%= f.label :画像 %>
               <%= f.file_field :image %>

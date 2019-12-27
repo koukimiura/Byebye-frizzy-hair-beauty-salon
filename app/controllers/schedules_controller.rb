@@ -95,10 +95,7 @@ class SchedulesController < ApplicationController
         
         logger.debug("-----count=#{count}")
 
-        #riginals = ["10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30",
-                 #"16:00", "16:30", "17:00", "17:30", "18:00", "18:30", "19:00", "19:30", "20:00", "20:30"] 
-                 
-                 
+
         #countをeachで複数個createする。
         count.each do |value|
             dates=value[:date]
@@ -108,19 +105,27 @@ class SchedulesController < ApplicationController
                 
             #originals.each do |original|
             dates.zip(times) do |date, time|
+                logger.debug("------date=#{date}")
+                logger.debug("------time=#{time}")
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
                     Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
                     
+                    logger.debug("------break_date=#{date}")
+                    logger.debug("------break_time=#{time}")
                  #elsif original != time   
                     #Schedule.create(staff_id: staffId, date: date, frame: original, frame_status: 'break')
                     
-                elsif time == "9:30" || "21:00"
+                elsif time == "9:30" || time == "21:00"
                 
                     Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'preparation_period')
+                    logger.debug("------preparation_period_date=#{date}")
+                    logger.debug("------preparation_period_time=#{time}")
                 
+                
+                    
                 else
-                        #logger.debug("------date=#{date}")
-                        #logger.debug("------time=#{time}")
+                    logger.debug("------available_date=#{date}")
+                    logger.debug("------available_time=#{time}")
                     Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
                     
                 end

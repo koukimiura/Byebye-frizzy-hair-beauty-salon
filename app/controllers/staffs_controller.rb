@@ -13,7 +13,8 @@ class StaffsController < ApplicationController
     def new
         @staff = Staff.new
         staffIds = Staff.pluck(:id)
-        @staff_number = "推奨ナンバー00#{staffIds.last + 1}"
+        date = Date.today
+        @staff_number = "推奨ナンバー#{date.year}#{staffIds.last + 1}"
         #logger.debug("----------@staff_number=#{@staff_number}")
     end
     
@@ -32,13 +33,28 @@ class StaffsController < ApplicationController
     
     def edit
         @staff = Staff.find(params[:id])
+        @staff_image = @staff.image
     end
     
 
     def update
-        @staff = Staff.update(staff_params)
-        flash[:notice] = '社員情報を編集しました。'
-        redirect_to staffs_path
+        
+        #else以下が実行された場合 renderが発動するので@staffにしておけば、勝手staffでーたをs飛ばしてくれます。
+        @staff = Staff.find(params[:id])
+        logger.debug("-------@staff=#{@staff.id}")
+        logger.debug("-----------staff_params#{staff_params}")
+        
+        @staff.assign_attributes(staff_params)
+        
+        if @staff.save
+            flash[:notice] = '社員情報を編集しました。'
+            redirect_to staffs_path
+            
+        else
+            flash.now[:alert] = '社員情報を編集できていません。'
+            render :edit
+            
+        end
     end
     
     
@@ -56,10 +72,25 @@ class StaffsController < ApplicationController
     
     def login 
         @staff = Staff.find_by(last_name: params[:last_name], first_name: params[:first_name], number: params[:number])
-        logger.debug("-----params=#{@staff}")
-        if @staff 
-            #session[:staff_id] = @staff.id
-            redirect_to "/schedules/#{@staff.id}/new"
+        
+        
+        this_month_first_day = Date.today.beginning_of_month
+        next_month = this_month_first_day.next_month
+        rangeDates = (next_month..next_month.end_of_month)
+        @schedules = Schedule.where(staff_id: @staff.id, date: rangeDates)  if @staff
+        
+        #logger.debug("-----@staff.id=#{@staff.id}")
+        
+        if @schedules.present?
+            
+            flash[:alert] = '今月のシフトは入力済みです。'
+            redirect_to login_form_staffs_path
+            
+            
+        elsif @staff  
+        
+           redirect_to "/schedules/#{@staff.id}/new"
+        
         else
             @error_message = '名前または社員番号が違います。'
             render :login_form

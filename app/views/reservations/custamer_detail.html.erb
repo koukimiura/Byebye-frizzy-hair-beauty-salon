@@ -18,6 +18,11 @@
                         <input type ='hidden' name="frame[]", value="<%= frame %>" >
                     <% end %>
                     
+                    
+                    <% @scheduleIds.each do |scheduleId| %>
+                        <input type ='hidden' name="scheduleId[]", value="<%= scheduleId %>" >
+                    <% end %>
+                    
                     <div class='field'>
                         <p>性<span class='must'>※</span></p>
                         <%= f.text_field :last_name, class: 'form-control'%>
@@ -30,6 +35,7 @@
                     
                     <div class='field'>
                         <p>電話番号<span class='must'>※ハイフンなしで記入下さい。</span></p>
+                        <!------ saveメソッドを使わないので...number_field -->
                         <%= f.number_field :tel, class: 'form-control' %>
                     </div>
                     

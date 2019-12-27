@@ -89,12 +89,14 @@
             <!-- 渡すvalueをjson文字列にしてます。-->
             <%= f.hidden_field :menu_ids, :value => @hash_menuIds.to_json %>
             <%= f.hidden_field :frames, value: @hash_frames.to_json %>
+            
             <% logger.debug("---------@hash_menuIds#{@hash_menuIds}") %>
             <% logger.debug("---------@hash_frames#{@hash_frames}") %>
-
-            <!--- { name: "item[#{index}][name]" } -->        
-            <!--<input type ='hidden' name="frames[]", value=" frame " > -->
-            <!--f.hidden_field :frames, :value => frame -->
+            
+            <% @scheduleIds.each do |scheduleId| %>
+                <input type ='hidden' name="scheduleId[]", value="<%= scheduleId %>" >
+            <% end %>
+            
     <div class='menu-footer'>
             <%= link_to "戻る", :back, class: 'btn btn-success' %>
             <%= f.submit :この内容で次へ, class:'btn btn-info' %>

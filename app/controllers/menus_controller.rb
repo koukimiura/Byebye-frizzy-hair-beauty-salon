@@ -27,9 +27,12 @@ class MenusController < ApplicationController
 
   def create
     @menu = Menu.new(menu_params)
+    
     if @menu.save
+      flash[:notice] = '新メニューを作成しました。'
       redirect_to menus_path
     else
+      flash.now[:alert] = '新メニューを作成できません。'
       render :new
     end
   end
@@ -39,10 +42,20 @@ class MenusController < ApplicationController
   end
 
   def update
-    @menu = Menu.find(params[:id]).update_attributes(menu_params)
-    redirect_to menus_path
+    @menu = Menu.find(params[:id])
+    @menu.assign_attributes(menu_params)
+    
+    if @menu.save
+      flash[:notice] = 'メニューを編集しました。'
+      redirect_to menus_path
+    else
+      flash.now[:alert] = '新メニューを編集できません。'
+      render :edit
+    end
     
   end
+
+
 
   def destroy
      @menu = Menu.find(params[:id])
@@ -50,7 +63,7 @@ class MenusController < ApplicationController
      redirect_to menus_path
   end
   
-  private
+  privates
   
     def menu_params
       

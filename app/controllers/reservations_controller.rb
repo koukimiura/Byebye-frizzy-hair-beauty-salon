@@ -2,44 +2,45 @@ class ReservationsController < ApplicationController
     
    # before_action:reservation_params_for_json, only: [:create]
     
-    
-    def search
-        @staffs = Staff.all.order(status: :asc)
+    #--------------検索-----------------  
+    def search   
+        #@staffs = Staff.all.order(status: :asc)
+        @name = '担当スタッフ名前'
         
         date = Date.today
-        @dates = (date..date + 2.month)
-        #logger.debug("----------dates=#{dates}")
         
-        @reservations = Reservation.search(params[:search_last_kana], params[:search_first_kana], params[:search_staff], params[:search_date])
-    #@reservation = Reservation.find_by(id: 2)
-    #@frames = JSON.parse(@reservation.frames)
-    #logger.debug("------------frames=#{frames.class}")
+        #今日から予約のできる2ヶ月後まで
+        @dates = (date..date + 2.month)
+        
+        @searchedReservations = Reservation.search(params[:search_tel], params[:search_date], @dates)
+        
+        logger.debug("----------@searchedReservations=#{@searchedReservations.inspect}")
+        
+        #@reservation = Reservation.find_by(id: 2)
+        #@frames = JSON.parse(@reservation.frames)
+        #logger.debug("------------frames=#{frames.class}")
     
     
     end
     
     
     def index
-        
+        @name = '担当スタッフ名前'
         end_this_month = Date.today.end_of_month
         
         d = (Date.today..end_this_month)
-        @this_month_reservations = Reservation.where(date: d)
-        @after_this_month_reservations = Reservation.all.order(date: :desc)
         
-        mixed_reservations = @this_month_reservations | @after_this_month_reservations
+        #今日から今月末まで
+        this_month_reservations = Reservation.where(date: d)
+        
+        #全体
+        after_this_month_reservations = Reservation.all.order(date: :desc)
+        
+        
+        mixed_reservations = this_month_reservations | after_this_month_reservations
         @reservations = mixed_reservations.uniq
         
-#--------------検索-----------------        
-        
-        @staffs = Staff.all.order(status: :asc)
-        
-        date = Date.today
-        @dates = (date..date + 2.month)
-        #logger.debug("----------dates=#{dates}")
-        
-        @searchedReservations = Reservation.search(params[:search_last_kana], params[:search_first_kana], params[:search_staff], params[:search_date])
-
+  
     end
     
     def choose_menus
@@ -289,7 +290,7 @@ class ReservationsController < ApplicationController
 
        #updateしたカラムにおけるFrameを取得
         @total_frames=[]     
-       
+        @scheduleIds=[]
        
                     #iに0~6のインデックス番号が入ってます。
                     #Schedule.status_frameを仮予約状態にする。
@@ -305,6 +306,7 @@ class ReservationsController < ApplicationController
            #schedule.update(frame_status: "keep")
            
            @total_frames.push(schedule.frame)
+           @scheduleIds.push(schedule.id)
            
        end
        
@@ -321,6 +323,7 @@ class ReservationsController < ApplicationController
         staffId = staffId_params
         menuIds = menuIds_params
         times = frames_params
+        scheduleId = scheduleIds_params
         
         logger.debug("-------menuIds=#{menuIds}")
         logger.debug("-------times=#{times}")
@@ -330,12 +333,12 @@ class ReservationsController < ApplicationController
         #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
         if @reservation.last_name.present? && @reservation.first_name.present?  && @reservation.last_name_kana.present? && 
            @reservation.first_name_kana.present? && @reservation.tel.present? && @reservation.email.present? &&
-           staffId.present? && menuIds.present?  && times.present?
+           staffId.present? && menuIds.present?  && times.present? && scheduleId.present?
         
            
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
-                                        frame: frames_params, reservation: reservation_params)
+                                        frame: frames_params, reservation: reservation_params, scheduleId: scheduleIds_params)
                                         
 
         else
@@ -354,6 +357,7 @@ class ReservationsController < ApplicationController
         staffId = staffId_params
         @menuIds = menuIds_params
         @frames = frames_params
+        @scheduleIds = scheduleIds_params
         @reservation = Reservation.new(reservation_params)
         
         #@hash_frames = {h_frames: {key_frames: @frames}}
@@ -418,7 +422,7 @@ class ReservationsController < ApplicationController
         #string_frames = hash_reservation_params[:frames]
         #hash_frames = to_hash(string_frames)
         
-        
+        scheduleIds = scheduleIds_params
         
         
         
@@ -467,6 +471,10 @@ class ReservationsController < ApplicationController
                                   menu_ids: array_menuIds)
 
         if reservation.save
+            #scheduleIds.each do |scheduleId|
+            #schedule = Schedule.find_by(id: scheduleId)
+            #schedule.update(frame_status: "reserved")
+            #end
             flash[:notice] ='予約が確定しました。'
             redirect_to root_path
             
@@ -500,6 +508,11 @@ class ReservationsController < ApplicationController
         
         def frames_params
              params[:frame]
+        end
+        
+        
+        def scheduleIds_params
+            params[:scheduleId]
         end
     
         
