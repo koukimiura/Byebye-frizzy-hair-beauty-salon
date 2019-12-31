@@ -3,13 +3,52 @@
         <div class='reservations-inners'>
             <h3>予約一覧</h3>
             <% @reservations.each do |reservation| %>
-                <% logger.debug("------reservation=#{reservation.id}") %>
+                <% logger.debug("------reservation=#{reservation.date}") %>
                 <% if Date.parse(reservation.date) == Date.today %>
-                    <% render 'reservation_index', reservation: reservation %>
+                    <h4 >Today!</h4>
+                    <%= render 'reservation_index', resesrvation: reservation %>
                 <% else %>
-                    <% render 'reservation_index', reservation: reservation %>
+                    <%=render 'reservation_index', reservation: reservation %>
                 <% end %>
             <% end %>
         </div>
     </div>
 </div>
+
+
+<script>
+    $(document).ready(function(){
+        $('.reservation-inner').each(function(){
+            var target = $(this).attr('id');
+            
+            // javascriptで今日の日付を取ってくる//
+            var today = new Date();
+            var rubyToday = new Date(target);
+            //console.log(rubyToday);//
+            
+            var script_year = today.getFullYear();
+            // etMonth();は 0~11で取ってくる//
+            var script_month = today.getMonth() + 1;
+            var script_date = today.getDate();
+            
+            var ruby_year = rubyToday.getFullYear();
+            // etMonth();は 0~11で取ってくる//
+            var ruby_month = rubyToday.getMonth() + 1;
+            var ruby_date = rubyToday.getDate();
+           
+            var scriptDate = script_year + '年' + script_month + '月' + script_date + '日'
+            var rubyDate = ruby_year + '年' + ruby_month + '月' + ruby_date + '日'
+        
+            console.log(script_year);
+            console.log(script_month);
+            console.log(script_date);
+            console.log(scriptDate);
+            console.log(rubyDate);
+            
+           if (scriptDate == rubyDate){
+               
+               $(this).css('background-color','#FFFFCC');
+           }
+        });
+    });
+</script>

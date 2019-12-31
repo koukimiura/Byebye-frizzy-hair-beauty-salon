@@ -62,18 +62,68 @@
 
 
 
+
 /**TOP**/
 
-.top {
-    max-width: 80px;
+.home-page {
+    /**display: block;**/
+    /**position: fixed;**/
+    
+    /**content:"";**/
+    /**z-index:-1;**/
+}
+.top-side {
     margin: auto;
+    /**align-items: center;**/
+    color:#FF9966;
+    
     
 }
 
-.top-image {
+.top-left-side {
+    margin-bottom: 10px;
+    line-height: 1.7;
+    font-family: 'Crimson Text', serif;
+}
+
+.top-center-side {
+    margin: auto;
+    margin-bottom: 10px;
+}
+
+.top-right-side {
+    line-height: 1.7;
+    font-family: 'Crimson Text', serif;
+}
+
+
+.home-main-side {
+    margin: auto;
+    width:100%;
+    /**min-height: 600px;**/
+    height:100vh;
+    background-image: url('salon.png');
+    background-size: cover;
+    position: relative;
+    overflow: hidden;
+    color:#FF9966;
+}
+
+
+.home-main-main {
+   width: 100%;
+   position: absolute;
+   top: 45%;
+
+}
+
+.home-page-important {
     margin: auto;
 }
 
+.about-us {
+    font-family: 'Crimson Text', serif;
+}
 
 
 
@@ -715,6 +765,10 @@ td {
     padding: 20px;
 }
 
+.reservations-inners h4 {
+    color: #FF0033;
+}
+
 .reservation-inner {
     box-shadow: 0 2px 6px #c1ced7;
 }
@@ -743,8 +797,8 @@ td {
 }
 
 .reservation-date p {
-    color: red;
-    font-size: 25px;
+    color: #FF66CC;
+    font-size: 23px;
 }
 
 .reservation-frames-menus {

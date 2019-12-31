@@ -1,6 +1,8 @@
 class SchedulesController < ApplicationController
-    before_action :basic, if: :production?
-    
+ before_action :basic_auth#, if: :production?
+ #before_action :correct_staff, only: [:new, :create]
+ #before_action :current_staff, only: [:new, :create]
+ #before_action :
     def index
         @before = Date.today - 1.months
         @present = Date.today
@@ -23,9 +25,12 @@ class SchedulesController < ApplicationController
     end
     
     def new
-        logger.debug("----params=#{params[:id]}")
-        @current_staff = Staff.find(params[:staff_id])
+        #logger.debug("----params=#{params[:id]}")
+        #@current_staff = Staff.find_by(id: params[:staff_id])
+        
+        @staffs = Staff.all.order(status: :asc)
         @schedule = Schedule.new 
+        
         this_month_first_day = Date.today.beginning_of_month
         next_month = this_month_first_day.next_month
         @dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
@@ -162,9 +167,36 @@ class SchedulesController < ApplicationController
             #end
     end
     
+    #直接直書きでurlにパラメータを入れてきた場合
+    def correct_staff
+        this_month_first_day = Date.today.beginning_of_month
+        next_month = this_month_first_day.next_month
+        rangeDates = (next_month..next_month.end_of_month)
+        
+        staff = Staff.find_by(id: params[:staff_id].to_i)
+        
+        schedules = Schedule.where(staff_id: staff.id, date: rangeDates)  if staff
+        #logger.debug("----------------staff.id=#{staff.id}")
     
-    
-    
+        
+        #url直書きしてstaff.idが存在した場合、一人が同じ月のシフトが複数できてしまう。
+        if schedules.present?   
+            
+            flash[:alert] = '今月のシフトは入力済みです。'
+            
+            redirect_to login_form_staffs_path
+            
+        #そもそもstaffが存在しなかったら    
+        elsif staff.nil?
+        
+            flash[:alert] = 'スタッフの情報を入力してください。s'
+            
+            redirect_to login_form_staffs_path
+        
+        end
+    end
+
+
     private
         
         #少数とstringに戻すアルゴリズム
@@ -179,4 +211,6 @@ class SchedulesController < ApplicationController
 
             return string_time
         end
+        
+        
 end

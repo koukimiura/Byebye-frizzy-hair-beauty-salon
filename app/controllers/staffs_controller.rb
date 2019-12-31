@@ -1,5 +1,5 @@
 class StaffsController < ApplicationController
-    before_action :basic, if: :production?
+    before_action :basic_auth#, if: :production?
     
     def index
         @staffs = Staff.all.order(status: :asc)
@@ -66,6 +66,7 @@ class StaffsController < ApplicationController
     
     
     def login_form
+        
     end
     
     
@@ -77,6 +78,7 @@ class StaffsController < ApplicationController
         this_month_first_day = Date.today.beginning_of_month
         next_month = this_month_first_day.next_month
         rangeDates = (next_month..next_month.end_of_month)
+        
         @schedules = Schedule.where(staff_id: @staff.id, date: rangeDates)  if @staff
         
         #logger.debug("-----@staff.id=#{@staff.id}")

@@ -19,4 +19,16 @@ class Staff < ApplicationRecord
     
     has_many :schedules, dependent: :destroy
     has_many :reservations
+    
+            
+    def last_nameANDfirst_name
+        
+     
+        return '(' + self.number.to_s + ')' + self.last_name + self.first_name
+        
+    end
+    
+    
+    
+    
 end

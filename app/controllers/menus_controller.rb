@@ -1,5 +1,5 @@
 class MenusController < ApplicationController
-  before_action :basic, if: :production?
+  before_action :basic_auth #, if: :production?
   
   
   def index
@@ -41,6 +41,7 @@ class MenusController < ApplicationController
     @menu = Menu.find(params[:id])
   end
 
+
   def update
     @menu = Menu.find(params[:id])
     @menu.assign_attributes(menu_params)
@@ -63,7 +64,9 @@ class MenusController < ApplicationController
      redirect_to menus_path
   end
   
-  privates
+  
+  
+  private
   
     def menu_params
       

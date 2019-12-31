@@ -1,8 +1,28 @@
-<div class='top'>
-    <div class='top-image'>
-        <h2>Welcome</h2>
-        <p>詳細</p>
-        <p><%= link_to 'RESERVATION',choose_menus_reservations_path, class:'btn btn-info' %></p>
+<div class='home-page'>
+    <div class='top-side'>
+        <div class='top-left-side text-left'>
+            <p>このサイトは美容サロンをモデルに作りました。</p>
+        </div>
+        <div class='top-center-side'>
+            <h2 class='text-center'> Byebye frizzy hair</br>beauty salon</h2>
+        </div>
+        <div class='top-right-side text-right'>
+            <p>従業員ページをご覧の場合は下記をクリック</p>
+            <p><%= link_to "従業員ページ", home_basic_path %></p>
+        </div>
+    </div>
+    <div class='home-main-side'>
+        <div class='home-main-main'>
+            <div class='home-page-important'>
+                <div class='about-us'>
+                    <h1 class='text-center'>Hair Life Design</h1>
+                     <p class='text-center'>予約ページをご覧の場合は下記をクリック</p> 
+                </div>
+                <div class='click-btn text-center'>
+                    <p><%= link_to 'RESERVATION',choose_menus_reservations_path, class:'btn btn-info' %></p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
  

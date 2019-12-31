@@ -1,4 +1,4 @@
-<div class='reservation-inner'>
+<div class='reservation-inner' id='<%= Date.parse(reservation.date) %>'>
     <div class='reservation-inner2'>
         <div class='reservation-inner3'>
             <div class='reservations-top-side'>
@@ -38,7 +38,7 @@
             </div>
             <div class='reservation-down-side'>
                 <div class='reservation-custamer_detail'>
-                    <p class='font-color'>詳細</p>
+                    <p>詳細</p>
                     <div class='reservation_custermer_name'>
                         <p><%= reservation.last_name_kana %><span class='name-margin'><%= reservation.first_name_kana %></span></p>
                         <p><%= reservation.last_name %><span class='name-margin'><%= reservation.first_name %></span></p>

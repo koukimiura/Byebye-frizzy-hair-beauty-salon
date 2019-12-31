@@ -99,6 +99,7 @@
 <script>
     $(document).ready(function(){
         //モーダルウィンドウ処理
+        //複数の.open-modalがrubyのeachで繰り返しになっているのでこちらもeach//
         $('.open-modal').each(function(){
             $(this).on('click', function(){
                var target =　$(this).data('target');

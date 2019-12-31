@@ -1,7 +1,7 @@
 class ReservationsController < ApplicationController
     
-   # before_action:reservation_params_for_json, only: [:create]
-    
+ before_action :basic_auth, only: [:search, :index]
+
     #--------------検索-----------------  
     def search   
         #@staffs = Staff.all.order(status: :asc)
@@ -39,6 +39,8 @@ class ReservationsController < ApplicationController
         
         mixed_reservations = this_month_reservations | after_this_month_reservations
         @reservations = mixed_reservations.uniq
+        
+    
         
   
     end
