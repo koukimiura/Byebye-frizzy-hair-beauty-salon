@@ -298,46 +298,46 @@ module ReservationsHelper
             logger.debug("---------date=#{date}")
             case date 
                 
+                #この時点でframe_status breakとDBに保存されていない時間（出勤前、退勤後）は配列に入らない　省かれる。
                 when rangeDates[0] then
-                    #logger.debug("-------schedule.frame=#{schedule.frame}")
-                    firstDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    firstDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  
                     
                     firstDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                     
                 when rangeDates[1] then
                     
-                    secondDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    secondDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'
                     
                     secondDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[2] then
 
-                    thirdDatesFrames.push(schedule.frame)  if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    thirdDatesFrames.push(schedule.frame)  if schedule.frame_status == 'available'
                     
                     thirdDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
 
                 when rangeDates[3] then
                     
-                    fouseDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    fouseDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  
                     
                     fouseDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[4] then
                     
-                    fifthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' # ||  schedule.frame_status == 'break'
+                    fifthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' 
                     
                     fifthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[5] then
                     
-                    sixthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    sixthDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  
                     
                     sixthDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
                 when rangeDates[6] then  
                     
-                    seventhDatesFrames.push(schedule.frame) if schedule.frame_status == 'available'  #||  schedule.frame_status == 'break'
+                    seventhDatesFrames.push(schedule.frame) if schedule.frame_status == 'available' 
                     
                     seventhDatesReservedFrames.push(schedule.frame) if schedule.frame_status == 'reserved' || schedule.frame_status == 'keep'
                     
@@ -345,17 +345,16 @@ module ReservationsHelper
         end
    
    
- #
+
 #-------初日----------------------------------------------------------------------------
         
         #配列の中に配列入ってます（二次元配列）。一度selectを使って配列を作っているので....
         firstDatePreviousReservedFrames=[]
         
-        #working_hours.zip(firstDatesReservedFrames) do | whour, f|
         firstDatesReservedFrames.each do |f|
-            #until Time.parse(whour) < Time.parse(f)
-            
+
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -363,7 +362,6 @@ module ReservationsHelper
                                                                 #calumnメソッドを呼び出す。これは取得する要素数
                 firstDatePreviousReservedFrames << previousTimes.last(calumn(calumn_number))
               
-            #end
         end
 
         logger.debug("----------firstDatePreviousReservedFrames=#{firstDatePreviousReservedFrames}")
@@ -392,6 +390,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(s) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -427,6 +426,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(t) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -463,6 +463,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -499,6 +500,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -535,6 +537,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(f) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -571,6 +574,7 @@ module ReservationsHelper
             #until Time.parse(whour) < Time.parse(f)
             
                 #firstDate_before_reserved_times.push(whour)
+                #たとえ 16:30と17:00がreservedまたはkeepであったとしても、17:00がreservedのため16:30はfirstDatePreviousReservedFramesに格納される。
                 previousTimes = working_hours.select{ |whour| Time.parse(whour) < Time.parse(s) }
                 #previousTimes = working_hours.find{ |whour| Time.parse(whour) < Time.parse(f) }
                 logger.debug("----------previousTimes=#{previousTimes}")
@@ -641,14 +645,14 @@ module ReservationsHelper
             
             calender << hour
             
-            calender <<'</td>' 
+            calender << '</td>' 
             
         
 #------------初日-----------------------------------------------------------------   
 
             calender << '<td>'
                  
-                #Required_timeに応じたreservedの前の時間   必ず "reserved"の上
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if firstDatePRF.include?(working_hours[i])
                  
                     calender << '✖'
@@ -663,7 +667,7 @@ module ReservationsHelper
 
 
                 
-                #予約不可  RequiredTimeに応じた退勤時間からの処理  
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif firstunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[0], frame_status: "available")
 
                    calender << '-'    
@@ -694,7 +698,7 @@ module ReservationsHelper
 
             calender << '<td>'
                 
-                
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if secondDatePRF.include?(working_hours[i])
                     
                     calender << '✖'
@@ -707,7 +711,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif secondunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[1], frame_status: "available")
 
                    calender << '-'    
@@ -738,7 +742,7 @@ module ReservationsHelper
 
             calender << '<td>'
             
-                #Required_timeに応じたreservedの前の時間   
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if thirdDatePRF.include?(working_hours[i])
                  
                     calender << '✖'
@@ -751,7 +755,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif thirdunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[2], frame_status: "available")
 
                    calender << '-'    
@@ -783,7 +787,7 @@ module ReservationsHelper
 
             calender << '<td>'
             
-                #Required_timeに応じたreservedの前の時間   
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if fouseDatePRF.include?(working_hours[i])
                  
                     calender << '✖'
@@ -798,7 +802,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif fouseunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[3], frame_status: "available")
 
                    calender << '-'    
@@ -828,7 +832,7 @@ module ReservationsHelper
 
             calender << '<td>'
             
-                #Required_timeに応じたreservedの前の時間   
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if fifthDatePRF.include?(working_hours[i])
                  
                     calender << '✖'
@@ -841,7 +845,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif fifthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[4], frame_status: "available")
 
                    calender << '-'    
@@ -872,7 +876,7 @@ module ReservationsHelper
 
             calender << '<td>'
             
-                #Required_timeに応じたreservedの前の時間   
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if sixthDatePRF.include?(working_hours[i])
                  
                     calender << '✖'           
@@ -885,7 +889,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif sixthunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[5], frame_status: "available")
 
                    calender << '-'    
@@ -918,7 +922,7 @@ module ReservationsHelper
             calender << '<td>'
                 
                 
-                #Required_timeに応じたreservedの前の時間   
+                #Required_timeに応じたreserved(予約済み時間)の前の時間   必ず "reserved"の上
                 if seventhDatePRF.include?(working_hours[i])
                  
                     calender << '✖'  
@@ -931,7 +935,7 @@ module ReservationsHelper
                     calender << '✖'
 
                     
-                #予約不可
+                #予約不可  RequiredTimeに応じた退勤時間からの処理 ex. 必要時間90分に対して退勤時間から２つ上のカラムを削る
                 elsif seventhunavailableCalumns.include?(working_hours[i]) && Schedule.find_by(staff_id: staff, frame: working_hours[i], date: rangeDates[6], frame_status: "available")
 
                    calender << '-'    
@@ -966,6 +970,10 @@ module ReservationsHelper
              
         return calender           
     end
+    
+    
+    
+    
     
     
     

@@ -2,6 +2,7 @@
   <div class="alert alert-warning">
     <ul>
       <% model.errors.full_messages.each do |message| %>
+      <% logger.debug("-----------errors=#{message}") %>
         <li><%= message %></li>
       <% end %>
     </ul>

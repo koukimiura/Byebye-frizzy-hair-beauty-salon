@@ -4,6 +4,14 @@
     </div>
     <div class='custamer-detail'>
         <%= form_for @reservation, :url => {:controller => :reservations, :action => :custamer_info} do |f| %>
+            <% @reservation.errors.full_messages.each do |message| %>
+                <div class="alert alert-warning"></div>
+                    <ul>
+                        <li><%= message %></li>
+                    </ul>
+                </div>    
+            <% end %>
+            
             <div class='custamer row'>
                 <div class='col-xs-12 col-md-6 text-left'>    
                     <%= hidden_field_tag "selectedStaff", @staffId %>
@@ -24,7 +32,7 @@
                     </div>
                     
                     <div class='field'>
-                        <p>性(カナ)<span class='must'>※</span></p>
+                        <p>性(カナ)<span class='must'>※カタカナでお願いします。</span></p>
                         <%= f.text_field :last_name_kana, class: 'form-control' %>
                     </div>
                     
@@ -48,7 +56,7 @@
                     </div>
                     
                     <div class='field'>
-                        <p>名(カナ)<span class='must'>※</span></p>
+                        <p>名(カナ)<span class='must'>※カタカナでお願いします。</span></p>
                         <%= f.text_field :first_name_kana, class: 'form-control' %>
                     </div>
                     

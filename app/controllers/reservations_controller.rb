@@ -179,7 +179,7 @@ class ReservationsController < ApplicationController
                                            frame: keepFrame, 
                                            frame_status: 'keep') 
                                            
-                schedule.update(frame_status: 'available')
+                schedule.update(frame_status: 'available') 
                
             end
         end
@@ -267,66 +267,74 @@ class ReservationsController < ApplicationController
         @menuIds = menuIds_params
         
         
-        logger.debug("-------------@menuIds=#{@menuIds}")
-        
-        #menuRequiredTimesをFloat化して30でわる。
+
+        #必要時間をFloat化して30（３０分単位)でわる。
         number = menuRequiredTimes.to_f/30
         toInteger = number.to_i
          
+        logger.debug("---------number=#{number}")
         logger.debug("-------toInteger=#{toInteger}")
          
          
+        #updateNumbeはupdateするDBの行数。 　10min, 15min, 30min,でも１つはupdateする。
+        #30分以下　
          
-                #30分以下　
          if toInteger < 1
              
-             updateNumber = 0
+             updateNumber = 1
          
-        #Integerのアルゴリズムs
+        #Integerのアルゴリズム toIntegerが割り切れるのであればその整数がupdateNumbeはupdateするDBのカラム数。
+        #numberは必要時間をFloat化して30（３０分単位)で割った値つまりfloatである。下記の二つのあまりを求めることであまりが０ならintegerでなけばfloat
+        
         elsif 0 == number % toInteger        
             
             updateNumber = toInteger
             
         else
             
-            #少数アルゴリズム
-            number_float = number + 1                   #else以下に入れるnumberはFloatなので + 1しupdateするカラム数にあわせる。
+            #少数アルゴリズム　else以下に入れるnumberはFloatなので + 1しupdateするカラム数にあわせる。
+            #つまり1.2ならDBの2行update
+            #必要時間75minならnumberは2.5である。2.5に+1して3.5にして.to_iで3つupdateする。
+            
+            number_float = number + 1                   
             updateNumber =  number_float.to_i
             
         end
         
         #updateNumbeはupdateするDBのカラム数。
-        
-        logger.debug("---------- updateNumber=#{updateNumber}")
-                                                                   
-       selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
-       
-       
+        logger.debug("-----------updateNumber=#{updateNumber}")   
 
-       #updateしたカラムにおけるFrameを取得
-        @total_frames=[]     
-        #@scheduleIds=[]
+        selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
        
-                    
-        #scheduleも一緒にupdateする。                
-       updateNumber.times do |i|      
-           
-           logger.debug("--------i =#{i}")
-           scheduleId = selectedSchedule.id + i
-           
-           schedule = Schedule.find_by(id: scheduleId)
-           logger.debug("------schedule.id=#{schedule.id}")
-           schedule.update(frame_status: "keep")
-           
-           @total_frames.push(schedule.frame)
-           #@scheduleIds.push(schedule.id)
-           
-       end
+       
+#---------update---------------
+
+        #updateしたカラムにおけるFrameを取得
+        
+        @total_frames=[]     
+
+        #scheduleも一緒にupdateする。
+        #iは0から始まり
+        updateNumber.times do |i|      
+        
+            logger.debug("--------i=#{i}")
+            #一週目は初めのselectedScheduleのidを取得
+            
+            scheduleId = selectedSchedule.id + i
+            
+            schedule = Schedule.find_by(id: scheduleId)
+            
+            logger.debug("------schedule.id=#{schedule.id}")
+            schedule.update(frame_status: "keep")
+            
+            @total_frames.push(schedule.frame)
+        
+        end
+       
        
        
       @reservation = Reservation.new
-       
-        
+      
     end
     
     
@@ -493,6 +501,7 @@ class ReservationsController < ApplicationController
             redirect_to root_path
             
         else
+            
             flash[:alert] ='記入が漏れがあります。'
             redirect_to :back
             #redirect_back(fallback_location: fallback_location)
