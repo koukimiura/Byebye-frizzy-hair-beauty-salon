@@ -76,4 +76,5 @@ gem "select2-rails"
 
 
 #定期的共通処理
-gem 'whenever'
+#gem 'whenever'
+gem 'whenever', require: false

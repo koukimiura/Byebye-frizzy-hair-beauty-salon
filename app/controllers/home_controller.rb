@@ -10,5 +10,25 @@ class HomeController < ApplicationController
   
   def basic
     
+    #def update_frame_status
+        
+        time = DateTime.now
+        logger.debug("--------time=#{time}")
+        schedules = Schedule.where(frame_status: 'keep')
+        
+        schedules.each do |schedule|
+          #３０分足す。
+         update_time =  schedule.updated_at + 1800
+         logger.debug("-----------update_time=#{update_time}")
+            if time <= update_time
+                
+                
+                logger.debug("-----------schedule.updated_at=#{ssss}")
+                
+            end
+            
+        end
+        
+    #end
   end
 end

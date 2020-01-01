@@ -3,6 +3,14 @@
 # It's helpful, but not entirely necessary to understand cron before proceeding.
 # http://en.wikipedia.org/wiki/Cron
 
+
+set :output, File.join(Whenever.path, "log", "cron.log")
+#開発環境と指定。何もしなければ本番環境
+set :environment, :development
+
+
+
+
 # Example:
 #
 # set :output, "/path/to/my/cron_log.log"
@@ -21,25 +29,22 @@
 
 #cornをまだ実行してない。
 
-every 1.monthes do
+#前の処理を消す。
+every 1.month do
     
-    date = Date.today- 2.months
-    first_date = Date.new(date 1) #指定した月の初日
-    last_date = Date.new(date -1) #指定した月の最終日
+    rake "my:rake:schedule_task"
+
+    runner  "Schedule.do_somthing"
     
-    range = (first_date..last_date)
-    
-    runner  Schedule.destroy(date: range)
-    #rake "my:rake:task"
     #command "/usr/bin/my_great_command"
     
 end
 
-
-
-every 30.monthes do 
-    @reservation = Reservation.where(frame_status: 'keep')
+#scheduleのframe_statusの時間処理
+#every 3.minute do 
     
-    runner @reservation.update(frame_status: 'available')
+    #rake "my:rake:schedule.fame_status_task"
+    #runner "Reservation.change_frame_status"
     
-end
+#end
+

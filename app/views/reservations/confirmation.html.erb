@@ -93,9 +93,7 @@
             <% logger.debug("---------@hash_menuIds#{@hash_menuIds}") %>
             <% logger.debug("---------@hash_frames#{@hash_frames}") %>
             
-            <% @scheduleIds.each do |scheduleId| %>
-                <input type ='hidden' name="scheduleId[]", value="<%= scheduleId %>" >
-            <% end %>
+            
             
     <div class='menu-footer'>
             <%= link_to "戻る", :back, class: 'btn btn-success' %>

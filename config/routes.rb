@@ -10,8 +10,8 @@ Rails.application.routes.draw do
   
   resources :staffs do
     collection do
-      get 'login_form'
-      post 'login'
+      #get 'login_form'
+      #post 'login'
     end
   end
   

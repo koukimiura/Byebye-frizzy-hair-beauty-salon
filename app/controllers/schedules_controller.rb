@@ -138,33 +138,7 @@ class SchedulesController < ApplicationController
         end
         
         redirect_to root_path
-        
-        #while i < count_Index do
-            #c = count[i]
-            #d_length= c[:date].length
-            #t_length = c[:working_hour].length
-            #dates= c[:date]
-            #times = c[:working_hour]
-            #logger.debug("-----c=#{c}")
-            #logger.debug("-----date=#{c[:date]}")
-            #logger.debug("-----index=#{c[:index]}")
-            #logger.debug("-----working_hour=#{c[:working_hour]}")
-            #d = c[:date]
-            # number = c[:index].to_i
-            #w_hour = c[:working_hour]
-            #logger.debug("-----dates=#{dates}")
-            #logger.debug("-----times=#{times}")
-            #logger.debug("-----number=#{c[:index]}")
-            #logger.debug("-----w_hour=#{c[:working_hour]}")
-            #dates=[]
-                #number.times do 
-                    #dates.push(d)
-                #end
-            #c[:date].each do |date|
-                #c[:working_hour].each do |time|
-                    #Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
-                #end
-            #end
+      
     end
     
     #直接直書きでurlにパラメータを入れてきた場合

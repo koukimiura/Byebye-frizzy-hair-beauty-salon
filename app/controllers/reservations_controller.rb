@@ -165,14 +165,27 @@ class ReservationsController < ApplicationController
     
     def choose_date
         #paramsで受け取ると文字列になる。
-        
         @menuIds = menuIds_params
         staffId = staffId_params
         
-        #logger.debug("-------@menuIds=#{@menuIds}")
-        logger.debug("-------staffId=#{staffId}")
-
+        keepFrames = frames_params
+        keepDate = params[:date]
         
+        #custamer_detail以降から戻ってきた時keep -> available
+        if keepFrames.present? && keepDate
+            keepFrames.each do |keepFrame|
+               schedule = Schedule.find_by(staff_id: staffId, 
+                                           date: keepDate, 
+                                           frame: keepFrame, 
+                                           frame_status: 'keep') 
+                                           
+                schedule.update(frame_status: 'available')
+               
+            end
+        end
+
+
+
         #先週と来週の日数
         receivedNext = params[:next_week]
         receivedPrev = params[:previous_week]
@@ -292,12 +305,10 @@ class ReservationsController < ApplicationController
 
        #updateしたカラムにおけるFrameを取得
         @total_frames=[]     
-        @scheduleIds=[]
+        #@scheduleIds=[]
        
-                    #iに0~6のインデックス番号が入ってます。
-                    #Schedule.status_frameを仮予約状態にする。
                     
-                    
+        #scheduleも一緒にupdateする。                
        updateNumber.times do |i|      
            
            logger.debug("--------i =#{i}")
@@ -305,10 +316,10 @@ class ReservationsController < ApplicationController
            
            schedule = Schedule.find_by(id: scheduleId)
            logger.debug("------schedule.id=#{schedule.id}")
-           #schedule.update(frame_status: "keep")
+           schedule.update(frame_status: "keep")
            
            @total_frames.push(schedule.frame)
-           @scheduleIds.push(schedule.id)
+           #@scheduleIds.push(schedule.id)
            
        end
        
@@ -325,22 +336,22 @@ class ReservationsController < ApplicationController
         staffId = staffId_params
         menuIds = menuIds_params
         times = frames_params
-        scheduleId = scheduleIds_params
-        
+
         logger.debug("-------menuIds=#{menuIds}")
         logger.debug("-------times=#{times}")
         logger.debug("-----------staffId=#{staffId}")
+        
         @reservation = Reservation.new(reservation_params)
     
         #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
         if @reservation.last_name.present? && @reservation.first_name.present?  && @reservation.last_name_kana.present? && 
            @reservation.first_name_kana.present? && @reservation.tel.present? && @reservation.email.present? &&
-           staffId.present? && menuIds.present?  && times.present? && scheduleId.present?
+           staffId.present? && menuIds.present?  && times.present?
         
            
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
-                                        frame: frames_params, reservation: reservation_params, scheduleId: scheduleIds_params)
+                                        frame: frames_params, reservation: reservation_params)
                                         
 
         else
@@ -359,7 +370,6 @@ class ReservationsController < ApplicationController
         staffId = staffId_params
         @menuIds = menuIds_params
         @frames = frames_params
-        @scheduleIds = scheduleIds_params
         @reservation = Reservation.new(reservation_params)
         
         #@hash_frames = {h_frames: {key_frames: @frames}}
@@ -369,7 +379,7 @@ class ReservationsController < ApplicationController
         @hash_frames = {key_frames: @frames}
         @hash_menuIds = {key_menuIds: @menuIds}
         
-        
+        @hash_scheduleIds = {key_menuIds: @scheduleIds}
         
         logger.debug("-------@menuIds=#{@menuIds}")
         logger.debug("-------@frames=#{@frames}")
@@ -404,27 +414,25 @@ class ReservationsController < ApplicationController
     
         @menuRequiredTimes = required_times_integer.sum
         
-        #render :json => @reservation
-    
+
     end
     
     
     
 
     def create
+        #失敗例
         #json = params[:frames]
         #@reservation = Reservation.new(reservation_params)
-        
         #json_frames = JSON.parse(params[:frames].to_json)
         #json_frames = JSON.parse(reservation_params[:frames].to_json)
-    
         #reservation_paramsをjson化しないとhashとして扱えない。 各カラムだけやるとStringになってしまう。
         #hash_reservation_params = JSON.parse(reservation_params.to_json, {symbolize_names: true})
         #hash_frames = hash_reservation_params.as_json(only: [:frames])
         #string_frames = hash_reservation_params[:frames]
         #hash_frames = to_hash(string_frames)
+        #scheduleIds = scheduleIds_params
         
-        scheduleIds = scheduleIds_params
         
         
         
@@ -441,43 +449,47 @@ class ReservationsController < ApplicationController
         array_menuIds = hash_menuIds[:key_menuIds]
 
         
-        
-        logger.debug("--------reservation_params=#{reservation_params}")
-        #logger.debug("--------hash_reservation_params=#{hash_reservation_params.class}")
-        #logger.debug("--------hash_reservation_params=#{hash_reservation_params}")
-
-        logger.debug("--------hash_frames.class=#{hash_frames.class}")
-        logger.debug("--------hash_frames=#{hash_frames}")
-        logger.debug("--------array_frames=#{array_frames}")
-
-        logger.debug("--------array_menuIds=#{array_menuIds} ")
-
-           # product_params['type'].each do |t|
-           # product.name = product_params['name']
-            #product.about = product_params['about']
-           # product.type = t
-            #product.save 
+        #logger.debug("--------reservation_params=#{reservation_params}")
+        #logger.debug("--------hash_frames.class=#{hash_frames.class}")
+        #logger.debug("--------hash_frames=#{hash_frames}")
+        #logger.debug("--------array_frames=#{array_frames}")
+        #logger.debug("--------array_menuIds=#{array_menuIds} ")
             
         reservation = Reservation.new(staff_id: reservation_params[:staff_id],
-                                  date: reservation_params[:date],
-                                  last_name: reservation_params[:last_name],
-                                  first_name: reservation_params[:first_name],
-                                  last_name_kana: reservation_params[:last_name_kana],
-                                  first_name_kana: reservation_params[:first_name_kana],
-                                  tel: reservation_params[:tel],
-                                  email: reservation_params[:email],
-                                  check: reservation_params[:check],
-                                  gender: reservation_params[:gender],
-                                  request: reservation_params[:request],
-                                  frames: array_frames, 
-                                  menu_ids: array_menuIds)
+                                        date: reservation_params[:date],
+                                        last_name: reservation_params[:last_name],
+                                        first_name: reservation_params[:first_name],
+                                        last_name_kana: reservation_params[:last_name_kana],
+                                        first_name_kana: reservation_params[:first_name_kana],
+                                        tel: reservation_params[:tel],
+                                        email: reservation_params[:email],
+                                        check: reservation_params[:check],
+                                        gender: reservation_params[:gender],
+                                        request: reservation_params[:request],
+                                        frames: array_frames, 
+                                        menu_ids: array_menuIds)
 
         if reservation.save
             #scheduleIds.each do |scheduleId|
-            #schedule = Schedule.find_by(id: scheduleId)
-            #schedule.update(frame_status: "reserved")
-            #end
-            flash[:notice] ='予約が確定しました。'
+                #schedule = Schedule.find_by(id: scheduleId)
+                #schedule.update(frame_status: "reserved")
+            
+            
+            #staffのスケジュールを保留keepからreservedへ    
+            reservedFrams = JSON.parse(reservation.frames)
+            
+            reservedFrams.each do |reservedFrame|
+                
+                schedules = Schedule.find_by(staff_id: reservation.staff_id, 
+                                          date: reservation.date, 
+                                          frame: reservedFrame, 
+                                          frame_status: 'keep')
+                                          
+                schedules.update(frame_status: "reserved")
+                
+            end
+            
+            flash[:notice] ='予約が確定しました。ありがとうございました。'
             redirect_to root_path
             
         else
@@ -488,8 +500,25 @@ class ReservationsController < ApplicationController
     end
     
     
+    
     def destroy
+        
         reservation = Reservation.find(params[:id])
+        
+        #scheduleも一緒にupdateする。
+        reservedFrams = JSON.parse(reservation.frames)
+            
+            reservedFrams.each do |reservedFrame|
+                
+                schedules = Schedule.find_by(staff_id: reservation.staff_id, 
+                                          date: reservation.date, 
+                                          frame: reservedFrame, 
+                                          frame_status: 'reserved')
+                                          
+                schedules.update(frame_status: "available")
+                
+            end
+    
         reservation.destroy
         flash[:alert] = '予約を削除しました。'
         redirect_to :back
@@ -513,16 +542,13 @@ class ReservationsController < ApplicationController
         end
         
         
-        def scheduleIds_params
-            params[:scheduleId]
-        end
+        #def scheduleIds_params
+            #params[:scheduleId]
+        #end
     
         
         #ストロングパラメータは制限かけてるですーー
         def reservation_params
-            #json_request = ActionController::Parameters.new(JSON.parse(request.body.read))
-            #json_request.permit(:staff_id, :last_name, :first_name, :last_name_kana, :first_name_kana, :tel, 
-                                #:email, :gender, :request, :check, :date, :frames)
             params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana,
                                                 :first_name_kana, :tel, :email, :gender, :request, :check, :date, :frames, :menu_ids)
         end

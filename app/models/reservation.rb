@@ -37,6 +37,9 @@ class Reservation < ApplicationRecord
                 
                 Reservation.where(date: search_date, tel: search_tel) #フル入力
     end
+    
+    
+   
 
 end
     

@@ -39,7 +39,7 @@ class StaffsController < ApplicationController
 
     def update
         
-        #else以下が実行された場合 renderが発動するので@staffにしておけば、勝手staffでーたをs飛ばしてくれます。
+        #else以下が実行された場合 renderが発動するので@staffにしておけば、勝手staffでーたを飛ばしてくれます。
         @staff = Staff.find(params[:id])
         logger.debug("-------@staff=#{@staff.id}")
         logger.debug("-----------staff_params#{staff_params}")

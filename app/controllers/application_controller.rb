@@ -16,5 +16,22 @@ class ApplicationController < ActionController::Base
         username == ENV["BASIC_AUTH_USER"] && password == ENV["BASIC_AUTH_PASSWORD"]
         end
     end
+    
+    
+    def update_frame_status
+        
+        time = DateTime.now
+        #logger.debug("--------time=#{time}")
+        schedules = Schedule.where(frame_status: 'keep')
+        
+        schedules.each do |schedule|
+            if schedule.updated_at
+                
+                
+            end
+            
+        end
+        
+    end
   
 end

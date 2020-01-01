@@ -14,13 +14,8 @@
                     <% end %>
                     
                     <% @total_frames.each do |frame| %>
-                        <% logger.debug("---------frame=#{frame}") %>
+                        <% logger.debug("--------frame=#{frame}") %>
                         <input type ='hidden' name="frame[]", value="<%= frame %>" >
-                    <% end %>
-                    
-                    
-                    <% @scheduleIds.each do |scheduleId| %>
-                        <input type ='hidden' name="scheduleId[]", value="<%= scheduleId %>" >
                     <% end %>
                     
                     <div class='field'>
@@ -73,7 +68,7 @@
             <%= f.text_area :request, class: 'form-control form-request' %>
         </div>
         <div class='menu-footer'>
-            <%= link_to "戻る", choose_date_reservations_path(menus: @menuIds, selectedStaff: @staffId), class: 'btn btn-success' %>
+            <%= link_to "戻る", choose_date_reservations_path(menus: @menuIds, selectedStaff: @staffId, frame: @total_frames, date: @date), class: 'btn btn-success' %>
             <%= f.submit :この内容で次へ, class:'btn btn-info' %>
         </div>
         <% end %>

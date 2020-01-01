@@ -266,7 +266,7 @@ module ReservationsHelper
              
          #その日の出勤時間が出る。  予約可か予約済みかで配列分ている。             
         firstDatesFrames=[]
-        firstDatesReservedFrames=['15:00', '18:00', '18:30']
+        firstDatesReservedFrames=[]
         
         secondDatesFrames=[]
         secondDatesReservedFrames=[]
