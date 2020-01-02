@@ -2,10 +2,10 @@ class SchedulesController < ApplicationController
  before_action :basic_auth#, if: :production?
  #before_action :correct_staff, only: [:new, :create]
  #before_action :current_staff, only: [:new, :create]
- #before_action :
+
     def index
         @before = Date.today - 1.months
-        @present = Date.today
+        @present = Date.todays
         @after = Date.today + 1.months
     end
     

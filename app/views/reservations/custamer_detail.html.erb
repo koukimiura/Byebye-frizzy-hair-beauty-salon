@@ -4,26 +4,39 @@
     </div>
     <div class='custamer-detail'>
         <%= form_for @reservation, :url => {:controller => :reservations, :action => :custamer_info} do |f| %>
-            <% @reservation.errors.full_messages.each do |message| %>
-                <div class="alert alert-warning"></div>
-                    <ul>
-                        <li><%= message %></li>
-                    </ul>
-                </div>    
-            <% end %>
             
             <div class='custamer row'>
                 <div class='col-xs-12 col-md-6 text-left'>    
                     <%= hidden_field_tag "selectedStaff", @staffId %>
                     <%= f.hidden_field :date, :value => @date %>
                     
-                    <% @menuIds.each do |menuId| %>
-                        <input type ='hidden' name="menus[]", value="<%= menuId %>" >
+                    <% if  @menuIds.nil? %>
+                    
+                        <% JSON.parse(@reservation.menu_ids).each do |menuId| %>
+                            <input type ='hidden' name="menus[]", value="<%= menuId %>" >
+                        <% end %>
+                        
+                    <% else %>
+                    
+                        <% @menuIds.each do |menuId| %>
+                            <input type ='hidden' name="menus[]", value="<%= menuId %>" >
+                        <% end %>
+                        
                     <% end %>
                     
-                    <% @total_frames.each do |frame| %>
-                        <% logger.debug("--------frame=#{frame}") %>
-                        <input type ='hidden' name="frame[]", value="<%= frame %>" >
+                    <% if  @total_frames.nil? %>
+                    
+                        <% JSON.parse(@reservation.frames).each do |frame| %>
+                            <input type ='hidden' name="frame[]", value="<%= frame %>" >
+                        <% end %>
+                        
+                    <% else %>
+                    
+                        <% @total_frames.each do |frame| %>
+                            <% logger.debug("--------frame=#{frame}") %>
+                            <input type ='hidden' name="frame[]", value="<%= frame %>" >
+                        <% end %>
+                        
                     <% end %>
                     
                     <div class='field'>
@@ -39,7 +52,7 @@
                     <div class='field'>
                         <p>電話番号<span class='must'>※ハイフンなしで記入下さい。</span></p>
                         <!------ saveメソッドを使わないので...number_field -->
-                        <%= f.number_field :tel, class: 'form-control' %>
+                        <%= f.telephone_field :tel, class: 'form-control' %>
                     </div>
                     
                     <div class='field'>

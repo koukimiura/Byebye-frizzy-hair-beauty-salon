@@ -1,10 +1,12 @@
 class Schedule < ApplicationRecord
+    
     require 'date'
     
-    validates :staff_id, :frame, :frame_status, presence: true
-    validates :date, presence: true#,  uniqueness: true
-    
+    validates :staff_id, :frame, :frame_status, :date, presence: true
+
     belongs_to :staff
+   
+   
    
     
     def self.do_somthing
@@ -19,12 +21,6 @@ class Schedule < ApplicationRecord
         
     end
     
-     #def self.change_frame_status
-        
-        #schedules = self.where(frame_status: 'keep')
-        
-        #return schedules.update(frame_status: 'available')
-        
-    #end
+    
     
 end

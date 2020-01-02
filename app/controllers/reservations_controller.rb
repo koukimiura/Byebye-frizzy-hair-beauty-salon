@@ -268,6 +268,9 @@ class ReservationsController < ApplicationController
         
         
 
+
+
+
         #必要時間をFloat化して30（３０分単位)でわる。
         number = menuRequiredTimes.to_f/30
         toInteger = number.to_i
@@ -349,25 +352,90 @@ class ReservationsController < ApplicationController
         logger.debug("-------times=#{times}")
         logger.debug("-----------staffId=#{staffId}")
         
-        @reservation = Reservation.new(reservation_params)
-    
-        #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
-        if @reservation.last_name.present? && @reservation.first_name.present?  && @reservation.last_name_kana.present? && 
-           @reservation.first_name_kana.present? && @reservation.tel.present? && @reservation.email.present? &&
-           staffId.present? && menuIds.present?  && times.present?
+        #@reservation = Reservation.new(reservation_params)
         
-           
+        
+        reservation_kari = Reservation.new(staff_id: staffId,
+                                        date: reservation_params[:date],
+                                        last_name: reservation_params[:last_name],
+                                        first_name: reservation_params[:first_name],
+                                        last_name_kana: reservation_params[:last_name_kana],
+                                        first_name_kana: reservation_params[:first_name_kana],
+                                        tel: reservation_params[:tel],
+                                        email: reservation_params[:email],
+                                        check: reservation_params[:check],
+                                        gender: reservation_params[:gender],
+                                        request: reservation_params[:request],
+                                        frames: times, 
+                                        menu_ids: menuIds)
+        #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
+    
+        if reservation_kari.valid?
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
                                         frame: frames_params, reservation: reservation_params)
-                                        
 
         else
             
-            flash[:alert] ='記入が漏れがあります。'
-            redirect_to :back
-         
+            #配列@reservation.errors.messagesにはvalidationのエラーメッセージが入っているがredirect＿toで戻していいるから表示されない。
             
+            #log 
+            #@reservation.errors.messages={:last_name=>["can't be blank"], :first_name=>["can't be blank"],
+            #:last_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
+            #:first_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
+            #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
+
+
+            logger.debug("---------reservation_kari.errors.messages=#{reservation_kari.errors.full_messages}")
+            
+            
+            reservation_kari.errors.full_messages.each do |array_errors_message|
+                    
+                logger.debug("---------array_errors_message=#{array_errors_message}")
+                case array_errors_message
+                
+                    when "Last name can't be blank" then
+                        
+                        flash[:alert] ='(性)が未記入です。'
+                        
+                    when "First name can't be blank" then
+                
+                        flash[:alert] ='(名)が未記入です。'
+                        
+                    when "Last name kana can't be blank" then
+                
+                        flash[:alert] ='性(カナ)が未記入です。' 
+                        
+                    when "Last name kana 全角カタカナのみで入力して下さい。" then
+                
+                        flash[:alert] ='性(カナ)を全角カタカナのみで入力して下さい。'  
+                        
+                    when "First name kana can't be blank" then
+                        
+                        flash[:alert] ='性(カナ)が未記入です。' 
+                        
+                    when "First name kana 全角カタカナのみで入力して下さい。" then
+                        
+                        flash[:alert] ='性(カナ)を全角カタカナのみで入力して下さい。' 
+                        
+                    when "Tel can't be blank" then
+                        
+                        flash[:alert] ='電話番号が未記入です。'     
+                    
+                     when "Email can't be blank" then
+                        
+                        flash[:alert] ='メールアドレスが未記入です。' 
+                        
+                    when "Email 適切なアドレスを入れてください。" then
+                        
+                        flash[:alert] ='適切なアドレスを入れてください。'
+                
+                end
+            end
+            
+            redirect_to :back
+            #redirect_back(fallback_location: fallback_location)
+            #render 'custamer_detail' #, @menuIds: reservation
         end
     end
     
