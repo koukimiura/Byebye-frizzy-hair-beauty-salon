@@ -28,13 +28,12 @@ class ApplicationController < ActionController::Base
         time = Time.now   # + 5.days 
         
         schedules.each do |schedule|
-            logger.debug("--------schedule.updated_at =#{schedule.updated_at}")
-            #original = schedule.updated_at
+            #logger.debug("--------schedule.updated_at =#{schedule.updated_at}")
             #30分足す。
             after_30min =  schedule.updated_at + 1800
              
-            logger.debug("--------グリンリッジ=#{time}")
-            logger.debug("--------target..=#{Time.parse(after_30min.to_s)}")
+            #logger.debug("--------グリンリッジ=#{time}")
+            #logger.debug("--------target..=#{Time.parse(after_30min.to_s)}")
                 
              #Time.parse　string化しなさい。
              #update時間の30g後の時間が現在時刻より小さくなったら

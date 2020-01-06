@@ -1,5 +1,6 @@
 class StaffsController < ApplicationController
     before_action :basic_auth#, if: :production?
+    before_action :staff_id_check, only: [:edit, :update, :destroy]
     
     def index
         @staffs = Staff.all.order(status: :asc)
@@ -59,47 +60,12 @@ class StaffsController < ApplicationController
     
     
     def destroy
-        @staff = Staff.find(params[:id])
-        @staff.destroy
+        staff = Staff.find_by(id: params[:id])
+        staff.destroy
         redirect_to staffs_path
-    end
-    
-    
-    def login_form
-        
-    end
-    
-    
-    
-    def login 
-        @staff = Staff.find_by(last_name: params[:last_name], first_name: params[:first_name], number: params[:number])
-        
-        
-        this_month_first_day = Date.today.beginning_of_month
-        next_month = this_month_first_day.next_month
-        rangeDates = (next_month..next_month.end_of_month)
-        
-        @schedules = Schedule.where(staff_id: @staff.id, date: rangeDates)  if @staff
-        
-        #logger.debug("-----@staff.id=#{@staff.id}")
-        
-        if @schedules.present?
             
-            flash[:alert] = '今月のシフトは入力済みです。'
-            redirect_to login_form_staffs_path
-            
-            
-        elsif @staff  
-        
-           redirect_to "/schedules/#{@staff.id}/new"
-        
-        else
-            @error_message = '名前または社員番号が違います。'
-            render :login_form
-        end
-        
+
     end
-    
 
     private
         def staff_params
@@ -107,4 +73,12 @@ class StaffsController < ApplicationController
                                            :experience, :status, :self_introduction, :image)
         end
 
+
+        def staff_id_check
+            if Staff.find_by(id: params[:id])
+                
+                redirect_to root_path
+                
+            end
+        end
 end

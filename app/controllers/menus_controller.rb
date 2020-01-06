@@ -1,6 +1,6 @@
 class MenusController < ApplicationController
   before_action :basic_auth #, if: :production?
-  
+  before_action :menu_id_check, only: [:edit, :update, :destroy]
   
   def index
     #@menus = Menu.all.order(category: :asc)
@@ -21,9 +21,13 @@ class MenusController < ApplicationController
     
   end
 
+
+
   def new
     @menu = Menu.new
   end
+
+
 
   def create
     @menu = Menu.new(menu_params)
@@ -37,9 +41,12 @@ class MenusController < ApplicationController
     end
   end
 
+
+
   def edit
     @menu = Menu.find(params[:id])
   end
+
 
 
   def update
@@ -59,9 +66,12 @@ class MenusController < ApplicationController
 
 
   def destroy
-     @menu = Menu.find(params[:id])
-     @menu.destroy
-     redirect_to menus_path
+     menu = Menu.find_by(id: params[:id])
+    
+      menu.destroy
+      redirect_to menus_path
+      
+    
   end
   
   
@@ -74,5 +84,12 @@ class MenusController < ApplicationController
       
     end
   
-  
+    def menu_id_check
+      
+      !if Menu.find_by(id: params[:id])
+        flash[:alert] = 'メニューが見つかりません。'
+         redirect_to root_path
+      end
+    end
+
 end

@@ -2,6 +2,10 @@ require_relative 'boot'
 
 require 'rails/all'
 
+
+
+# デフォルトは :log で, 許可されていないパラメータは無視されたうえでログ出力されます.
+#config.action_controller.action_on_unpermitted_parameters = :raise
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(*Rails.groups)

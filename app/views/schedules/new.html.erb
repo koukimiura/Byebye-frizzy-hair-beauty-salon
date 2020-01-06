@@ -1,9 +1,4 @@
-<script>
-$(document).ready(function() { 
-    
-});
-</script>
-
+<%= link_to '管理者画面', home_basic_path%>
 <div class='schedule'>
     <div class='form-body'>
         <div class='timesheet'>
@@ -11,44 +6,58 @@ $(document).ready(function() {
             <h2><%= d.strftime("%Y年") %><%= d.next_month.strftime("%m月") %></h2>
             
             <%= form_for @schedule do |f| %>
-            <%= render 'layouts/error_messages', model: f.object %>
-            <div class='timesheet-staff'>
-                <%= f.label :＊スタッフを選択してください。, class:'font-color' %></br>
-                <%= f.collection_select :staff_id, @staffs, :id, :last_nameANDfirst_name, :prompt => "選択してください" %>
-            </div>
-                <hr>
-                    <% @dates.each do |date| %>
-                        <%= f.label :日付け %>
-                        <% wday = %w(日 月 火 水 木 金 土)[date.wday] %>
-                        <%= date.strftime("%m月 %d日")%>(<%= wday %>)
-                        <%= hidden_field_tag "date_and_time[][date]", date %> <!--- .strftime("%m月 %d日") -->
-                        <p>出勤時間</p>
-                            <select name="date_and_time[][start_time]">
-                                <option value="0.0">休暇</option>
-                                <option value="9.5" selected = "9:30">9:30</option>
-                                <option value="10.0" >10:00</option>
-                                <option value="10.5">10:30</option>
-                                <option value="11.0">11:00</option>
-                                <option value="11.5">11:30</option>
-                                <option value="12.0">12:00</option>
-                                <option value="12.5">12:30</option>
-                                <option value="13.0">13:00</option>
-                            </select>
-                        <p>退勤時間</p>
-                            <select name="date_and_time[][end_time]">
-                                <option value="16.5">16:30</option>
-                                <option value="17.0">17:00</option>
-                                <option value="17.5">17:30</option>
-                                <option value="18.0" selected = "18:00">18:00</option>
-                                <option value="18.5">18:30</option>
-                                <option value="19.0">19:00</option>
-                                <option value="19.5">19:30</option>
-                                <option value="20.0">20:00</option>
-                                <option value="20.5">20:30</option>
-                                <option value="21.0">21:00</option>
-                            </select>
+                <%= render 'layouts/error_messages', model: f.object %>
+                    <div class='timesheet-staff'>
+                        <%= f.label :＊スタッフを選択してください。, class:'font-color' %></br>
+                        <%= f.collection_select :staff_id, @staffs, :id, :last_nameANDfirst_name, :prompt => "選択してください" %>
+                    </div>
                         <hr>
-                    <% end %>
+                            <% @dates.each_with_index do |date, i| %>
+                                <p class='font-color'>＊休暇申請は出勤、退勤時間共に休暇を選択してください。</p>
+                                <%= f.label :日付け %>
+                                <% wday = %w(日 月 火 水 木 金 土)[date.wday] %>
+                                <%= date.strftime("%m月 %d日")%>(<%= wday %>)
+                                    <!-- hidden_field_tag "date_and_time[][date]", date --> 
+                                    <!-- f.hidden_field :date_and_time, name: "schedule[date_and_time[][:date]]", :value => date --> 
+                                    <!--- .strftime("%m月 %d日") -->
+                                    
+                                    <%= f.hidden_field :date, name: "schedule[date[][number]]" , :value => i + 1 %>
+                                    <%= f.hidden_field :date, name: "schedule[date[][dateKey]]" , :value => date %>
+                                    
+                                 <p>出勤時間</p>
+
+                                    <!---<select name="schedule[start_time[][<%= date %>[frame]]]">-->
+                                    <%= f.hidden_field :start_time, name: "schedule[start_time[][number]]" , :value => i + 1 %>
+                                    <select name="schedule[start_time[][frame]]">
+                                        <option value="0.0">休暇</option>
+                                        <option value="9.5" selected = "9:30">9:30</option>
+                                        <option value="10.0" >10:00</option>
+                                        <option value="10.5">10:30</option>
+                                        <option value="11.0">11:00</option>
+                                        <option value="11.5">11:30</option>
+                                        <option value="12.0">12:00</option>
+                                        <option value="12.5">12:30</option>
+                                        <option value="13.0">13:00</option>
+                                    </select>
+                                    
+                                <p>退勤時間</p>
+                                    <%= f.hidden_field :end_time, name: "schedule[end_time[][number]]" , :value => i + 1 %>
+                                    <select name="schedule[end_time[][[frame]]">
+                                        <option value="0.0">休暇</option>
+                                        <option value="16.5">16:30</option>
+                                        <option value="17.0">17:00</option>
+                                        <option value="17.5">17:30</option>
+                                        <option value="18.0" selected = "18:00">18:00</option>
+                                        <option value="18.5">18:30</option>
+                                        <option value="19.0">19:00</option>
+                                        <option value="19.5">19:30</option>
+                                        <option value="20.0">20:00</option>
+                                        <option value="20.5">20:30</option>
+                                        <option value="21.0">21:00</option>
+                                    </select>
+
+                                <hr>
+                            <% end %>
                 <%= f.submit :登録 %>
             <% end %>
         </div>

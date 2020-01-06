@@ -1,11 +1,10 @@
 class SchedulesController < ApplicationController
  before_action :basic_auth#, if: :production?
- #before_action :correct_staff, only: [:new, :create]
- #before_action :current_staff, only: [:new, :create]
+
 
     def index
         @before = Date.today - 1.months
-        @present = Date.todays
+        @present = Date.today
         @after = Date.today + 1.months
     end
     
@@ -25,63 +24,92 @@ class SchedulesController < ApplicationController
     end
     
     def new
-        #logger.debug("----params=#{params[:id]}")
-        #@current_staff = Staff.find_by(id: params[:staff_id])
-        
         @staffs = Staff.all.order(status: :asc)
         @schedule = Schedule.new 
         
         this_month_first_day = Date.today.beginning_of_month
         next_month = this_month_first_day.next_month
         @dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
+        
+        
+        
+        
     end
     
-    
-    
+
     
     def create
-        staffId = params[:staff_id]
-        date_and_times = params[:date_and_time]
-    
-        total_Index = date_and_times.length
-        i = 0
-        count=[]
-        #インデックス番号がしょっぱな０だからtotal_Indexはインデックスの合計数と同じでok
-        while i < total_Index do
-            grount = date_and_times[i]
-            # 出勤時間と退勤時間がどちらかが休暇でもう片方が時間が入っている事故をなくすための処理
-            if grount['end_time'] == "0.0" &&  grount['start_time'] != '0.0'
-                flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
-                redirect_to :back and return
-                
-            elsif grount['end_time'] != "0.0" &&  grount['start_time'] == '0.0'
-                flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
-                redirect_to :back and return
-            end
-            #労働時間用
-            end_hour = grount['end_time'].to_f
-            start_hour = grount['start_time'].to_f
-            #Index用
-            end_time = grount['end_time'].to_f
-            start_time = grount['start_time'].to_f
-            index = (end_time-start_time)*2
-            logger.debug("-----index=#{index}")
-            dates =[]
-            #indexと同じ回数日数を作る。
-            # if分でbreakをはじく
-            if  index == 0.0
-                dates << grount['date']
-            else
-                index.to_i.times do
-                    dates << grount['date']
+        #staffId = params[:staff_id]
+        #date_and_times = params[:date_and_time]
+        
+        #@schedule = Schedule.new(schedule_params)
+        logger.debug("--------------schedule_params=#{schedule_params}")
+        date_and_times=[]
+        
+        schedule_params[:date].each do |d|
+            schedule_params[:start_time].each do |s|
+                schedule_params[:end_time].each do |e|
+                    
+                    if d[:number] == s[:number] && d[:number] == e[:number] && s[:number] == e[:number]
+                        
+                        date_and_times << {:date => d[:dateKey], :start_time => s[:frame], :end_time => e[:frame]}
+                        
+                    end
                 end
             end
-            #logger.debug("----dates=#{dates}")
+        end
+
+        total_Index = date_and_times.length
+        logger.debug("---------date_and_times=#{date_and_times.inspect}")
+        #logger.debug("---------total_Index=#{total_Index}")
+        
+        i = 0
+        count=[]
+        
+        #インデックス番号がしょっぱな０だからtotal_Indexはインデックスの合計数と同じでok
+        #total_Indexは来月の日数
+        
+        while i < total_Index do
+            
+            grount = date_and_times[i]
+
+            # 出勤時間と退勤時間がどちらかが休暇でもう片方が時間が入っている事故をなくすための処理
+            if grount[:end_time] == "0.0" &&  grount[:start_time] != '0.0'
+                flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
+                redirect_to :back and return
+                
+            elsif grount[:end_time] != "0.0" &&  grount[:start_time] == '0.0'
+                flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
+                redirect_to :back and return
+            end
+            
+            #労働時間用
+            end_hour = grount[:end_time].to_f
+            start_hour = grount[:start_time].to_f
+            
+            #Index用
+            end_time = grount[:end_time].to_f
+            start_time = grount[:start_time].to_f
+            
+            index = (end_time-start_time)*2
+            
+
+            dates =[]
+            #indexと同じ回数日数を作る。
+            # if文でbreakをはじく
+            
+            if  index == 0.0     #break
+                dates << grount[:date]
+            else
+                
+                index.to_i.times do
+                    dates << grount[:date]
+                end
+                
+            end
             #start_hourとend_hourの間の時間を取得
             all_hour =[]
-                #logger.debug("----start_hour=#{start_hour}")
-                logger.debug("----end_hour=#{end_hour}")
-                
+
             #条件分で休暇なら０.０をpush
             if start_hour == 0.0 && end_hour ==0.0
                 all_hour << 0.0
@@ -91,84 +119,56 @@ class SchedulesController < ApplicationController
                     start_hour += 0.5
                 end
             end
-                logger.debug("-----all_hour=#{all_hour}")
             #returnで少数をstringに
             string_times =all_hour.map{|float_time| time_to_string(float_time)}
             count << { date: dates, working_hour: string_times}
             i +=1
         end
-        
-        logger.debug("-----count=#{count}")
 
+
+#-------------create----------------------
+        #logger.debug("-----count=#{count}")
 
         #countをeachで複数個createする。
         count.each do |value|
             dates=value[:date]
             times= value[:working_hour]
-                #logger.debug("------dates=#{dates}")
-                logger.debug("-----times=#{times}")
+
                 
-            #originals.each do |original|
             dates.zip(times) do |date, time|
-                logger.debug("------date=#{date}")
-                logger.debug("------time=#{time}")
+                #logger.debug("------original_date=#{date}")
+                #logger.debug("------original_time=#{time}")
+                
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
-                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'break')
+                    Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'break')
                     
                     logger.debug("------break_date=#{date}")
                     logger.debug("------break_time=#{time}")
-                 #elsif original != time   
-                    #Schedule.create(staff_id: staffId, date: date, frame: original, frame_status: 'break')
                     
+
                 elsif time == "9:30" || time == "21:00"
                 
-                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'preparation_period')
+                    Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'preparation_period')
                     logger.debug("------preparation_period_date=#{date}")
                     logger.debug("------preparation_period_time=#{time}")
                 
                 
                     
                 else
+                    #退勤時間を18:00にしても予約するときはavailable_timeの最後は17:30で入る。そのため18:00(退勤時間)はscheduleのDBには存在しない。
                     logger.debug("------available_date=#{date}")
                     logger.debug("------available_time=#{time}")
-                    Schedule.create(staff_id: staffId, date: date, frame: time, frame_status: 'available')
+                    Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'available')
                     
                 end
             end
         end
         
-        redirect_to root_path
+        
+        redirect_to home_basic_path
       
     end
     
-    #直接直書きでurlにパラメータを入れてきた場合
-    def correct_staff
-        this_month_first_day = Date.today.beginning_of_month
-        next_month = this_month_first_day.next_month
-        rangeDates = (next_month..next_month.end_of_month)
-        
-        staff = Staff.find_by(id: params[:staff_id].to_i)
-        
-        schedules = Schedule.where(staff_id: staff.id, date: rangeDates)  if staff
-        #logger.debug("----------------staff.id=#{staff.id}")
-    
-        
-        #url直書きしてstaff.idが存在した場合、一人が同じ月のシフトが複数できてしまう。
-        if schedules.present?   
-            
-            flash[:alert] = '今月のシフトは入力済みです。'
-            
-            redirect_to login_form_staffs_path
-            
-        #そもそもstaffが存在しなかったら    
-        elsif staff.nil?
-        
-            flash[:alert] = 'スタッフの情報を入力してください。s'
-            
-            redirect_to login_form_staffs_path
-        
-        end
-    end
 
 
     private
@@ -187,4 +187,14 @@ class SchedulesController < ApplicationController
         end
         
         
+        
+        def schedule_params
+            #一回配列がネストするパターン
+            
+            params.require(:schedule).permit(:staff_id, :date => [:number, :dateKey], 
+                                                        :start_time => [:number, :frame], 
+                                                        :end_time => [:number, :frame]
+                                            )
+
+        end
 end

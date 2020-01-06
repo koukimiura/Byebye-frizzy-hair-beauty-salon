@@ -1,8 +1,16 @@
 class ReservationsController < ApplicationController
     
  before_action :basic_auth, only: [:search, :index]
+ 
+ #createアクションが呼ばれたら、menuIds, staffId, framesは空になっている。
+ before_action :nil_check_menus, only: [:choosen_menus, :choose_staff, :choosen_staff, :choose_date, :custamer_detail, :custamer_info, :confirmation]
+ before_action :nil_check_staff, only: [:choosen_staff, :choose_date, :custamer_detail, :custamer_info, :confirmation]
+ before_action :nil_check_date, only: [:custamer_detail]
+ before_action :nil_check_frames,  only: [:custamer_info, :confirmation]
+ before_action :nil_check_strong_parameters, only: [:custamer_info, :confirmation, :create]
+ 
 
-    #--------------検索-----------------  
+#--------------検索-----------------  
     def search   
         #@staffs = Staff.all.order(status: :asc)
         @name = '担当スタッフ名前'
@@ -84,14 +92,10 @@ class ReservationsController < ApplicationController
             
         redirect_to controller: 'reservations', action: 'choose_staff', menus: menuIds_params
             
-            
-            
         else
-            
             render :choose_menus
         end
     end
-
     
     
     def choose_staff
@@ -143,33 +147,17 @@ class ReservationsController < ApplicationController
     end
     
     
-    #def choosen_staff
-
-    
-        #logger.debug("-------staffId=#{staffId}")
-        #logger.debug("-------menuIds_params=#{menuIds_params}")
-        
-        #if staffId_params && menuIds_params
-             #redirect_to controller: 'reservations', action: 'choose_date', selected_Staff: staffId, menu_ids: menuIds, menu_names: menuNames,
-                                                                            #menu_prices: menuPrices, menu_required_times: menuRequiredTimes
-                                                                            
-             #redirect_to controller: 'reservations', action: 'choose_date', selectedStaff: staffId_params, menus: menuIds_params                                                                
-        #else
-            
-            #flash.now[:alert] = 'スタイリストを選択してください。'
-            #render :choose_staff
-        #end
-        
-    #end
-    
-    
     def choose_date
         #paramsで受け取ると文字列になる。
         @menuIds = menuIds_params
         staffId = staffId_params
         
+        
+#-----------redirect_to backした場合。---------------------
         keepFrames = frames_params
         keepDate = params[:date]
+        
+        
         
         #custamer_detail以降から戻ってきた時keep -> available
         if keepFrames.present? && keepDate
@@ -177,14 +165,22 @@ class ReservationsController < ApplicationController
                schedule = Schedule.find_by(staff_id: staffId, 
                                            date: keepDate, 
                                            frame: keepFrame, 
-                                           frame_status: 'keep') 
+                                           frame_status: 'keep')
                                            
-                schedule.update(frame_status: 'available') 
-               
+                                           
+                schedule.update(frame_status: 'available')                                
+               #params[:date] = nil
+               #params[:frame] = nil
             end
         end
+        
+        
+ #----------------------------------------------------------       
+        
 
 
+        logger.debug("-----------keepFrames=#{keepFrames}")
+        logger.debug("-----------keepDate=#{keepDate}")
 
         #先週と来週の日数
         receivedNext = params[:next_week]
@@ -245,10 +241,8 @@ class ReservationsController < ApplicationController
          @prev = @d - 1.week #aタグ用
          
          
-        #d = Date.today + 1.week
-        
-        #@calenders = reservation_calender(@d, @staff)
-        
+
+
         #logger.debug("-------menuIds=#{@menuIds}")
         #logger.debug("-------menuNames=#{@menuNames}")
         #logger.debug("-------menuPrices=#{@menuPrices}")
@@ -259,7 +253,7 @@ class ReservationsController < ApplicationController
     
     def custamer_detail
        # 日付
-        @date = params[:date]
+        @date = date_params
         #必要時間
         menuRequiredTimes = params[:menu_required_times]
         
@@ -267,7 +261,7 @@ class ReservationsController < ApplicationController
         @menuIds = menuIds_params
         
         
-
+        logger.debug("------------@date=#{params[:date]}")
 
 
 
@@ -282,7 +276,7 @@ class ReservationsController < ApplicationController
         #updateNumbeはupdateするDBの行数。 　10min, 15min, 30min,でも１つはupdateする。
         #30分以下　
          
-         if toInteger < 1
+        if toInteger < 1
              
              updateNumber = 1
          
@@ -344,16 +338,11 @@ class ReservationsController < ApplicationController
     
     
     def custamer_info
+        
         staffId = staffId_params
         menuIds = menuIds_params
         times = frames_params
 
-        logger.debug("-------menuIds=#{menuIds}")
-        logger.debug("-------times=#{times}")
-        logger.debug("-----------staffId=#{staffId}")
-        
-        #@reservation = Reservation.new(reservation_params)
-        
         
         reservation_kari = Reservation.new(staff_id: staffId,
                                         date: reservation_params[:date],
@@ -368,8 +357,9 @@ class ReservationsController < ApplicationController
                                         request: reservation_params[:request],
                                         frames: times, 
                                         menu_ids: menuIds)
-        #saveメソッドを使わないのでバリデーションによるエラーメッセージ を出せない。 
-    
+
+
+
         if reservation_kari.valid?
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
@@ -386,12 +376,9 @@ class ReservationsController < ApplicationController
             #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
 
 
-            logger.debug("---------reservation_kari.errors.messages=#{reservation_kari.errors.full_messages}")
-            
             
             reservation_kari.errors.full_messages.each do |array_errors_message|
                     
-                logger.debug("---------array_errors_message=#{array_errors_message}")
                 case array_errors_message
                 
                     when "Last name can't be blank" then
@@ -434,6 +421,7 @@ class ReservationsController < ApplicationController
             end
             
             redirect_to :back
+            
             #redirect_back(fallback_location: fallback_location)
             #render 'custamer_detail' #, @menuIds: reservation
         end
@@ -447,6 +435,9 @@ class ReservationsController < ApplicationController
         @menuIds = menuIds_params
         @frames = frames_params
         @reservation = Reservation.new(reservation_params)
+        logger.debug("-------------------reservation_params=#{reservation_params}")
+        
+        
         
         #@hash_frames = {h_frames: {key_frames: @frames}}
         #@hash_frames = JSON.parse(hash_frames.to_json)
@@ -457,11 +448,8 @@ class ReservationsController < ApplicationController
         
         @hash_scheduleIds = {key_menuIds: @scheduleIds}
         
-        logger.debug("-------@menuIds=#{@menuIds}")
-        logger.debug("-------@frames=#{@frames}")
-        
         #ストロングパラメータのclassは
-        logger.debug("-----------reservation_params.class=#{reservation_params.class}")
+        #logger.debug("-----------reservation_params.class=#{reservation_params.class}")
        
        
         @date = Date.parse(@reservation.date)
@@ -497,20 +485,6 @@ class ReservationsController < ApplicationController
     
 
     def create
-        #失敗例
-        #json = params[:frames]
-        #@reservation = Reservation.new(reservation_params)
-        #json_frames = JSON.parse(params[:frames].to_json)
-        #json_frames = JSON.parse(reservation_params[:frames].to_json)
-        #reservation_paramsをjson化しないとhashとして扱えない。 各カラムだけやるとStringになってしまう。
-        #hash_reservation_params = JSON.parse(reservation_params.to_json, {symbolize_names: true})
-        #hash_frames = hash_reservation_params.as_json(only: [:frames])
-        #string_frames = hash_reservation_params[:frames]
-        #hash_frames = to_hash(string_frames)
-        #scheduleIds = scheduleIds_params
-        
-        
-        
         
         #JSON文字列で受け取りhashとして扱いvalueを必要な形に崩していく
         
@@ -580,7 +554,9 @@ class ReservationsController < ApplicationController
     
     def destroy
         
-        reservation = Reservation.find(params[:id])
+        reservation = Reservation.find_by(id: params[:id])
+        
+        if reservation
         
         #scheduleも一緒にupdateする。
         reservedFrams = JSON.parse(reservation.frames)
@@ -595,39 +571,119 @@ class ReservationsController < ApplicationController
                 schedules.update(frame_status: "available")
                 
             end
-    
-        reservation.destroy
-        flash[:alert] = '予約を削除しました。'
-        redirect_to :back
-        
+            
+            reservation.destroy
+            flash[:notice] = '予約を削除しました。'
+            redirect_to :back
+            
+        else
+            
+            flash[:alert] = '予約が見つかりません。'
+            redirect_to :back
+            
+        end
     end
     
+    
+    
+#------------------------------------------------------private--------------------------------------   
     
     
     private
     
         def menuIds_params
             params[:menus]
+            #params.permit(:menus)
         end
         
         def staffId_params
             params[:selectedStaff]
         end
         
+        def date_params
+            
+            params[:date]
+        end
+        
         def frames_params
              params[:frame]
         end
         
+#-------------before_actionシリーズ------------------
         
-        #def scheduleIds_params
-            #params[:scheduleId]
-        #end
-    
         
+        def nil_check_menus
+            if menuIds_params == nil 
+            
+                flash[:alert] = 'メニューを選択してください。'
+                redirect_to choose_menus_reservations_path
+            
+            end
+        end
+        
+        
+        def nil_check_staff
+            if staffId_params == nil
+            
+                flash[:alert] = 'スタッフを選択してください。'
+                redirect_to choose_staff_reservations_path(menus: menuIds_params)
+                
+            end
+        end
+        
+        def nil_check_date
+            if date_params == nil
+                
+                flash[:alert] = '来店びを選択してください。'
+                redirect_to choose_date_reservations_path(menu: menuIds_params, selectedStaff: staffId_params)
+            end
+            
+        end
+        
+        
+        
+        def nil_check_frames
+            if  frames_params == nil 
+            
+                flash[:alert] = '来店びを選択してください。'
+                redirect_to choose_date_reservations_path(menu: menuIds_params, selectedStaff: staffId_params)
+                
+            end
+        end
+        
+        
+        def nil_check_strong_parameters
+                
+            #fetchでキーがreservationでないならデフォルト値{}を作る。
+            if params.fetch(:reservation, {}) == {}
+            
+                flash[:alert] = '選び直してください。'
+                redirect_to choose_menus_reservations_path
+                #schedule = Schedule.where
+                
+            end
+        end
+        
+            
+            
+            
         #ストロングパラメータは制限かけてるですーー
         def reservation_params
-            params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana,
-                                                :first_name_kana, :tel, :email, :gender, :request, :check, :date, :frames, :menu_ids)
+            params.require(:reservation).permit(:staff_id, 
+                                                :last_name, 
+                                                :first_name, 
+                                                :last_name_kana,
+                                                :first_name_kana, 
+                                                :tel, 
+                                                :email, 
+                                                :gender, 
+                                                :request, 
+                                                :check, 
+                                                :date, 
+                                                :frames, 
+                                                :menu_ids
+                                                )
+                                                
         end
 
 #------------------------------------menu----------------------------------------

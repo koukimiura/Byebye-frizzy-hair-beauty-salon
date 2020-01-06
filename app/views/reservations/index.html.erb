@@ -1,12 +1,12 @@
+<%= link_to '管理者画面', home_basic_path%>
 <div class='reservation-index'>
     <div class='reservation_all'>
         <div class='reservations-inners'>
             <h3>予約一覧</h3>
             <% @reservations.each do |reservation| %>
-                <% logger.debug("------reservation=#{reservation.date}") %>
                 <% if Date.parse(reservation.date) == Date.today %>
                     <h4 >Today!</h4>
-                    <%= render 'reservation_index', resesrvation: reservation %>
+                    <%= render 'reservation_index', reservation: reservation %>
                 <% else %>
                     <%=render 'reservation_index', reservation: reservation %>
                 <% end %>
@@ -47,7 +47,8 @@
             
            if (scriptDate == rubyDate){
                
-               $(this).css('background-color','#FFFFCC');
+               //$(this).css('background-color','#FFFFCC');//
+               $(this).css('border-width','1.5px').css('border-style', 'solid').css('border-color', '#FF0033');
            }
         });
     });
