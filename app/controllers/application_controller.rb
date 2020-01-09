@@ -27,10 +27,11 @@ class ApplicationController < ActionController::Base
         #グリンリッジ
         time = Time.now   # + 5.days 
         
+
         schedules.each do |schedule|
             #logger.debug("--------schedule.updated_at =#{schedule.updated_at}")
             #30分足す。
-            after_30min =  schedule.updated_at + 1800
+            after_30min =  schedule.updated_at + 900
              
             #logger.debug("--------グリンリッジ=#{time}")
             #logger.debug("--------target..=#{Time.parse(after_30min.to_s)}")
@@ -40,10 +41,11 @@ class ApplicationController < ActionController::Base
             if Time.parse(after_30min.to_s) < time
                 
                 schedule.update_attributes(frame_status: 'available')
-                puts 'hello'
                 
             end
         end
+        
+     
     end
     
     

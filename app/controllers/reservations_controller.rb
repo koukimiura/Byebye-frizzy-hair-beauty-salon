@@ -5,10 +5,9 @@ class ReservationsController < ApplicationController
  #createアクションが呼ばれたら、menuIds, staffId, framesは空になっている。
  before_action :nil_check_menus, only: [:choosen_menus, :choose_staff, :choosen_staff, :choose_date, :custamer_detail, :custamer_info, :confirmation]
  before_action :nil_check_staff, only: [:choosen_staff, :choose_date, :custamer_detail, :custamer_info, :confirmation]
- before_action :nil_check_date, only: [:custamer_detail]
  before_action :nil_check_frames,  only: [:custamer_info, :confirmation]
  before_action :nil_check_strong_parameters, only: [:custamer_info, :confirmation, :create]
- 
+
 
 #--------------検索-----------------  
     def search   
@@ -157,8 +156,8 @@ class ReservationsController < ApplicationController
         keepFrames = frames_params
         keepDate = params[:date]
         
-        
-        
+        logger.debug("-----------params[:date]=#{params[:date]}")
+        logger.debug("-----------keepFrames=#{keepFrames}")
         #custamer_detail以降から戻ってきた時keep -> available
         if keepFrames.present? && keepDate
             keepFrames.each do |keepFrame|
@@ -166,11 +165,9 @@ class ReservationsController < ApplicationController
                                            date: keepDate, 
                                            frame: keepFrame, 
                                            frame_status: 'keep')
-                                           
-                                           
-                schedule.update(frame_status: 'available')                                
-               #params[:date] = nil
-               #params[:frame] = nil
+                if schedule     
+                    schedule.update(frame_status: 'available')
+                end
             end
         end
         
@@ -179,9 +176,6 @@ class ReservationsController < ApplicationController
         
 
 
-        logger.debug("-----------keepFrames=#{keepFrames}")
-        logger.debug("-----------keepDate=#{keepDate}")
-
         #先週と来週の日数
         receivedNext = params[:next_week]
         receivedPrev = params[:previous_week]
@@ -189,14 +183,8 @@ class ReservationsController < ApplicationController
         
         @staff = Staff.find(staffId)
         
-        #menuIds = menuIds_params
-        #menuIds = params[:selectedMenus]
-        #@menuNames = params[:menu_names]
-        #menuPrices = params[:menu_prices]
-        #@menuRequiredTimes = params[:menu_required_times]
-        
-        
-        
+
+    
         #-------------メニュー-----------------------
         
         
@@ -253,7 +241,8 @@ class ReservationsController < ApplicationController
     
     def custamer_detail
        # 日付
-        @date = date_params
+        @date = params[:date]
+        
         #必要時間
         menuRequiredTimes = params[:menu_required_times]
         
@@ -261,7 +250,6 @@ class ReservationsController < ApplicationController
         @menuIds = menuIds_params
         
         
-        logger.debug("------------@date=#{params[:date]}")
 
 
 
@@ -269,10 +257,7 @@ class ReservationsController < ApplicationController
         number = menuRequiredTimes.to_f/30
         toInteger = number.to_i
          
-        logger.debug("---------number=#{number}")
-        logger.debug("-------toInteger=#{toInteger}")
-         
-         
+
         #updateNumbeはupdateするDBの行数。 　10min, 15min, 30min,でも１つはupdateする。
         #30分以下　
          
@@ -299,7 +284,6 @@ class ReservationsController < ApplicationController
         end
         
         #updateNumbeはupdateするDBのカラム数。
-        logger.debug("-----------updateNumber=#{updateNumber}")   
 
         selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
        
@@ -321,7 +305,6 @@ class ReservationsController < ApplicationController
             
             schedule = Schedule.find_by(id: scheduleId)
             
-            logger.debug("------schedule.id=#{schedule.id}")
             schedule.update(frame_status: "keep")
             
             @total_frames.push(schedule.frame)
@@ -363,7 +346,7 @@ class ReservationsController < ApplicationController
         if reservation_kari.valid?
            
            redirect_to confirmation_reservations_path(menus: menuIds_params, selectedStaff: staffId_params,
-                                        frame: frames_params, reservation: reservation_params)
+                                        frame: frames_params, reservation: reservation_params, scheduleId: frame_status_check)
 
         else
             
@@ -434,9 +417,9 @@ class ReservationsController < ApplicationController
         staffId = staffId_params
         @menuIds = menuIds_params
         @frames = frames_params
+        @selectedSchedule = frame_status_check
         @reservation = Reservation.new(reservation_params)
-        logger.debug("-------------------reservation_params=#{reservation_params}")
-        
+
         
         
         #@hash_frames = {h_frames: {key_frames: @frames}}
@@ -534,11 +517,14 @@ class ReservationsController < ApplicationController
                                           date: reservation.date, 
                                           frame: reservedFrame, 
                                           frame_status: 'keep')
-                                          
-                schedules.update(frame_status: "reserved")
+                if schedules
+                    schedules.update(frame_status: "reserved")
+                else
+                    flash[:notice] == '時間時れです。もう一度選んでください。'
+                    redirect_to root_path
+                end
                 
             end
-            
             flash[:notice] ='予約が確定しました。ありがとうございました。'
             redirect_to root_path
             
@@ -600,10 +586,7 @@ class ReservationsController < ApplicationController
             params[:selectedStaff]
         end
         
-        def date_params
-            
-            params[:date]
-        end
+       
         
         def frames_params
              params[:frame]
@@ -631,16 +614,7 @@ class ReservationsController < ApplicationController
             end
         end
         
-        def nil_check_date
-            if date_params == nil
-                
-                flash[:alert] = '来店びを選択してください。'
-                redirect_to choose_date_reservations_path(menu: menuIds_params, selectedStaff: staffId_params)
-            end
-            
-        end
-        
-        
+
         
         def nil_check_frames
             if  frames_params == nil 
@@ -662,6 +636,13 @@ class ReservationsController < ApplicationController
                 #schedule = Schedule.where
                 
             end
+        end
+        
+        def frame_status_check
+            
+            #application_controllerのframe_status_updateでkeepからavailableに戻されていないかchec
+            schedule = Schedule.find_by(id: params[:scheduleId])
+            
         end
         
             

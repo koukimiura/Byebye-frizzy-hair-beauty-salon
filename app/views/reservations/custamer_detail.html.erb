@@ -1,3 +1,14 @@
+<script>
+    history.pushState(null, null, null);
+    window.addEventListener("popstate", function (e) {
+        
+        alert('左下の戻るボタンを使用してください。');
+        return false;
+        
+    });
+</script>
+
+
 <div class='custamer'>
     <div class='main-header'>
         <h2 class='text-center'>お客様情報を入力してください</h2>
@@ -9,6 +20,7 @@
                 <div class='col-xs-12 col-md-6 text-left'>    
                     <%= hidden_field_tag "selectedStaff", @staffId %>
                     <%= f.hidden_field :date, :value => @date %>
+                    
                     
                     <% if  @menuIds.nil? %>
                     
