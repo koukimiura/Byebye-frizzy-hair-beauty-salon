@@ -89,10 +89,11 @@ class ReservationsController < ApplicationController
             
         #javascriptで　returnをして飛べないようにしてます。
             
-        redirect_to controller: 'reservations', action: 'choose_staff', menus: menuIds_params
+            redirect_to controller: 'reservations', action: 'choose_staff', menus: menuIds_params
             
         else
-            render :choose_menus
+            #render :choose_menus
+            redirect_to choose_menus_path
         end
     end
     
