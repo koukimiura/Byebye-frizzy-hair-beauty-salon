@@ -26,18 +26,31 @@ Create staff's schedules.
 スタッフのスケジュールを作成します。
 
 # DEMO
+
+ Home page
+
+ <img width="1440" alt="スクリーンショット 2020-01-09 16 23 11" src="https://user-images.githubusercontent.com/50481755/72299050-1cdc7300-36a3-11ea-830f-3b0d365ea9ac.png">
+
+
  Choosing Menus
  
+ <img width="1125" alt="スクリーンショット 2020-01-14 07 43 35" src="https://user-images.githubusercontent.com/50481755/72299167-6200a500-36a3-11ea-985f-26ffe18d99fe.png">
+
  
  Choosing Date
+ 
+ <img width="1198" alt="スクリーンショット 2020-01-14 07 44 06" src="https://user-images.githubusercontent.com/50481755/72299106-3b426e80-36a3-11ea-9a08-7ee5365533b4.png">
  
  
  Making staff's schedules
  
+ <img width="1226" alt="スクリーンショット 2020-01-14 07 41 54" src="https://user-images.githubusercontent.com/50481755/72298966-e7378a00-36a2-11ea-8363-08ebe591e4bf.png">
+
  
  Making sure staff's schedules
  
- 
+ <img width="907" alt="スクリーンショット 2020-01-14 07 43 03" src="https://user-images.githubusercontent.com/50481755/72299205-7c3a8300-36a3-11ea-9501-ba6629f88ed4.png">
+
 
  
 # Features
