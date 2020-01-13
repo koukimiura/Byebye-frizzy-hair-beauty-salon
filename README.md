@@ -128,27 +128,8 @@ $ rails g bootstrap:install
 
 *whenever
 
-# 実行環境を指定する
-
-set :environment, Rails.env.to_sym 
-set :environment, :development
-
-# 実行logの出力先
-
-set :output, "#{Rails.root.to_s}/log/cron.log"
-
-set :environment　
-
-set :outputでlogの出力先を指定。
-
-
-実行コマンド
-
-# 反映
 whenever --update-crontab
-# 無効化
 whenever --clear-crontab
-# 確認
 whenever
 
 
@@ -158,12 +139,9 @@ whenever
 *basic認証
 
 vim ~/.bash_profile
-
 export BASIC_AUTH_USER='xxxx'
 export BASIC_AUTH_PASSWORD='xxxx'
-
 $ source ~/.bash_profile
-
 
 
 
@@ -187,13 +165,6 @@ It is available to choose menu.
 It is available to choose staff.
 
 It is available to choose date and time.
-
-
-
-
-# Note
- 
-
 
 
 
