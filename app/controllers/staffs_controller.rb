@@ -1,6 +1,6 @@
 class StaffsController < ApplicationController
-    before_action :basic_auth#, if: :production?
-    before_action :staff_id_check, only: [:edit, :update, :destroy]
+ before_action :basic_auth, if: :production?
+ before_action :staff_id_check, only: [:edit, :update, :destroy]
     
     def index
         @staffs = Staff.all.order(status: :asc)
@@ -75,8 +75,10 @@ class StaffsController < ApplicationController
 
 
         def staff_id_check
-            if Staff.find_by(id: params[:id])
-                
+            staff = Staff.find_by(id: params[:id])
+            
+            if staff.nil?
+                flash[:alert] = 'メニューがありません。'
                 redirect_to root_path
                 
             end

@@ -1,5 +1,5 @@
 class MenusController < ApplicationController
-  before_action :basic_auth #, if: :production?
+  before_action :basic_auth, if: :production?
   before_action :menu_id_check, only: [:edit, :update, :destroy]
   
   def index
@@ -85,11 +85,13 @@ class MenusController < ApplicationController
     end
   
     def menu_id_check
+        menu =  Menu.find_by(id: params[:id])
+        
+        if menu.nil?
+            flash[:alert] = 'メニューが見つかりません。'
+            redirect_to root_path
+        end
       
-      !if Menu.find_by(id: params[:id])
-        flash[:alert] = 'メニューが見つかりません。'
-         redirect_to root_path
-      end
     end
 
 end

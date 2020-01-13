@@ -1,5 +1,6 @@
 class SchedulesController < ApplicationController
- before_action :basic_auth#, if: :production?
+ before_action :basic_auth, if: :production?
+ before_action :schedules_check, only: [:create]
 
 
     def index
@@ -23,13 +24,18 @@ class SchedulesController < ApplicationController
         end
     end
     
+    
+    
     def new
         @staffs = Staff.all.order(status: :asc)
         @schedule = Schedule.new 
         
-        this_month_first_day = Date.today.beginning_of_month
-        next_month = this_month_first_day.next_month
-        @dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
+        #this_month_first_day = Date.today.beginning_of_month
+        #next_month = this_month_first_day.next_month
+        #@dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
+        
+        #rangeDate   pravateメソッドないから呼び出し
+        @dates = rangeDate  
         
         
         
@@ -39,8 +45,6 @@ class SchedulesController < ApplicationController
 
     
     def create
-        #staffId = params[:staff_id]
-        #date_and_times = params[:date_and_time]
         
         #@schedule = Schedule.new(schedule_params)
         logger.debug("--------------schedule_params=#{schedule_params}")
@@ -140,6 +144,7 @@ class SchedulesController < ApplicationController
                 #logger.debug("------original_time=#{time}")
                 
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
+                
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'break')
                     
                     logger.debug("------break_date=#{date}")
@@ -149,6 +154,7 @@ class SchedulesController < ApplicationController
                 elsif time == "9:30" || time == "21:00"
                 
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'preparation_period')
+                    
                     logger.debug("------preparation_period_date=#{date}")
                     logger.debug("------preparation_period_time=#{time}")
                 
@@ -158,6 +164,7 @@ class SchedulesController < ApplicationController
                     #退勤時間を18:00にしても予約するときはavailable_timeの最後は17:30で入る。そのため18:00(退勤時間)はscheduleのDBには存在しない。
                     logger.debug("------available_date=#{date}")
                     logger.debug("------available_time=#{time}")
+                    
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'available')
                     
                 end
@@ -187,7 +194,36 @@ class SchedulesController < ApplicationController
         end
         
         
+        def schedules_check
+            
+            staff = Staff.find_by(id: schedule_params[:staff_id])
+                
+            if staff.nil?
+                
+                flash[:alert] = 'スタッフを選択してください。'
+                redirect_to schedules_new_path
+            
+             elsif  Schedule.where(date: rangeDate, staff_id: staff.id).present?
+                
+                flash[:alert] = '選択されたスタッフのシフトはすでに組まれています。'
+                redirect_to schedules_new_path
+            
+            end
+            
+        end
         
+        
+        def rangeDate
+            this_month_first_day = Date.today.beginning_of_month
+            next_month = this_month_first_day.next_month
+            
+            #rangeDate   pravateメソッドないから呼び出し
+            return (next_month..next_month.end_of_month)
+            
+        end
+        
+        
+    
         def schedule_params
             #一回配列がネストするパターン
             
@@ -195,6 +231,5 @@ class SchedulesController < ApplicationController
                                                         :start_time => [:number, :frame], 
                                                         :end_time => [:number, :frame]
                                             )
-
         end
 end

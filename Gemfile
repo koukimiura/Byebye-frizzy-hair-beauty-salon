@@ -67,7 +67,7 @@ gem 'execjs'
 
 
 #select2
-gem "select2-rails"
+#gem "select2-rails"
 
 #font-awsome
 

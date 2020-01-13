@@ -1,73 +1,82 @@
-# README
-
-# Name
- 
-# VINFASH
+# Byebye frizzy hair beauty salon
 
  
 # Description
 
-The purpose of this app is making friends who likes vintage clothing and postting your favarite one.
+This application is making reservations	web site created based on hair salon web site.
+(This hair salon's name dose not actually exsit.)
 
-このWEBアプリケーションは古着好きの友達作り、投稿の閲覧を目的として作られました。
+Create reservations to hava hair cut.
+
+Registar new staffs and menus.
+
+edit staffs and menus
+
+Create staff's schedules.
+
+
+このWEBアプリケーションは美容サロンの予約サイトをモデルに作られたアプリです。
+
+ヘアカットの予約をします。
+
+新しいスタッフとメニューを登録します。
+
+スタッフとメニューの編集をします。
+
+スタッフのスケジュールを作成します。
 
 # DEMO
- notification
+ Choosing Menus
  
  
- user page
+ Choosing Date
  
  
- chat
+ Making staff's schedules
+ 
+ 
+ Making sure staff's schedules
  
  
 
  
 # Features
  
-* Create an accaunt.
-* Following other users
-* Chating with other users.
-* Posting photos.
-* Sending  comments to other's post
-* Announcing your any events which will take place before long.
+* Create and Update staffs.
+* Create and Update menus
+* Reserve haricut.
+* Create staff schedules.
+
  
-* This app has notification. if you receive that, it shows someone follows you, texts you, or makes comments on your posts.
- 
-*記事関連
-    投稿機能
+*スタッフ関連
+    登録機能
+    編集機能
+    削除機能
     一覧表示機能
-    詳細表示機能
+
+*メニュー関連
+    登録機能
     削除機能
     編集機能
-    プレビュー機能
-    
-*ユーザー関連
+    一覧表示機能
+
+
+
+*スケジュール（従業員シフト）関連
+    シフト表
     登録機能
-    よく行く買い物エリアの登録機能
-    編集機能(アドレス・パスワード)
-    管理ユーザー追加機能
-    ログイン・アウト機能
-    
-*チャット機能
-    チャット機能
-    最新チャット一覧
 
-*コメント関連
-    コメント投稿機能
-    削除機能
-    
-*友達関連
-    フォロー機能
-    チャット機能
 
-*通知機能
-    フォロー通知機能
-    メッセージ通知機能
-    投稿に対するコメント通知機能
     
-*お問い合わせ機能
-    お問い合わせを送信機能
+*予約機能
+    予約機能
+    メニュー選択機能
+    スタッフ選択機能
+    日時選択機能
+    カスタマー詳細機能
+    予約一覧機能
+    予約削除機能
+    予約検索機能
 
 
 # Requirement
@@ -83,18 +92,20 @@ Library(gem)
     *sqlite3  1.3.13
     *puma
     *jquery-rails
-    *bootstrap
+    *therubyracer
+    *less-rails
+    *twitter-bootstrap-railss
+    *'sprockets', '3.7.2'
+    *'execjs'
     *carrierwave
-    *devise
     *seed_fu 2.3
-    *font-awesome-rails
-    *data-confirm-moda
-    *kaminari ページネーション 0.17.0
+    *whenever
+    *basic認証
+    
+    
 
 # Setup
  
-
-
 *carrierwave
 
 $ bundle install
@@ -105,13 +116,7 @@ mount_uploader :image, ImageUploader
 
 
 
-*devise
 
-$ rails g devise:install
-$ rails g devise user
-$ rails db:migrate
-$ rails g devise：controllers users
-$ rails g devise:views
 
 *bootstrap
 
@@ -119,26 +124,76 @@ $ rails g bootstrap:install
 
 
 
+
+
+*whenever
+
+# 実行環境を指定する
+
+set :environment, Rails.env.to_sym 
+set :environment, :development
+
+# 実行logの出力先
+
+set :output, "#{Rails.root.to_s}/log/cron.log"
+
+set :environment　
+
+set :outputでlogの出力先を指定。
+
+
+実行コマンド
+
+# 反映
+whenever --update-crontab
+# 無効化
+whenever --clear-crontab
+# 確認
+whenever
+
+
+
+
+
+*basic認証
+
+vim ~/.bash_profile
+
+export BASIC_AUTH_USER='xxxx'
+export BASIC_AUTH_PASSWORD='xxxx'
+
+$ source ~/.bash_profile
+
+
+
+
+
+
+
 # Usage
 
-you can post something without photo.
+It is available to create and update staff's infomation.
 
-Two users follow each other, then they can chat.
+It is available to create and update menus.
 
- 
-# License
+It is available to make staff's schedules.
 
-This software is released under the MIT License, see LICENSE.
+It is available to make staff's schedules.
+
+It is available to make staff's schedules.
+
+It is available to choose menu.
+
+It is available to choose staff.
+
+It is available to choose date and time.
+
+
+
 
 # Note
  
-Everyone can see user's posts, but if you would like to enjoy anything else, you have to sign up or logn in.
 
-投稿、イベントの閲覧はできますが、他の機能を使う場合はSing Upまたは、Logn inが必要となります。
-
-*simple accaunt   
-
-*you can use the one  (テスト用にお使いください。)
 
 
 
@@ -147,9 +202,6 @@ Everyone can see user's posts, but if you would like to enjoy anything else, you
  
 * Koki Miura　　
 * Toyo univercity
-* miurak565@gmail.com
- 
 * 三浦 光樹　　
 * 東洋大学
-* miurak565@gmail.com
  

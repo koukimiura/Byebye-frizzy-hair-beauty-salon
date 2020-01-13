@@ -5,9 +5,8 @@ $(document).ready(function() {
     var times = sessionStorage.getItem('array_time');
     var prices = sessionStorage.getItem('array_price');
     var array_menus = JSON.parse(sessionStorage.getItem('menus'));
-    console.log(times);
-    console.log(prices);
-    
+    //var array_clones = JSON.parse(sessionStorage.getItem('clonedMenu'));
+    var array_clones = sessionStorage.getItem('clonedMenu');
     
     if (window.performance.navigation.type === 0/* TYPE_NAVIGATE */) {
       // 初期表示
@@ -25,44 +24,77 @@ $(document).ready(function() {
         $("#totalPrice").attr('price', prices).html('￥' + prices);
         $("#totalTime").attr('time', times).html(times + '分');
         
-        var $copy= $('#selectedMenu').clone().css('display', 'block');
         
+        console.log(times);
+        console.log(prices);
         console.log(array_menus);
-        //console.log(clonexxxx);
+        //console.log(JSON.parse(array_clones));
         
-        //var i = 0;
         
-
+        var i = 0;
         
-        //while (i < array_menus.length) {
-        //array_menus.forEach((menu) => {
+        var Ids =[];
         
-        //$copy.attr('id', 'selectedCheck'+ menu['value']);
-        //createdId.push('selectedCheck'+ menu['value']);
-       // $copy.find('#selected_Name').html(menu[i]['nameKey']);
-        //$copy.find("#selected_Price").html('￥' + menu[i]['priceKey']);
-        //$copy.find("#selected_Time").html(menu[i]['timeKey'] + '分');
     
-        
-        //});
-       ////// i ++;
-        //}
-        //$('#selectedMenu').after($copy);
-        
-      
+        while (i < array_menus.length){
+            array_menus.forEach(function(menu){
+                
+                //== と ===は同じデータ型であれば　===が推奨される。しかも厳密な条件文。
+                //初回
+                if (i === 0) {
+                    var $copy = $('#selectedMenu').clone().css('display', 'block');
+                    $copy.removeAttr('id');
+                    
+                    var Id = 'selectedCheck'+ (menu['value']);
+                        
+                    Ids.push(Id);
+                    
+                    $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                    $copy.find('#selected_Name').html(menu['nameKey']);
+                    $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                    $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                    $('#selectedMenu').after($copy);
+                    
+                    
+                } else {
+                    
+                    var $copy = $('#selectedMenu').clone().css('display', 'block');
+                    $copy.removeAttr('id');
+                    
+                    var Id = 'selectedCheck'+ (menu['value']);
+                    
+                    
+                    $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                    
+                    
+                    $copy.find('#selected_Name').html(menu['nameKey']);
+                    $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                    $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                    
+                    console.log(Ids.pop());
+                    
+                    // 配列のケツの要素をとってきて、一個前にviewに出力したidの前に$copyを出力
+                    $(Ids.pop()).before($copy);
+                    
+                    //月の配列要素が来たときのために最後にプッシュs
+                    Ids.push(Id);
+                    
+                }
+            //i ++;
+            });
+        i ++;   
+       }
     }
 
    
 
 
-
-
     $(document).on('change','input:checkbox', function() { 
+        
         //選択されたメニューの表示
         if(this.checked){
             var $copy= $('#selectedMenu').clone().css('display', 'block');
             $copy.removeAttr('id');
-                
             $copy.attr('id', 'selectedCheck'+$(this).val());
             
             var name = $(this).attr('data-name');
@@ -76,10 +108,6 @@ $(document).ready(function() {
             $('#selectedMenu').after($copy);
             
             
-            //$(document).on('click', '#submit-btn', function(){
-                
-             //});
-            
             
         } else {
             //用事されているidを取得してremove();
@@ -87,38 +115,41 @@ $(document).ready(function() {
             target.remove();
         }
         
-      
+ 
+ 
+//----------------------------------------------------------------------------------
+
         //金額合計と時間
         
         //Ids = [];
-        //names = [];
-        prices = [];
-        required_time = [];
-        array_hash_menus = [];
+        var prices = [];
+        var required_time = [];
+        var array_hash_menus = [];
+        var clones=[]
         
        
         //checkboxがcheckされているかどうか//
-        
-
-        //while ( i < length) {
+    
         $('input[name="menus[]"]:checked').each(function() { 
-            //console.log($('input[name="menus[]"]:checked').length);
 
-            //文字列を整数に直す  parseInt valueを取得    //
+            //文字列を整数に直す  parseInt valueを取得
             var menuId = $(this).val();
             var name= $(this).attr('data-name');
             var number= parseInt($(this).attr('data-price'));
             var time = parseInt($(this).attr('data-time'));
             
+            var clone = $(this).clone();
+            
+            //console.log(clone);
             //Ids.push(id);
-            //names.push(name);
             prices.push(number);
             required_time.push(time);
+            clones.push(clone);
             
             // keyは文字列かシラブル、　valueは文字列が基本
             //array_hash_menus.push({ [i]: {"value": menuId, "nameKey": name, "priceKey": price, "timeKey": time}});
             array_hash_menus.push({"value": menuId, "nameKey": name, "priceKey": price, "timeKey": time});
-            
+            //array_hash_clones.push({clone});
         });
         
     
@@ -126,12 +157,14 @@ $(document).ready(function() {
         //parseInt($('#totalPrice').attr('price'));  <- これでやってたから一度選択された値が足されていた。//
         
         var total_Price = 0; 
+        
         for (var i=0, len = prices.length; i < len; i++) {
             total_Price += prices[i];
         }
         
         
         var total_Time = 0;
+        
         for (var i=0, len =required_time.length; i < len; i++) {
             total_Time += required_time[i];
         }
@@ -142,16 +175,21 @@ $(document).ready(function() {
         
         console.log(total_Time);
         console.log(total_Price);
+        console.log(clones);
         
         // keyは文字列かシラブル、　valueは文字列が基本
         //menus_hash = {"value": Ids, "name": names, "price": prices, "time": required_time};
 
+
         //javascriptオブジェクトからjson化するメソッド
+        //sessionStrageは文字列で渡さないといけない。
         var tojson = JSON.stringify(array_hash_menus);
+        //var tojson_clones = JSON.stringify(clones);
 
         sessionStorage.setItem('array_time', total_Time);
         sessionStorage.setItem('array_price', total_Price);
         sessionStorage.setItem('menus', tojson); 
+        sessionStorage.setItem('clonedMenu', JSON.stringify(clones)); 
 
    });
 
@@ -170,20 +208,6 @@ $(document).ready(function() {
         }
         
         
-        
-        
-       // clonexxx=[]
-        
-       // $('input[name="menus[]"]:checked').each(function() { 
-            //var $clone = $('#selectedCheck'+$(this).val()).clone();
-            ///clonexxx.push($clone);
-            
-      //  });
-        
-        //console.log(clonexxx);
-                    
-        //sessionStorage.setItem('clone', JSON.stringify(clonexxx));             
-                
      });
 });
 

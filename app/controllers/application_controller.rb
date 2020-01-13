@@ -1,15 +1,16 @@
 class ApplicationController < ActionController::Base
  #before_action :basic_auth
  protect_from_forgery with: :exception
-    #before_action :basic , if: :production?
  before_action :update_frame_status
   
   
   private
   
-    #def production?   #プロダクション環境のみで処理する。
-       #Rails.env == "production"
-    #end
+    #プロダクション環境のみで処理する。
+    
+    def production?  
+       Rails.env == "production"
+    end
   
     def basic_auth
         authenticate_or_request_with_http_basic do |username, password|
