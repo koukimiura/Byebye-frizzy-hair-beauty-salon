@@ -5,19 +5,16 @@ class Schedule < ApplicationRecord
     #ストロングパラメータでpermitした属性
     attr_accessor :start_time
     attr_accessor :end_time
-    
-    #attr_accessor :number
-    #attr_accessor :dateKey
-
-    
-    
-    
-    validates :staff_id, :frame, :frame_status, :date, presence: true
-
     belongs_to :staff
-   
-   
-   
+
+     with_options presence: true do
+        validates :staff_id
+        validates :frame
+        validates :date
+        validates :frame_status
+    end
+    
+
     
     def self.do_somthing
         

@@ -34,7 +34,7 @@ class SchedulesController < ApplicationController
         #next_month = this_month_first_day.next_month
         #@dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
         
-        #rangeDate   pravateメソッドないから呼び出し
+        #rangeDate   pravateメソッドから呼び出し
         @dates = rangeDate  
         
         
@@ -47,7 +47,8 @@ class SchedulesController < ApplicationController
     def create
         
         #@schedule = Schedule.new(schedule_params)
-        logger.debug("--------------schedule_params=#{schedule_params}")
+        #logger.debug("--------------schedule_params=#{schedule_params}")
+        
         date_and_times=[]
         
         schedule_params[:date].each do |d|
@@ -64,9 +65,7 @@ class SchedulesController < ApplicationController
         end
 
         total_Index = date_and_times.length
-        logger.debug("---------date_and_times=#{date_and_times.inspect}")
-        #logger.debug("---------total_Index=#{total_Index}")
-        
+
         i = 0
         count=[]
         
@@ -81,10 +80,12 @@ class SchedulesController < ApplicationController
             if grount[:end_time] == "0.0" &&  grount[:start_time] != '0.0'
                 flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
                 redirect_to :back and return
+                #render :new and return
                 
             elsif grount[:end_time] != "0.0" &&  grount[:start_time] == '0.0'
                 flash[:alert] = '休暇の場合、出勤時間と退勤時間を休暇にしてください。'
                 redirect_to :back and return
+                #render :new and return
             end
             
             #労働時間用
@@ -131,7 +132,6 @@ class SchedulesController < ApplicationController
 
 
 #-------------create----------------------
-        #logger.debug("-----count=#{count}")
 
         #countをeachで複数個createする。
         count.each do |value|
@@ -170,10 +170,7 @@ class SchedulesController < ApplicationController
                 end
             end
         end
-        
-        
         redirect_to home_basic_path
-      
     end
     
 
@@ -206,7 +203,7 @@ class SchedulesController < ApplicationController
              elsif  Schedule.where(date: rangeDate, staff_id: staff.id).present?
                 
                 flash[:alert] = '選択されたスタッフのシフトはすでに組まれています。'
-                redirect_to schedules_new_path
+                redirect_to home_basic_path
             
             end
             
@@ -230,6 +227,6 @@ class SchedulesController < ApplicationController
             params.require(:schedule).permit(:staff_id, :date => [:number, :dateKey], 
                                                         :start_time => [:number, :frame], 
                                                         :end_time => [:number, :frame]
-                                            )
+                                                        )
         end
 end

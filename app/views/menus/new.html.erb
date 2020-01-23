@@ -5,3 +5,23 @@
         <%= render 'form', {:f => f} %>
     <% end %>
 </div>
+
+<script>
+
+    //render後のリロード対策
+    function addToNewUrl() {
+        
+        //urlを取得
+        let path = location.pathname;
+        let pattern = "/menus/new"
+    
+        // URLが正しければ変更は不要
+        if(path.match(pattern)) return;
+    
+        // URLを変更
+        history.replaceState('', '', "/menus/new" );
+    }
+    
+    window.onload = addToNewUrl();
+    
+</script>

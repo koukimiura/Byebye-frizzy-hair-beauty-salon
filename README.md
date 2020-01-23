@@ -177,7 +177,7 @@ It is available to choose menu.
 
 It is available to choose staff.
 
-It is available to choose date and time.
+It is available to choose a date and time.
 
 
 

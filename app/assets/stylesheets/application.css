@@ -14,7 +14,8 @@
  *= require_self
 
  */
-
+ 
+/** お客さんが見るページのみレスポンシブデザイン入れて*/
 
 *{
      box-sizing: border-box;
@@ -502,6 +503,15 @@ td {
 
 /*modal*/
 
+@media screen and (min-width: 0px) and (max-width: 812px) {
+  
+}
+
+
+
+
+
+
 .staff-show {
     /**display: none;**/
     display: none;
@@ -655,12 +665,25 @@ td {
 }
 
 /** custamer-detail **/
+@media screen and (min-width: 0px) and (max-width: 812px) {
+    custamer-detail {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100vw;
+         height: 100vh;
+    }
+}
+
+
 
 .custamer-detail {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
 }
+
+
 
 .custamer {
     padding: 10px;

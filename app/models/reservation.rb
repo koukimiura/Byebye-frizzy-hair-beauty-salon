@@ -6,10 +6,17 @@ class Reservation < ApplicationRecord
     #require trueがつく可能性が高い
     #belongs_to :menu     配列で入れてる
     
-    #validates :staff_id, :frame, :frame_status, presence: true
-    
 
-    validates :staff_id, :menu_ids, :frames, :date, :gender, :last_name, :first_name, presence: true 
+    with_options presence: true do
+        validates :staff_id
+        validates :menu_ids
+        validates :frames
+        validates :date
+        validates :gender 
+        validates :last_name
+        validates :first_name
+    end
+    
     
     validates :last_name_kana, :first_name_kana, presence: true,
                                                     format: { 
@@ -36,29 +43,34 @@ class Reservation < ApplicationRecord
 
 
 
-
-
-
-
-
-    
-
-
-
-
-    
     #予約検索
     
     #クラスメソッド、　Reservation.searchってこと
     def self.search(search_tel, search_date, dates)
             
-        return  Reservation.where(date: dates) unless search_tel || search_date #今日以降のデータ       
-        
-                Reservation.where(date: search_date) unless search_tel #日付
-        
-                Reservation.where(tel: search_tel) unless search_date #電話番号
+            #今日以降のデータ    
+            if search_tel.present? && search_date.present?
+            
+                result = Reservation.where(date: search_date, tel: search_tel).order(date: :asc)      
+            
+            #日付
+            elsif search_date.present?
+            
+                result = Reservation.where(date: search_date).order(date: :asc)  
+            
+            #電話番号
+            elsif search_tel.present?
+            
+                result = Reservation.where(tel: search_tel).order(date: :asc)  
+            
+            #フル入力    
+            else
                 
-                Reservation.where(date: search_date, tel: search_tel) #フル入力
+                result = Reservation.where(date: dates).order(date: :asc)
+                
+            end
+            
+        return result
     end
     
     

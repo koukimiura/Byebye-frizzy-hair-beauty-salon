@@ -2,8 +2,8 @@
 <div class='search'>
     <div class='search-for-reservation'>
         <h3>予約検索<span class='font-color name-margin'>予約を削除したい場合はこちらをご利用ください</span></h3>
-        <p　class='font-color'>電話で問合せいただいたことを想定して</p>
-<!-------検索フォーマット----------------------------------------------------------------->
+        <p class='font-color'>電話で問合せいただいたことを想定して</p>
+    <!-------検索フォーマット----------------------------------------------------------------->
             <%= form_tag({controller: :reservations, action: :search}, {method: 'get'}) do   %>
                 <div class='search_form'>
                     <p>お客さんの登録した電話番号(数値のみ)</p>
@@ -11,23 +11,18 @@
                     
                     <p>来店予定日</p>
                         <select name= 'search_date'>
-                            <!--<option value='', selected = ''>不明</option>-->
+                            <option value="" selected="">洗濯してください</option>
                             <% @dates.each do |date| %>
                                 <option name="search_date" value="<%= date %>"><%= date.strftime("%Y年 %m月 %d日") %></option>
-                                <% logger.debug ("-----------date=#{date}") %>
                             <% end %>
                         </select>
-                        
                     <%= submit_tag 'Search', :name => nil %>
                 </div>       
             <% end %>
     </div>
 <hr>
-
-
 <!-------検索結果を表示------------------------------------------------------------------>
 <!----------indexと作りが少し違うのでrenderはしない。　具体的にはdestroyボタン ------>
-
     <div class='selected-reservations'>
         <h3>検索結果</h3>
             <% @searchedReservations.each do |reservation| %>
@@ -60,7 +55,6 @@
                                     </div>    
                                 </div>
                             </div>
-                            
                             <div class='reservations-middle'>
                                 <div class='reservation-in-charge-staff-image'>
                                     <% staff = Staff.find_by(id: reservation.staff_id) %>
@@ -70,7 +64,6 @@
                                     <p><i><%= @name %></i><%= staff.last_name %><span class='name-margin'><%= staff.first_name %></span></p>
                                 </div>
                             </div>
-                            
                             <div class='reservation-down-side-search'>
                                 <div class='reservation-custamer_detail'>
                                     <p class='font-color'>詳細</p>

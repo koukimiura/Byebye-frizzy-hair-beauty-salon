@@ -1,0 +1,26 @@
+ja:
+  activerecord:
+    models:
+      staff: スタッフ
+      menu: メニュー
+    attributes:
+      staff:
+        last_name: 名前
+        first_name: 性
+        last_name_kana: 名前（カナ)
+        first_name_kana: 性（カナ)
+        number: 社員番号
+        age: 年齢
+        gender: 性別
+        experience: 経験
+        status: ポジション
+        self_introduction: 自己紹介
+        image: 画像
+      menu:
+        name: 名前
+        category: カテゴリー
+        price: 値段
+        required_time: 必要時間
+        detail: 詳細
+
+

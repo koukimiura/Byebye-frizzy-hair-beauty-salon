@@ -79,3 +79,6 @@ gem 'execjs'
 #定期的共通処理
 #gem 'whenever'
 gem 'whenever', require: false
+
+#エラーメッセージ日本語化
+gem 'rails-i18n'

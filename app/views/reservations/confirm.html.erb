@@ -1,7 +1,6 @@
 <div class='confirmation'>
     <div class='main-title'>
         <%= form_for @reservation do |f| %>
-
         <h2 class='text-center'>予約内容を確認してください</h2>
     </div>
     <div class='main'>
@@ -72,7 +71,7 @@
         </div>
     </div>
 
-            <%= f.hidden_field :staff_id, :value => @staff.id %>
+            <%= f.hidden_field :staff_id, :value => @reservation.staff_id %>
             <%= f.hidden_field :last_name, :value => @reservation.last_name %>
             <%= f.hidden_field :first_name, :value => @reservation.first_name %>
             <%= f.hidden_field :last_name_kana, :value => @reservation.last_name_kana %>
@@ -85,13 +84,13 @@
             <%= f.hidden_field :date, :value => @reservation.date %>
             
             <!-- 渡すvalueをjson文字列にしてます。-->
-            <%= f.hidden_field :menu_ids, :value => @hash_menuIds.to_json %>
-            <%= f.hidden_field :frames, value: @hash_frames.to_json %>
-
-
+            <%= f.hidden_field :menu_ids, :value => @reservation.menu_ids %>
+            <%= f.hidden_field :frames, :value => @reservation.frames %>
+            
+            
     <div class='menu-footer'>
             <%= link_to "戻る", :back, class: 'btn btn-success' %>
-            <%= f.submit :この内容で次へ, class:'btn btn-info' %>
+            <%= f.submit :確定, class:'btn btn-info' %>
         <% end %>
     </div>
 </div>

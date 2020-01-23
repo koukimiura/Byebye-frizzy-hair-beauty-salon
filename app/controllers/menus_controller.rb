@@ -18,7 +18,6 @@ class MenusController < ApplicationController
     @setting_your_hair = 'ヘアセット'
     @other = 'その他'
     
-    
   end
 
 
@@ -30,8 +29,8 @@ class MenusController < ApplicationController
 
 
   def create
-    @menu = Menu.new(menu_params)
     
+    @menu = Menu.new(menu_params)
     if @menu.save
       flash[:notice] = '新メニューを作成しました。'
       redirect_to menus_path
@@ -70,8 +69,6 @@ class MenusController < ApplicationController
     
       menu.destroy
       redirect_to menus_path
-      
-    
   end
   
   

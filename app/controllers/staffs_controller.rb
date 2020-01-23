@@ -13,22 +13,22 @@ class StaffsController < ApplicationController
     
     def new
         @staff = Staff.new
-        staffIds = Staff.pluck(:id)
+        
         date = Date.today
+        staffIds = Staff.pluck(:id)
         @staff_number = "推奨ナンバー#{date.year}#{staffIds.last + 1}"
-        #logger.debug("----------@staff_number=#{@staff_number}")
     end
     
     
     def create
         @staff = Staff.new(staff_params)
-            if @staff.save
-                flash[:notice] = '社員登録完了しました。'
-                redirect_to staffs_path
-            else 
-                flash.now[:alert] = '社員登録完了していません。'
-                render :new
-            end
+        if @staff.save
+            flash[:notice] = '社員登録完了しました。'
+            redirect_to staffs_path
+        else 
+            flash.now[:alert] = '社員登録完了していません。'
+            render :new
+        end
     end
     
     
@@ -42,9 +42,7 @@ class StaffsController < ApplicationController
         
         #else以下が実行された場合 renderが発動するので@staffにしておけば、勝手staffでーたを飛ばしてくれます。
         @staff = Staff.find(params[:id])
-        logger.debug("-------@staff=#{@staff.id}")
-        logger.debug("-----------staff_params#{staff_params}")
-        
+
         @staff.assign_attributes(staff_params)
         
         if @staff.save

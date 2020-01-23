@@ -1,55 +1,16 @@
-<script>
-    history.pushState(null, null, null);
-    window.addEventListener("popstate", function (e) {
-        
-        alert('左下の戻るボタンを使用してください。');
-        return false;
-        
-    });
-</script>
-
-
 <div class='custamer'>
     <div class='main-header'>
         <h2 class='text-center'>お客様情報を入力してください</h2>
     </div>
     <div class='custamer-detail'>
-        <%= form_for @reservation, :url => {:controller => :reservations, :action => :custamer_info} do |f| %>
-            
+        <%= form_for @reservation, :url => {:controller => :reservations, :action => :deal} do |f| %>
             <div class='custamer row'>
-                <div class='col-xs-12 col-md-6 text-left'>    
-                    <%= hidden_field_tag "selectedStaff", @staffId %>
-                    <%= f.hidden_field :date, :value => @date %>
-                    
-                    
-                    <% if  @menuIds.nil? %>
-                    
-                        <% JSON.parse(@reservation.menu_ids).each do |menuId| %>
-                            <input type ='hidden' name="menus[]", value="<%= menuId %>" >
-                        <% end %>
-                        
-                    <% else %>
-                    
-                        <% @menuIds.each do |menuId| %>
-                            <input type ='hidden' name="menus[]", value="<%= menuId %>" >
-                        <% end %>
-                        
-                    <% end %>
-                    
-                    <% if  @total_frames.nil? %>
-                    
-                        <% JSON.parse(@reservation.frames).each do |frame| %>
-                            <input type ='hidden' name="frame[]", value="<%= frame %>" >
-                        <% end %>
-                        
-                    <% else %>
-                    
-                        <% @total_frames.each do |frame| %>
-                            <% logger.debug("--------frame=#{frame}") %>
-                            <input type ='hidden' name="frame[]", value="<%= frame %>" >
-                        <% end %>
-                        
-                    <% end %>
+                <div class='col-xs-12 col-md-6 text-left'>
+                      
+                    <%= f.hidden_field :staff_id, :value => @reservation.staff_id %>
+                    <%= f.hidden_field :date, :value => @reservation.date %>
+                    <%= f.hidden_field :menu_ids, :value => @reservation.menu_ids %>
+                    <%= f.hidden_field :frames, :value => @reservation.frames %>
                     
                     <div class='field'>
                         <p>性<span class='must'>※</span></p>
@@ -101,10 +62,58 @@
             <%= f.text_area :request, class: 'form-control form-request' %>
         </div>
         <div class='menu-footer'>
-            <%= link_to "戻る", choose_date_reservations_path(menus: @menuIds, selectedStaff: @staffId, frame: @total_frames, date: @date), class: 'btn btn-success' %>
-            <%= f.submit :この内容で次へ, class:'btn btn-info' %>
+            <%= link_to "戻る", choose_date_reservations_path(menus: @menuIds, selectedStaff: @reservation.staff_id, 
+                                                            frame: @frames, date: @reservation.date), class: 'btn btn-success' %>
+                                                            
+            <%= f.submit :この内容で次へ, class: 'btn btn-info', id: 'toconfirm'  %>
         </div>
         <% end %>
     </div>
 </div>
 
+<script>
+
+$(document).ready(function() {
+    
+    var queryStr = window.location.search; 
+    
+    console.log(queryStr);
+    //storageに保存する。
+    sessionStorage.setItem('params', queryStr);
+    
+});
+
+
+    //ender後のリロード対策
+    function addToNewUrl() {
+        //renderされたらstorageのkeyを取得してdefaultのurlにクエリを追加する。
+        var query = sessionStorage.getItem('params');
+        //urlを取得
+        let path = location.pathname;
+
+        //let pattern = /^.*\/new.*$/
+        
+        let pattern = "/reservations/custamer_detail"
+    
+        // URLが正しければ変更は不要
+        if(path.match(pattern)) return;
+    
+        console.log(query);
+        // URLを変更
+        history.replaceState('', '', "/reservations/custamer_detail" + query);
+    }
+    
+    window.onload = addToNewUrl();
+    
+    
+
+
+    //ブラウザバックを封じる。
+    history.pushState(null, null, null);
+    window.addEventListener("popstate", function (e) {
+        
+        alert('左下の戻るボタンを使用してください。');
+        return false;
+        
+    });
+</script>

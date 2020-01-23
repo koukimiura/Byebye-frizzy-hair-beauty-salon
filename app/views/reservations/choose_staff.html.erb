@@ -56,7 +56,7 @@
                                                 <h4><%= staff.last_name %><span><%= staff.first_name %></span><span><%= staff.last_name_kana %><%= staff.first_name_kana %></span></h4>
                                             </div>  
                                             <div class='close-btn'>
-                                                <a class='close-modal' href="#">X</a>
+                                                <a a href="#">X</a>
                                             </div>
                                         </div>
                                         <div class='staff-show-midle'>
@@ -97,28 +97,51 @@
 
 
 <script>
+$(window).on('load resize', function(){
+		//switch_staff_comment();
+	});
+
+
+
+
     $(document).ready(function(){
         //モーダルウィンドウ処理
         //複数の.open-modalがrubyのeachで繰り返しになっているのでこちらもeach//
         $('.open-modal').each(function(){
             $(this).on('click', function(){
-               var target =　$(this).data('target');
-               var  modal = document.getElementById(target);
-               $(modal).fadeIn();
-               // retun falseでモーダルが表示されてからすぐに非表示になるのを防ぐ    処理の中断
+                let target =　$(this).data('target');
+                let modal = document.getElementById(target);
+                $(modal).fadeIn();
+                
+                // retun falseでモーダルが表示されてからすぐに非表示になるのを防ぐ    処理の中断
                 return false; 
             });
         });
             
-            
-        $('.close-modal').each(function(){
-            $(this).on('click', function(){
-                var target =　$(this).parent('.staff-show').attr('id');
-                var modal = document.getElementById(target);
-                $(target).fadeOut();
-            });
-        });
+     
+        //$('.close-modal').each(function(){
+            //$(this).on('click', function(){
+                //console.log($(this));
+               // var target =　$(this).parent('.staff-show').attr('id');
+                //console.log(target);
+                //var modal = document.getElementById(target);
+                //console.log(modal);
+                //$(target).hide();
+            //});
+        //});
+        
+        
+    $(document).on("click", ".close-btn", function(){
+        console.log($(this));
+        let parent = $(this).closest(".staff-show").attr("id");
+        console.log(parent);
+        $(parent).fadeOut();
     });
+        
+        
+        
+        
+});
 </script>
 
 
