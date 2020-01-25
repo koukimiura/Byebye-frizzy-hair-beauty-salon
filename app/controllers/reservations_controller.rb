@@ -5,6 +5,7 @@ class ReservationsController < ApplicationController
  #createアクションが呼ばれたら、menuIds, staffId, framesは空になっている。
  before_action :nil_check_menus, only: [:choosen_menus, :choose_staff, :choosen_staff, :choose_date]   
  before_action :nil_check_staff, only: [:choosen_staff, :choose_date] 
+ before_action :update_passedTimes, only: [:choose_date]
  before_action :nil_check_something, only: [:custamer_detail]
  before_action :nil_check_strong_parameters, only: [:deal, :confirm, :create]
  before_action :reservation_params, only: [:deal, :create]
@@ -15,7 +16,7 @@ class ReservationsController < ApplicationController
         #@staffs = Staff.all.order(status: :asc)
         @name = '担当スタッフ名前'
         
-        date = Date.today
+        date = Date.current
         twoMonthLater =  date + 2.month
         #今日から予約のできる2ヶ月後まで
         @dates = (date..twoMonthLater)
@@ -26,8 +27,8 @@ class ReservationsController < ApplicationController
     
     def index
         @name = '担当スタッフ名前'
-        end_this_month = Date.today.end_of_month
-        d = (Date.today..end_this_month)
+        end_this_month = Date.current.end_of_month
+        d = (Date.current..end_this_month)
         
         #今日から今月末まで
         this_month_reservations = Reservation.where(date: d).order(date: :asc)
@@ -115,7 +116,6 @@ class ReservationsController < ApplicationController
     
     
     def choose_date
-        
         #paramsで受け取ると文字列になる。
         @menuIds = menuIds_params
         staffId = staffId_params
@@ -135,7 +135,6 @@ class ReservationsController < ApplicationController
                 end
             end
         end
-        
         
 #----------------------------------------------------------       
         #先週と来週の日数
@@ -164,20 +163,17 @@ class ReservationsController < ApplicationController
         @menuRequiredTimes = required_times_integer.sum
         
     
-        #@dの条件文
+        #@dの条件文(先週なのか翌週なのかで表示する一週間を変更)
         if receivedNext
             @d = Date.parse(receivedNext)
             #logger.debug("------d=#{@d}")
             #date= Date.parse(receivedNext)
-        elsif receivedPrev && Date.parse(receivedPrev) < Date.today  #elsifの順番
-            @d = Date.today      #- 2.day
-            #date=Date.today
+        elsif receivedPrev && Date.parse(receivedPrev) < Date.current  #elsifの順番
+            @d = Date.current      #- 2.day
         elsif receivedPrev
             @d = Date.parse(receivedPrev)
-            #date=Date.parse(receivedPrev)
         else 
-            @d = Date.today
-            #date=Date.today
+            @d = Date.current
         end
          @next = @d + 1.week #aタグ用
          @prev = @d - 1.week #aタグ用
@@ -450,11 +446,7 @@ class ReservationsController < ApplicationController
             end
         end
         
-
-    
         def nil_check_something
-            
-
             if menuIds_params == nil && params.fetch(:reservation, {}) == {}
                 
                 flash[:alert] = 'メニューを選択してください。'
@@ -492,7 +484,7 @@ class ReservationsController < ApplicationController
             
         end
         
-        
+#-------------------------json文字列変換-----------------------       
         
         def json_to_hash_frames
             
@@ -517,7 +509,29 @@ class ReservationsController < ApplicationController
             return array_menuIds
         
         end
+        
+#-------------------------------------------------------
+        #時間が過ぎていたら当日のframe_status == availableをupdateする
+        def update_passedTimes
+            #datetime = DateTime.now
+            #tokyo = ActiveSupport::TimeZone.new("Tokyo").parse(datetime.to_s)   
+            #logger.debug("----------time_zone=#{Time.current.zone}")
+            #logger.debug("----------date.current=#{Date.current}")
+            #logger.debug("----------in_time_zone('Tokyo')=#{Time.now.in_time_zone('Tokyo')}")
+            #logger.debug("----------tokyotime=#{Time.parse(tokyo.to_s)}")
             
+            #JSCで日付を検索                                            staffId_paramsの呼び出し
+            schedules = Schedule.where(staff_id: staffId_params).where(date: Date.current).where(frame_status: "available")
+
+            schedules.each do |schedule|
+                #日本時間で(日本の)現在時刻とDBを比較。現在時刻よりも小さいのであればupdate
+                if Time.zone.parse(schedule.frame) < Time.current
+
+                    schedule.update_attributes(frame_status: 'break')
+                
+                end#if
+            end##each
+        end
             
         #ストロングパラメータは制限かけてるですーー
         def reservation_params

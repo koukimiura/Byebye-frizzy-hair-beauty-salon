@@ -16,6 +16,8 @@
                                 <p class='font-color'>＊休暇申請は出勤、退勤時間共に休暇を選択してください。</p>
                                 <%= f.label :日付け %>
                                 <% wday = %w(日 月 火 水 木 金 土)[date.wday] %>
+                     
+                     
                                 <%= date.strftime("%m月 %d日")%>(<%= wday %>)
                                     <!-- hidden_field_tag "date_and_time[][date]", date --> 
                                     <!-- f.hidden_field :date_and_time, name: "schedule[date_and_time[][:date]]", :value => date --> 

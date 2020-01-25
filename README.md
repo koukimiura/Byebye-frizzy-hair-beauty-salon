@@ -3,27 +3,25 @@
  
 # Description
 
-This application is making reservations	web site created based on hair salon web site.
-(This hair salon's name dose not actually exsit.)
+* This application is making reservations	web site created based on hair salon web site. (This hair salon's name dose not actually exsit.)
 
-Create reservations to hava hair cut.
+* Create reservations to hava hair cut.
 
-Registar new staffs and menus.
+* Registar new staffs and menus.
 
-edit staffs and menus
+* edit staffs and menus
 
-Create staff's schedules.
+* Create staff's schedules.
 
+* このWEBアプリケーションは美容サロンの予約サイトをモデルに作られたアプリです。
 
-このWEBアプリケーションは美容サロンの予約サイトをモデルに作られたアプリです。
+* ヘアカットの予約をします。
 
-ヘアカットの予約をします。
+* 新しいスタッフとメニューを登録します。
 
-新しいスタッフとメニューを登録します。
+* スタッフとメニューの編集をします。
 
-スタッフとメニューの編集をします。
-
-スタッフのスケジュールを作成します。
+* スタッフのスケジュールを作成します。
 
 # DEMO
 
@@ -60,104 +58,86 @@ Create staff's schedules.
 * Reserve haricut.
 * Create staff schedules.
 
- 
-*スタッフ関連
-    登録機能
-    編集機能
-    削除機能
-    一覧表示機能
+<dl>
+    <dt>スタッフ関連</dt>
+    <dd>登録機能</dd>
+    <dd>編集機能</dd>
+    <dd>削除機能</dd>
+    <dd>一覧表示機能</dd>
+</dl>
 
-*メニュー関連
-    登録機能
-    削除機能
-    編集機能
-    一覧表示機能
+<dl>
+    <dt>メニュー関連</dt>
+    <dd>登録機能</dd>
+    <dd>編集機能</dd>
+    <dd>削除機能</dd>
+    <dd>一覧表示機能</dd>
+</dl>
 
+<dl>
+    <dt>スケジュール（従業員シフト）関連</dt>
+    <dd>シフト表</dd>
+    <dd>登録機能</dd>
+</dl>   
 
-
-*スケジュール（従業員シフト）関連
-    シフト表
-    登録機能
-
-
+<dl>
+    <dt>予約機能関連</dt>
+    <dd>予約機能</dd>
+    <dd>メニュー選択機能</dd>
+    <dd>スタッフ選択機能</dd>
+    <dd>日時選択機能</dd>
+    <dd>カスタマー詳細機能</dd>
+    <dd>予約一覧機能</dd>
+    <dd>予約削除機能</dd>
+    <dd>予約検索機能</dd>
+</dl>   
     
-*予約機能
-    予約機能
-    メニュー選択機能
-    スタッフ選択機能
-    日時選択機能
-    カスタマー詳細機能
-    予約一覧機能
-    予約削除機能
-    予約検索機能
-
 
 # Requirement
     
-     *ruby 2.6.3
-     *Rails 5.0.7.2
-     *html
-     *css 
-     *javascript
-
-Library(gem)
-    
-    *sqlite3  1.3.13
-    *puma
-    *jquery-rails
-    *therubyracer
-    *less-rails
-    *twitter-bootstrap-railss
-    *'sprockets', '3.7.2'
-    *'execjs'
-    *carrierwave
-    *seed_fu 2.3
-    *whenever
-    *basic認証
-    
+    ruby 2.6.3
+    Rails 5.0.7.2
+    html
+    css 
+    javascript
+    sqlite3  1.3.13
+    puma
+    jquery-rails
+    therubyracer
+    less-rails
+    twitter-bootstrap-railss
+    carrierwave
+    seed_fu 2.3
+    whenever
+    basic認証
     
 
 # Setup
  
-*carrierwave
+* carrierwave
 
-$ bundle install
-$ rails g migration add_image_to_articles カラム名:string
-$ rails db:migrate
-$ rails g uploader Image
-mount_uploader :image, ImageUploader
+`$ bundle install`<br>
+`$ rails g migration add_image_to_articles カラム名:string`<br>
+`$ rails db:migrate`<br>
+`$ rails g uploader Image`<br>
+`mount_uploader :image, ImageUploader`<br>
 
+* bootstrap
 
+`$ rails g bootstrap:install`<br>
 
+* whenever
 
+`whenever --update-crontab`<br>
+`whenever --clear-crontab`<br>
+`whenever`<br>
 
-*bootstrap
+* basic認証
 
-$ rails g bootstrap:install
-
-
-
-
-
-*whenever
-
-whenever --update-crontab
-whenever --clear-crontab
-whenever
-
-
-
-
-
-*basic認証
-
-vim ~/.bash_profile
-export BASIC_AUTH_USER='xxxx'
-export BASIC_AUTH_PASSWORD='xxxx'
-$ source ~/.bash_profile
-
-
-
+`vim ~/.bash_profile`<br>
+`export BASIC_AUTH_USER='xxxx'`<br>
+`export BASIC_AUTH_PASSWORD='xxxx'`<br>
+`$ source ~/.bash_profile`<br>
 
 
 
@@ -185,7 +165,7 @@ It is available to choose a date and time.
 # Author
  
 * Koki Miura　　
-* Toyo univercity
+* Toyo university
 
 * 三浦 光樹　　
 * 東洋大学

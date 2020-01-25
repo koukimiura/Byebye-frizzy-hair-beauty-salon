@@ -22,5 +22,9 @@ module Myapp
     #これは、正規表現を使い、config/locales以下のディレクトリ内にある全てのymlファイルを読み込むように指示する一文となります。
     
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '**', '*.yml').to_s]
+    
+    #UTC(グリンリッジの時間)をJSC化
+    config.time_zone = 'Tokyo'
+
   end
 end

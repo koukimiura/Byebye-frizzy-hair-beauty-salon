@@ -18,7 +18,7 @@ class Schedule < ApplicationRecord
     
     def self.do_somthing
         
-        date = Date.today - 2.months
+        date = Date.current - 2.months
         first_date = date.beginning_of_month.to_s  #指定した月の初日
         last_date = date.end_of_month.to_s #指定した月の最終日
         

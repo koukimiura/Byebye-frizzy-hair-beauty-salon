@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
  #before_action :basic_auth
  protect_from_forgery with: :exception
  before_action :update_frame_status
+ #before_action :japanese_time
   
   
   private
@@ -18,8 +19,6 @@ class ApplicationController < ActionController::Base
         end
     end
     
-    
-    
     #keepを30分後updateする。
     def update_frame_status
         
@@ -31,23 +30,21 @@ class ApplicationController < ActionController::Base
 
         schedules.each do |schedule|
             #logger.debug("--------schedule.updated_at =#{schedule.updated_at}")
-            #30分足す。
-            after_30min =  schedule.updated_at + 900
+            #15分足す。
+            after_15min =  schedule.updated_at + 900
              
             #logger.debug("--------グリンリッジ=#{time}")
             #logger.debug("--------target..=#{Time.parse(after_30min.to_s)}")
                 
              #Time.parse　string化しなさい。
              #update時間の30g後の時間が現在時刻より小さくなったら
-            if Time.parse(after_30min.to_s) < time
+            if Time.parse(after_15min.to_s) < time
                 
                 schedule.update_attributes(frame_status: 'available')
                 
-            end
-        end
+            end#if
+        end#each
+    end#update_frame_status
         
-     
-    end
-    
-    
+        
 end

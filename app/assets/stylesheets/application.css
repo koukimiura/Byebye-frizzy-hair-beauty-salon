@@ -443,14 +443,26 @@ td {
 
 .staff-profile {
     display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
     padding: 15px;
     flex-direction: column;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
 }
 
 .staff-upside {
     display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;
     flex-direction: row;
-    justify-content: flex-start;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+  	justify-content: flex-start;
+  	-webkit-box-pack: start;
+	-ms-flex-pack: start;
     margin-bottom: 8px;
 }
 
@@ -474,12 +486,19 @@ td {
 }
 
 .staff-downside {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
     flex-direction: column;
 
 }
 
 .staff-introduction-r {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
     margin-bottom: 5px;
     /**margin-left: auto;
@@ -489,14 +508,20 @@ td {
 }
 
 .staff-introduction-r a {
+    -ms-flex-item-align: end;
     align-self: flex-end;
 }
 
 .staff-click {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+
 }
 
 .staff-click a {
+    -webkit-box-flex: 7;
+	-ms-flex-positive: 7;
     flex-grow: 7;
 }
 
@@ -504,10 +529,13 @@ td {
 /*modal*/
 
 @media screen and (min-width: 0px) and (max-width: 812px) {
+    
+    
+    
+    
+    
   
 }
-
-
 
 
 
@@ -548,15 +576,31 @@ td {
     box-shadow: 2px 2px 2px 2px #bbb;
 }
 
+
+/**ここから**/
+
+
 .staff-show4 {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
     flex-direction: column;
     padding: 5px;
 }
 
 .staff-show-upside {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
     flex-direction: row;
+    -webkit-box-pack: justify;
+	-ms-flex-pack: justify;
     justify-content: space-between;
     margin-bottom: 10px;
 }
@@ -566,7 +610,12 @@ td {
 }
 
 .staff-show-midle {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
     flex-direction: row;
     margin-bottom: 10px;
     max-height: 40%;
@@ -736,9 +785,16 @@ td {
 
 
 .today-staff-date {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
     flex-direction: row;
     /**margin-top: 20px;**/
+    -webkit-box-align: center;
+	-ms-flex-align: center;
     align-items: center;
 }
 
@@ -757,6 +813,8 @@ td {
 
 .today-staff-details {
     font-size: 18px;
+    -webkit-box-flex:1;
+	-ms-flex-positive:1;
     flex-grow: 7;
     letter-spacing: 10px;
 }
@@ -802,14 +860,24 @@ td {
 
 .reservation-inner3 {
     margin: auto;
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
     flex-direction: column;
 }
 
 
 .reservations-top-side {
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
-    flex-direction: row;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;
+  	flex-direction: row;
     align-items: center;
     /**justify-content: space-between;**/
     margin-bottom: 8px;
@@ -827,21 +895,43 @@ td {
 .reservation-frames-menus {
     /**margin-right: 15px;**/
     margin-right: 10px;
+    margin: auto;
+    display:-webkit-box;
+  	display:-ms-flexbox;
     display: flex;
+    -webkit-box-orient: vertical;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: column;
     flex-direction: column;
 }
 
 
 .reservation-frames {
-    display: flex;
-    flex-direction: row;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;   
+  	flex-direction: row;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
     align-items: center;
 }
 
 .reservation-menus{
-    display: flex;
-    flex-direction: row;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;   
+  	flex-direction: row;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
     align-items: center;
+    
+    
 }
 
 
@@ -851,8 +941,15 @@ td {
 }
 
 .reservations-middle {
-    display: flex;
-    flex-direction: row;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;   
+  	flex-direction: row;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
     align-items: center;
     margin-bottom: 8px;
 }
@@ -886,8 +983,15 @@ td {
 
 
 .reservation-tel-email {
-    display: flex;
-    flex-direction: row;
+    display:-webkit-box;
+  	display:-ms-flexbox;
+  	display: flex;
+    -webkit-box-orient: horizontal;
+  	-webkit-box-direction: normal;
+  	-ms-flex-direction: row;   
+  	flex-direction: row;
+    -webkit-box-align: center;
+	-ms-flex-align: center;
     align-items: center;
 }
 
@@ -899,7 +1003,11 @@ td {
 
 
 .reservation-destroy {
-    display: flex;
+    display:-webkit-box;
+  	display:-ms-flexbox;   
+  	display: flex;
+  	-webkit-box-pack: end;
+	-ms-flex-pack: end;
     justify-content: flex-end;
     font-size: 17px;
 }

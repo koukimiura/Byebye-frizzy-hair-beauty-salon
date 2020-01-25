@@ -36,11 +36,6 @@ class Reservation < ApplicationRecord
                                 with: /\A\S+@\S+\.\S+\z/,
                                 message: '適切なアドレスを入れてください。'
                                 }
-    
-    
-    
-
-
 
 
     #予約検索

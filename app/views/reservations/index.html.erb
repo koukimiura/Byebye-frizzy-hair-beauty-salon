@@ -4,7 +4,7 @@
         <div class='reservations-inners'>
             <h3>予約一覧</h3>
             <% @reservations.each do |reservation| %>
-                <% if Date.parse(reservation.date) == Date.today %>
+                <% if Date.parse(reservation.date) == Date.current %>
                     <h4 >Today!</h4>
                     <%= render 'reservation_index', reservation: reservation %>
                 <% else %>
