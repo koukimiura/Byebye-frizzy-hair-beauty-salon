@@ -46,7 +46,6 @@
                         </tr>
                         <tr>
                             <th>電話番号</th>
-                            <%= logger.debug("---------@reservation.tel=#{@reservation.tel}") %>
                             <td><%= @reservation.tel %></td>
                         </tr>
                         <tr>
@@ -89,10 +88,19 @@
             
             
     <div class='menu-footer'>
-            <%= link_to "戻る", :back, class: 'btn btn-success' %>
+            <%= submit_tag :戻る, name: "back", class: 'btn btn-success' %>
             <%= f.submit :確定, class:'btn btn-info' %>
         <% end %>
     </div>
 </div>
+
+
+<script >
+    $(document).ready(function() {
+        //クエリを取得
+        let getDateQuery = sessionStorage.getItem('dateKey');
+        //Storageに保存する。
+    });
+</script>
 
 

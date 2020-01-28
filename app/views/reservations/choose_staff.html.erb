@@ -41,7 +41,6 @@
                                     <div class='staff-click'>
                                         <%= link_to '指名して予約', choose_date_reservations_path(selectedStaff: staff.id, menus: @menuIds),
                                                                                                             class: 'btn btn-info' %>
-                                        <% logger.debug("----------staff.id=#{staff.id}") %>
                                         <!--<input type="submit" value="指名して予約" class='btn btn-info' > -->
                                     </div>
                                 </div>
@@ -94,48 +93,6 @@
         <%= link_to "戻る", choose_menus_reservations_path, class: 'btn btn-success' %>
     </div>
 </div>
-
-
-<script>
-    $(document).ready(function(){
-        //モーダルウィンドウ処理
-        //複数の.open-modalがrubyのeachで繰り返しになっているのでこちらもeach//
-        $('.open-modal').each(function(){
-            $(this).on('click', function(){
-                let target =　$(this).data('target');
-                let modal = document.getElementById(target);
-                $(modal).fadeIn();
-                
-                // retun falseでモーダルが表示されてからすぐに非表示になるのを防ぐ    処理の中断
-                return false; 
-            });
-        });
-            
-     
-        //$('.close-modal').each(function(){
-            //$(this).on('click', function(){
-                //console.log($(this));
-               // var target =　$(this).parent('.staff-show').attr('id');
-                //console.log(target);
-                //var modal = document.getElementById(target);
-                //console.log(modal);
-                //$(target).hide();
-            //});
-        //});
-        
-        
-    $(document).on("click", ".close-btn", function(){
-        console.log($(this));
-        let parent = $(this).closest(".staff-show").attr("id");
-        console.log(parent);
-        $(parent).fadeOut();
-    });
-        
-        
-        
-        
-});
-</script>
 
 
 

@@ -93,7 +93,7 @@ class ReservationsController < ApplicationController
         
        #selected_Menus = selectedMenus #||= selected_Menus2
       
-#-------------------------------------------
+#---------------------メニュー----------------------
 
         menus = selectedMenus.map{|menuId|totalMenus(menuId)}
         
@@ -119,10 +119,10 @@ class ReservationsController < ApplicationController
         #paramsで受け取ると文字列になる。
         @menuIds = menuIds_params
         staffId = staffId_params
-        
 #-----------redirect_to backした場合。---------------------
         keepFrames = params[:frame]
         keepDate = params[:date]
+        
         #custamer_detail以降から戻ってきた時keep -> available
         if keepFrames.present? && keepDate
             keepFrames.each do |keepFrame|
@@ -133,6 +133,17 @@ class ReservationsController < ApplicationController
                 if schedule     
                     schedule.update(frame_status: 'available')
                 end
+            end
+        end
+        
+#---------------ブラウザバックからのリロード対策---------------        
+        #custamer_detailからブラウザバック時のリロード対策
+        if params[:scheduleIds]
+            params[:scheduleIds].each do |scheduleId|
+                logger.debug("---------------scheduleId=#{scheduleId}") 
+                schedule = Schedule.find_by(id: scheduleId)
+                schedule.update(frame_status: "available")
+                
             end
         end
         
@@ -162,7 +173,7 @@ class ReservationsController < ApplicationController
         @menuPrices = prices_integer.sum
         @menuRequiredTimes = required_times_integer.sum
         
-    
+#-------------先週、翌週のbtn対策--------------
         #@dの条件文(先週なのか翌週なのかで表示する一週間を変更)
         if receivedNext
             @d = Date.parse(receivedNext)
@@ -182,63 +193,76 @@ class ReservationsController < ApplicationController
     
     
     def custamer_detail
-        
         # linkからの受け取り
         @date = params[:date]
         @staffId = staffId_params
         @menuIds = menuIds_params
+        
         #必要時間
         menuRequiredTimes = params[:menu_required_times]
         
-#---------update---------------       
-        #必要時間をFloat化して30（３０分単位)でわる。
-        number = menuRequiredTimes.to_f/30
-        toInteger = number.to_i
-         
-        #updateNumbeはupdateするDBの行数。 　10min, 15min, 30min,でも１つはupdateする。
-        #30分以下
-        if toInteger < 1
-             updateNumber = 1
-            #Integerのアルゴリズム toIntegerが割り切れるのであればその整数がupdateNumbeはupdateするDBのカラム数。
-            #numberは必要時間をFloat化して30（３０分単位)で割った値つまりfloatである。下記の二つのあまりを求めることであまりが０ならintegerでなけばfloat
+#---------frame_statusのupdateメカニズム---------------  
+        if  menuRequiredTimes 
+            #必要時間をFloat化して30（３０分単位)でわる。
+            number = menuRequiredTimes.to_f/30
+            toInteger = number.to_i
+             
+            #updateNumbeはupdateするDBの行数。 　10min, 15min, 30min,でも１つはupdateする。
+            #30分以下
+            if toInteger < 1
+                 updateNumber = 1
+                #Integerのアルゴリズム toIntegerが割り切れるのであればその整数がupdateNumbeはupdateするDBのカラム数。
+                #numberは必要時間をFloat化して30（３０分単位)で割った値つまりfloatである。下記の二つのあまりを求めることであまりが０ならintegerでなけばfloat
+                
+            elsif 0 == number % toInteger        
             
-        elsif 0 == number % toInteger        
-        
-            updateNumber = toInteger
+                updateNumber = toInteger
+            else
+                #少数アルゴリズム　else以下に入れるnumberはFloatなので + 1しupdateするカラム数にあわせる。
+                #つまり1.2ならDBの2行update
+                #必要時間75minならnumberは2.5である。2.5に+1して3.5にして.to_iで3つupdateする。
+                number_float = number + 1                   
+                updateNumber =  number_float.to_i
+            end
+                #updateNumbeはupdateするDBのカラム数。
+            selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
+           
+            #updateしたカラムにおけるFrameを取得
+            
+            @frames=[]  
+            
+            #Javascriptへ直渡し
+            @scheduleIds=[]
+            
+            #iは0から始まり
+            updateNumber.times do |i|      
+                logger.debug("--------i=#{i}")
+                #一週目は初めのselectedScheduleのidを取得
+                
+                scheduleId = selectedSchedule.id + i
+                
+                schedule = Schedule.find_by(id: scheduleId)
+                
+                schedule.update(frame_status: "keep")
+                
+                @frames.push(schedule.frame)
+                
+                @scheduleIds.push(schedule.id)
+            end
+            
+            #---------------------------------------------
+            #frameとメニューのvalueは配列、hash化してネストさせる。
+            @hash_frames = {key_frames: @frames}
+            @hash_menuIds = {key_menuIds: @menuIds}
+            #@hash_framesと@hash_menuIdsをJSON文字列にして@reservationに入れとく。renderのとき楽
+            @reservation = Reservation.new(staff_id:  @staffId, date: @date, menu_ids: @hash_menuIds.to_json, frames: @hash_frames.to_json)
         else
-            #少数アルゴリズム　else以下に入れるnumberはFloatなので + 1しupdateするカラム数にあわせる。
-            #つまり1.2ならDBの2行update
-            #必要時間75minならnumberは2.5である。2.5に+1して3.5にして.to_iで3つupdateする。
-            number_float = number + 1                   
-            updateNumber =  number_float.to_i
+            
+            #確認画面の戻るボタンを押した場合の処理
+            @reservation = Reservation.new(reservation_params)
+            @frames = json_to_hash_frames
+            @menuIds = json_to_hash_menuIds
         end
-            #updateNumbeはupdateするDBのカラム数。
-        selectedSchedule =  Schedule.find_by(staff_id: @staffId, date: params[:date], frame: params[:frame])      #選択された日程からidを割り出す。
-       
-        #updateしたカラムにおけるFrameを取得
-        
-        @frames=[]     
-        #scheduleも一緒にupdateする。
-        #iは0から始まり
-        updateNumber.times do |i|      
-            logger.debug("--------i=#{i}")
-            #一週目は初めのselectedScheduleのidを取得
-            
-            scheduleId = selectedSchedule.id + i
-            
-            schedule = Schedule.find_by(id: scheduleId)
-            
-            schedule.update(frame_status: "keep")
-            
-            @frames.push(schedule.frame)
-        end
-#---------------------------------------------
-        #frameとメニューのvalueは配列、hash化してネストさせる。
-        @hash_frames = {key_frames: @frames}
-        @hash_menuIds = {key_menuIds: @menuIds}
-        #@hash_framesと@hash_menuIdsをJSON文字列にして@reservationに入れとく。renderのとき楽
-        @reservation = Reservation.new(staff_id:  @staffId, date: @date, menu_ids: @hash_menuIds.to_json, frames: @hash_frames.to_json)
-        #@reservation = Reservation.new(staff_id:  @staffId, date: @date)
     end
     
     
@@ -254,43 +278,49 @@ class ReservationsController < ApplicationController
             #:last_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
             #:first_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
             #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
+            logger.debug("-----------@reservation.errors.messages=#{@reservation.errors.messages}")
             
             @reservation.errors.full_messages.each do |array_errors_message|
+                logger.debug("------------array_errors_message=#{array_errors_message}")
                 case array_errors_message
                 
-                    when "Last name can't be blank" then
+                    when "Last nameを入力してください" then
                         
-                        flash.now[:alert] ='(性)が未記入です。'
+                        flash.now[:alert] = '(性)が未記入です。'
                         
-                    when "First name can't be blank" then
+                    when "First nameを入力してください" then
                 
-                        flash.now[:alert] ='(名)が未記入です。'
+                        flash.now[:alert] = '(名)が未記入です。'
                         
-                    when "Last name kana can't be blank" then
+                    when "Last name kanaを入力してください" then
                 
                         flash.now[:alert] ='性(カナ)が未記入です。' 
                         
-                    when "Last name kana 全角カタカナのみで入力して下さい。" then
+                    when "Last name kana全角カタカナのみで入力して下さい。" then
                 
                         flash.now[:alert] ='性(カナ)を全角カタカナのみで入力して下さい。'  
                         
-                    when "First name kana can't be blank" then
+                    when "First name kanaを入力してください" then
                         
                         flash.now[:alert] ='性(カナ)が未記入です。' 
                         
-                    when "First name kana 全角カタカナのみで入力して下さい。" then
+                    when "First name kana全角カタカナのみで入力して下さい。" then
                         
-                        flash.now[:alert] ='性(カナ)を全角カタカナのみで入力して下さい。' 
+                        flash.now[:alert] = '性(カナ)を全角カタカナのみで入力して下さい。' 
                         
-                    when "Tel can't be blank" then
+                    when "Telを入力してください" then
                         
-                        flash.now[:alert] ='電話番号が未記入です。'     
+                        flash.now[:alert] ='電話番号が未記入です。' 
+                        
+                    when "Tel電話番号はハイフンなしです。" then
+                        
+                        flash.now[:alert] ='電話番号はハイフンなしです。' 
                     
-                     when "Email can't be blank" then
+                     when "Emailを入力してください" then
                         
                         flash.now[:alert] ='メールアドレスが未記入です。' 
                         
-                    when "Email 適切なアドレスを入れてください。" then
+                    when "Email適切なアドレスを入れてください。" then
                         
                         flash.now[:alert] ='適切なアドレスを入れてください。'
                 end
@@ -300,12 +330,9 @@ class ReservationsController < ApplicationController
     end
 
 
-
     
     def confirm
-        
         @reservation = Reservation.new(reservation_params)
-        
             #ストロングパラメータのclassは
             #logger.debug("-----------reservation_params.class=#{reservation_params.class}")
            
@@ -315,14 +342,10 @@ class ReservationsController < ApplicationController
             @check = '再来店' if @reservation.check == 'false'
             @staff = Staff.find_by(id: @reservation.staff_id)
            
-           
-        #privateメソッド下で呼び出し。    
-        
+            #privateメソッド内json_to_hash_framesメソッドで呼び出し。    
             @frames = json_to_hash_frames
-
 #---------------------メニュー-------------------------------------   
-        #privateメソッド下で呼び出し。   
-        
+            #privateメソッド内json_to_hash_menuIdsメソッド下で呼び出し。  
             menus = json_to_hash_menuIds.map{|menuId|totalMenus(menuId)}
             names = menus.map{|menu| name(menu)}
             #文字列をまとめる
@@ -339,11 +362,7 @@ class ReservationsController < ApplicationController
             @menuRequiredTimes = required_times_integer.sum
     end
     
-    
-    
-
     def create
-        
         #logger.debug("--------reservation_params=#{reservation_params}")
         #logger.debug("--------hash_frames.class=#{hash_frames.class}")
         #logger.debug("--------hash_frames.class=#{hash_menuIds.class}")
@@ -364,8 +383,11 @@ class ReservationsController < ApplicationController
                                         request: reservation_params[:request],
                                         frames: json_to_hash_frames, 
                                         menu_ids: json_to_hash_menuIds)   ##privateメソッド下で呼び出し。  
+         if params[:back]
+            
+            redirect_to custamer_detail_reservations_path(reservation: reservation_params)
                                         
-        if @reservation.save
+        elsif  @reservation.save
             #staffのスケジュールを保留keepからreservedへ    
             reservedFrams = JSON.parse(@reservation.frames)
             reservedFrams.each do |reservedFrame|
@@ -376,16 +398,16 @@ class ReservationsController < ApplicationController
                 if schedules
                     schedules.update(frame_status: "reserved")
                 else
-                    flash[:notice] == '時間時れです。もう一度選んでください。'
+                    flash[:notice] = '時間時れです。もう一度選んでください。'
                     redirect_to choose_menus_reservations_path
                 end
             end
             flash[:notice] ='予約が確定しました。ありがとうございました。'
             redirect_to root_path
         else
-            redirect_to custamer_detail_reservations(date: reservation.date, selectedStaff: reservation.staff_id)
+            redirect_to :back
             #redirect_back(fallback_location: fallback_location)
-            flash[:alert] ='記入が漏れがあります。'
+            flash.now[:alert] = '記入が漏れがあります。'
         end
     end
     

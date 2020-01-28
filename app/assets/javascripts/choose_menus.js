@@ -2,11 +2,6 @@
 //読み込んだら
 $(document).ready(function() {
     
-    var times = sessionStorage.getItem('array_time');
-    var prices = sessionStorage.getItem('array_price');
-    var array_menus = JSON.parse(sessionStorage.getItem('menus'));
-    //var array_clones = JSON.parse(sessionStorage.getItem('clonedMenu'));
-    var array_clones = sessionStorage.getItem('clonedMenu');
     
     if (window.performance.navigation.type === 0/* TYPE_NAVIGATE */) {
       // 初期表示
@@ -21,21 +16,25 @@ $(document).ready(function() {
     } else {
         // リロードされていない
         
+        let times = sessionStorage.getItem('array_time');
+        let prices = sessionStorage.getItem('array_price');
+        let array_menus = JSON.parse(sessionStorage.getItem('menus'));
+        //let array_clones = sessionStorage.getItem('clonedMenu');
+
         $("#totalPrice").attr('price', prices).html('￥' + prices);
         $("#totalTime").attr('time', times).html(times + '分');
         
-        
-        console.log(times);
-        console.log(prices);
-        console.log(array_menus);
+        //sessionStorage.clear()
+        //console.log(times);
+        //console.log(prices);
+        //console.log(array_menus);
         //console.log(JSON.parse(array_clones));
         
-        
+
         var i = 0;
         
         var Ids =[];
         
-    
         while (i < array_menus.length){
             array_menus.forEach(function(menu){
                 

@@ -526,18 +526,7 @@ td {
 }
 
 
-/*modal*/
-
-@media screen and (min-width: 0px) and (max-width: 812px) {
-    
-    
-    
-    
-    
-  
-}
-
-
+/*choose_staff modal*/
 
 
 .staff-show {
@@ -577,7 +566,9 @@ td {
 }
 
 
-/**ここから**/
+
+
+/**モーダルウィンドウそのもの**/
 
 
 .staff-show4 {
@@ -590,6 +581,7 @@ td {
     flex-direction: column;
     padding: 5px;
 }
+
 
 .staff-show-upside {
     display:-webkit-box;
@@ -714,24 +706,11 @@ td {
 }
 
 /** custamer-detail **/
-@media screen and (min-width: 0px) and (max-width: 812px) {
-    custamer-detail {
-        margin-top: 20px;
-        margin-left: auto;
-        margin-right: auto;
-        width: 100vw;
-         height: 100vh;
-    }
-}
-
-
-
 .custamer-detail {
     margin-top: 20px;
     margin-left: auto;
     margin-right: auto;
 }
-
 
 
 .custamer {
@@ -1010,4 +989,57 @@ td {
 	-ms-flex-pack: end;
     justify-content: flex-end;
     font-size: 17px;
+}
+
+
+
+/**レスポンシブデザイン**/
+
+
+@media screen and (min-width: 0px) and (max-width: 400px) {
+    
+    custamer-detail {
+        margin-top: 20px;
+        margin-left: auto;
+        margin-right: auto;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .staff-show3 {
+        position: absolute;
+        z-index: 0;
+        top: 50%;
+        /**bottom: 0; **/
+        left : 50%;
+       /** right: 0;**/
+       transform: translate(-50%, -50%);
+       -webkit-transform: translate(-50%, -50%);
+       -ms-transform: translate(-50%, -50%);
+        margin: 0px auto;
+        padding: 20px;
+        width: 100%;
+        background: #fff;
+        box-shadow: 2px 2px 2px 2px #bbb;
+    }
+    
+    .staff-show-midle {
+        display:-webkit-box;
+      	display:-ms-flexbox;
+        display: flex;
+        -webkit-box-orient: vertical;
+      	-webkit-box-direction: normal;
+      	-ms-flex-direction: column;
+        flex-direction: column;
+        /**margin-bottom: 10px;**/
+        /**max-height: 40%;**/
+    }
+    
+    .staff-show-image {
+        text-align: center;
+        max-width: 100%;
+        /**margin-right: 10px;**/
+    }
+    
+    
 }

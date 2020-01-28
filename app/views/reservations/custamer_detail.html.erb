@@ -71,49 +71,81 @@
     </div>
 </div>
 
+
+
 <script>
 
-$(document).ready(function() {
+    $(document).ready(function() {
+        //クエリを取得
+        let queryStr = window.location.search; 
+        let getDateQuery = sessionStorage.getItem('dateKey');
+        console.log("ゆーざー詳細"+queryStr);
+        //Storageに保存する。
+        sessionStorage.setItem('params', queryStr);
+        
+    });
     
-    var queryStr = window.location.search; 
     
-    console.log(queryStr);
-    //storageに保存する。
-    sessionStorage.setItem('params', queryStr);
-    
-});
-
-
-    //ender後のリロード対策
+    //render後のリロード対策
     function addToNewUrl() {
         //renderされたらstorageのkeyを取得してdefaultのurlにクエリを追加する。
-        var query = sessionStorage.getItem('params');
-        //urlを取得
+        //sessionStorageだからブラウザが閉じるまでは保持される。
+        
+        let query = sessionStorage.getItem('params');
+        
+        //urlを取得  
         let path = location.pathname;
-
-        //let pattern = /^.*\/new.*$/
+        console.log(path);
         
         let pattern = "/reservations/custamer_detail"
     
-        // URLが正しければ変更は不要
-        if(path.match(pattern)) return;
+        //検証
+        //URLが正しければ変更は不要
+        if (path.match(pattern)) return;
     
-        console.log(query);
-        // URLを変更
+        // 違う場合は書き換え。URLを変更
         history.replaceState('', '', "/reservations/custamer_detail" + query);
     }
     
-    window.onload = addToNewUrl();
+    
+    //HTTP postメソッドdealと一致したら
+    if (location.pathname.match("/reservations/deal")) {
+        
+        //呼び出し
+        window.onload = addToNewUrl();
+
+    }
     
     
-
-
-    //ブラウザバックを封じる。
-    history.pushState(null, null, null);
-    window.addEventListener("popstate", function (e) {
+    
+    //ブラウザバックに反応
+    $(window).on("popstate", function () {
         
-        alert('左下の戻るボタンを使用してください。');
-        return false;
+        //choose_dateページ,urlのクエリを取得
+        let getDateQuery = sessionStorage.getItem('dateKey');
         
+        //render後のリロード対策
+        function addToCorrectUrl() {
+            //renderされたらstorageのkeyを取得してdefaultのurlにクエリを追加する。
+    
+            //現状のurlを取得
+            let path = location.pathname;
+    
+            //日時選択ページ
+            let pattern = "/reservations/custamer_date"
+            
+            // URLが正しければ変更は不要
+            if (path.match(pattern)) return;
+            
+            // URLを変更
+            history.replaceState('', '', "/reservations/choose_date" + getDateQuery);
+        }
+    
+        //HTTP postメソッドdealと一致したら
+        if (location.pathname.match("/reservations/choose_date")) {
+            //呼び出し
+            window.onload =  addToCorrectUrl();
+        }
     });
 </script>
+
