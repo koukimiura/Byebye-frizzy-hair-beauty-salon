@@ -37,11 +37,16 @@
 <script>
 
     $(document).ready(function() {
-
+        
+        //choose_dateのsessionStorage
+        let times = sessionStorage.getItem('array_time');
+        let prices = sessionStorage.getItem('array_price');
+        let array_menus = JSON.parse(sessionStorage.getItem('menus'));
+        
+        
         //クエリを取得
         let dateQuery = window.location.search; 
-        console.log("日程query"+dateQuery);
-        
+
         //storageに保存する。
         sessionStorage.setItem('dateKey', dateQuery);
         

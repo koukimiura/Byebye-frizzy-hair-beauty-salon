@@ -1,4 +1,3 @@
-
 //読み込んだら
 $(document).ready(function() {
     
@@ -32,54 +31,50 @@ $(document).ready(function() {
         
 
         var i = 0;
-        
         var Ids =[];
         
         while (i < array_menus.length){
             array_menus.forEach(function(menu){
                 
-                //== と ===は同じデータ型であれば　===が推奨される。しかも厳密な条件文。
-                //初回
-                if (i === 0) {
-                    var $copy = $('#selectedMenu').clone().css('display', 'block');
-                    $copy.removeAttr('id');
+            //== と ===は同じデータ型であれば　===が推奨される。しかも厳密な条件文。
+            
+            //初回
+            if (i === 0) {
+                var $copy = $('#selectedMenu').clone().css('display', 'block');
+                $copy.removeAttr('id');
+                
+                var Id = 'selectedCheck'+ (menu['value']);
                     
-                    var Id = 'selectedCheck'+ (menu['value']);
-                        
-                    Ids.push(Id);
-                    
-                    $copy.attr('id', 'selectedCheck'+ (menu['value']));
-                    $copy.find('#selected_Name').html(menu['nameKey']);
-                    $copy.find("#selected_Price").html('￥' + menu['priceKey']);
-                    $copy.find("#selected_Time").html(menu['timeKey'] + '分');
-                    $('#selectedMenu').after($copy);
-                    
-                    
-                } else {
-                    
-                    var $copy = $('#selectedMenu').clone().css('display', 'block');
-                    $copy.removeAttr('id');
-                    
-                    var Id = 'selectedCheck'+ (menu['value']);
-                    
-                    
-                    $copy.attr('id', 'selectedCheck'+ (menu['value']));
-                    
-                    
-                    $copy.find('#selected_Name').html(menu['nameKey']);
-                    $copy.find("#selected_Price").html('￥' + menu['priceKey']);
-                    $copy.find("#selected_Time").html(menu['timeKey'] + '分');
-                    
-                    console.log(Ids.pop());
-                    
-                    // 配列のケツの要素をとってきて、一個前にviewに出力したidの前に$copyを出力
-                    $(Ids.pop()).before($copy);
-                    
-                    //月の配列要素が来たときのために最後にプッシュs
-                    Ids.push(Id);
-                    
-                }
-            //i ++;
+                Ids.push(Id);
+                
+                $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                $copy.find('#selected_Name').html(menu['nameKey']);
+                $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                $('#selectedMenu').after($copy);
+                
+            } else {
+                
+                var $copy = $('#selectedMenu').clone().css('display', 'block');
+                $copy.removeAttr('id');
+                
+                var Id = 'selectedCheck'+ (menu['value']);
+                
+                
+                $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                
+                $copy.find('#selected_Name').html(menu['nameKey']);
+                $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                
+                console.log(Ids.pop());
+                
+                // 配列のケツの要素をとってきて、一個前にviewに出力したidの前に$copyを出力
+                $(Ids.pop()).before($copy);
+                
+                //月の配列要素が来たときのために最後にプッシュs
+                Ids.push(Id);
+            }
             });
         i ++;   
        }

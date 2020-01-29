@@ -266,11 +266,35 @@ class ReservationsController < ApplicationController
     end
     
     
-    def deal
-        
+
+    def confirm
         @reservation = Reservation.new(reservation_params)
+        
         if @reservation.valid?
-            redirect_to confirm_reservations_path(reservation: reservation_params)
+            #確認画面　表示
+            @date = Date.parse(@reservation.date)
+            @check = '初来店' if @reservation.check == 'true'
+            @check = '再来店' if @reservation.check == 'false'
+            @staff = Staff.find_by(id: @reservation.staff_id)
+           
+            #privateメソッド内json_to_hash_framesメソッドで呼び出し。    
+            @frames = json_to_hash_frames
+    #---------------------メニュー-------------------------------------   
+            #privateメソッド内json_to_hash_menuIdsメソッド下で呼び出し。  
+            menus = json_to_hash_menuIds.map{|menuId|totalMenus(menuId)}
+            names = menus.map{|menu| name(menu)}
+            #文字列をまとめる
+            @menuNames = names.join(',')
+            
+            prices = menus.map{|menu| price(menu)}
+            required_times = menus.map{|menu| required_time(menu)}
+            
+            #各文字列をintegerにして合計金額と時間を出す。
+            prices_integer = prices.map{|x| integer(x)}
+            required_times_integer = required_times.map{|y| integer(y)}
+            
+            @menuPrices = prices_integer.sum
+            @menuRequiredTimes = required_times_integer.sum
         else
             #配列@reservation.errors.messagesにはvalidationのエラーメッセージが入っているがredirect＿toで戻していいるから表示されない。
             #log 
@@ -278,8 +302,7 @@ class ReservationsController < ApplicationController
             #:last_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
             #:first_name_kana=>["can't be blank", "全角カタカナのみで入力して下さい。"],
             #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
-            logger.debug("-----------@reservation.errors.messages=#{@reservation.errors.messages}")
-            
+
             @reservation.errors.full_messages.each do |array_errors_message|
                 logger.debug("------------array_errors_message=#{array_errors_message}")
                 case array_errors_message
@@ -328,39 +351,6 @@ class ReservationsController < ApplicationController
             render :custamer_detail
         end
     end
-
-
-    
-    def confirm
-        @reservation = Reservation.new(reservation_params)
-            #ストロングパラメータのclassは
-            #logger.debug("-----------reservation_params.class=#{reservation_params.class}")
-           
-            #確認画面　表示
-            @date = Date.parse(@reservation.date)
-            @check = '初来店' if @reservation.check == 'true'
-            @check = '再来店' if @reservation.check == 'false'
-            @staff = Staff.find_by(id: @reservation.staff_id)
-           
-            #privateメソッド内json_to_hash_framesメソッドで呼び出し。    
-            @frames = json_to_hash_frames
-#---------------------メニュー-------------------------------------   
-            #privateメソッド内json_to_hash_menuIdsメソッド下で呼び出し。  
-            menus = json_to_hash_menuIds.map{|menuId|totalMenus(menuId)}
-            names = menus.map{|menu| name(menu)}
-            #文字列をまとめる
-            @menuNames = names.join(',')
-            
-            prices = menus.map{|menu| price(menu)}
-            required_times = menus.map{|menu| required_time(menu)}
-            
-            #各文字列をintegerにして合計金額と時間を出す。
-            prices_integer = prices.map{|x| integer(x)}
-            required_times_integer = required_times.map{|y| integer(y)}
-            
-            @menuPrices = prices_integer.sum
-            @menuRequiredTimes = required_times_integer.sum
-    end
     
     def create
         #logger.debug("--------reservation_params=#{reservation_params}")
@@ -383,13 +373,17 @@ class ReservationsController < ApplicationController
                                         request: reservation_params[:request],
                                         frames: json_to_hash_frames, 
                                         menu_ids: json_to_hash_menuIds)   ##privateメソッド下で呼び出し。  
-         if params[:back]
+        if params[:back]
+            #logger.debug("-----------------")
+            @reservation.frames = {key_frames: json_to_hash_frames}.to_json
+            @reservation.menu_ids = {key_menuIds: json_to_hash_menuIds}.to_json
             
-            redirect_to custamer_detail_reservations_path(reservation: reservation_params)
-                                        
-        elsif  @reservation.save
+            render :custamer_detail
+            
+        elsif @reservation.save
             #staffのスケジュールを保留keepからreservedへ    
             reservedFrams = JSON.parse(@reservation.frames)
+            
             reservedFrams.each do |reservedFrame|
                 schedules = Schedule.find_by(staff_id: @reservation.staff_id, 
                                           date: @reservation.date, 
@@ -402,9 +396,11 @@ class ReservationsController < ApplicationController
                     redirect_to choose_menus_reservations_path
                 end
             end
+            
             flash[:notice] ='予約が確定しました。ありがとうございました。'
             redirect_to root_path
         else
+            
             redirect_to :back
             #redirect_back(fallback_location: fallback_location)
             flash.now[:alert] = '記入が漏れがあります。'
@@ -523,10 +519,10 @@ class ReservationsController < ApplicationController
         
         def json_to_hash_menuIds
                 
-                #framesのJSON文字列{key_menuIds: @menuIds}をparseしてhashとして扱えるようにする。
-                hash_menuIds = JSON.parse(reservation_params[:menu_ids], {symbolize_names: true})
-                #配列を取得
-                array_menuIds = hash_menuIds[:key_menuIds]
+            #framesのJSON文字列{key_menuIds: @menuIds}をparseしてhashとして扱えるようにする。
+            hash_menuIds = JSON.parse(reservation_params[:menu_ids], {symbolize_names: true})
+            #配列を取得
+            array_menuIds = hash_menuIds[:key_menuIds]
 
             return array_menuIds
         
