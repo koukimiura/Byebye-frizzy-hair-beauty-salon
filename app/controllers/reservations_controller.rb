@@ -391,7 +391,7 @@ class ReservationsController < ApplicationController
                                           frame_status: 'keep')
                 if schedules
                     schedules.update(frame_status: "reserved")
-                else
+                elses
                     flash[:notice] = '時間時れです。もう一度選んでください。'
                     redirect_to choose_menus_reservations_path
                 end
