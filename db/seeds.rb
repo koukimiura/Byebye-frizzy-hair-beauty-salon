@@ -40,14 +40,3 @@ Menu.create(:name => "ポイントメイク", :category => 6, :price =>"4400", :
 
 
 #Schedule
-
-Schedule.create(:id => 18364, :staff_id => 4, :date => "2020-01-24", :frame => "10:30", :frame_status => "available")
-Schedule.create(:id => 18365, :staff_id => 4, :date => "2020-01-24", :frame => "11:00", :frame_status => "available")
-Schedule.create(:id => 18366, :staff_id => 4, :date => "2020-01-24", :frame => "11:00", :frame_status => "available")
-Schedule.create(:id => 18367, :staff_id => 4, :date => "2020-01-24", :frame => "11:30", :frame_status => "available")
-Schedule.create(:id => 18368, :staff_id => 4, :date => "2020-01-24", :frame => "12:00", :frame_status => "available")
-Schedule.create(:id => 18369, :staff_id => 4, :date => "2020-01-24", :frame => "12:30", :frame_status => "available")
-Schedule.create(:id => 18370, :staff_id => 4, :date => "2020-01-24", :frame => "14:30", :frame_status => "available")
-
-
-
