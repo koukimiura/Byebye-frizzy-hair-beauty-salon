@@ -107,7 +107,6 @@
     less-rails
     twitter-bootstrap-railss
     carrierwave
-    seed_fu 2.3
     whenever
     basic認証
     

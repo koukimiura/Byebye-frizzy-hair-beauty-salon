@@ -15,10 +15,6 @@ class CreateReservations < ActiveRecord::Migration[5.0]
       t.string :gender
       t.text :request
       t.string :check
-      
-
-
-
 
       t.timestamps
     end

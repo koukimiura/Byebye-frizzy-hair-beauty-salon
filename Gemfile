@@ -54,7 +54,7 @@ gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
  
 #seed_fu
 
-gem 'seed-fu', '~> 2.3'
+#gem 'seed-fu', '~> 2.3'
 
 #carrierwave
 
