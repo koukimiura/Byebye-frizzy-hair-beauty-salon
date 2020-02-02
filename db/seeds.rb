@@ -37,6 +37,3 @@ Menu.create(:name => "メイクアップ", :category => 6, :price =>"7700", :req
 Menu.create(:name => "眉カット", :category => 6, :price =>"1650", :required_time =>"10", :detail => "")
 Menu.create(:name => "ポイントメイク", :category => 6, :price =>"4400", :required_time =>"30", :detail => "")
 
-
-
-#Schedule
