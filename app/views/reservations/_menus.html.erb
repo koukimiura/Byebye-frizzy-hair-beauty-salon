@@ -7,14 +7,14 @@
         <div class='rightside'>
             <div class='upside'>
                 <div class='name'>
-                    <strong><%= menu.name %></strong>    
+                    <strong><%= menu.name %></strong>
                 </div>
                 <div class='item-price-time'>
                     <div class='price'>
-                        ￥<%= menu.price.to_s(:delimited) %>
+                        <%= "￥#{menu.price.to_s(:delimited)}" %>
                     </div>
                     <div class='required_time'>
-                        <%= menu.required_time %>分
+                        <%= "#{menu.required_time}分"%>
                     </div>
                 </div>
             </div>
