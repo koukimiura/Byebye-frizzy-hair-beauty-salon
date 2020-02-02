@@ -3,7 +3,7 @@ class ChangeColumnToReservations2 < ActiveRecord::Migration[5.0]
     
     #change_column :reservations, :tel, :string
     
-    rename_column :reservations, :menu_id, :menu_ids#, array: true
+    rename_column :reservations, :menu_id, :menu_ids #, array: true
     
     
   end
