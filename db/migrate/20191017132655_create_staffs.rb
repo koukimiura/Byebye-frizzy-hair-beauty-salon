@@ -10,7 +10,7 @@ class CreateStaffs < ActiveRecord::Migration[5.0]
       t.integer :age
       t.string :gender
       t.string :experience
-      t.string :status
+      #t.string :status
       t.text :self_introduction
       t.string :image
       
