@@ -11,8 +11,9 @@ class SchedulesController < ApplicationController
     
 
     def date_workers
-        if params[:date]                                    #出勤者だけとってくる。
-            schedules = Schedule.where(date: params[:date]).where.not(frame_status: "break")
+        d = params[:date]
+        if d                   #scope       #出勤者だけとってくる。
+            schedules = Schedule.date(d).notBreaking
             
             staffs=[]
             
@@ -27,7 +28,7 @@ class SchedulesController < ApplicationController
     
     
     def new
-        @staffs = Staff.all.order(status: :asc)
+        #@staffs = Staff.all.order(status: :asc)
         @schedule = Schedule.new 
         
         #this_month_first_day = Date.today.beginning_of_month
@@ -35,7 +36,7 @@ class SchedulesController < ApplicationController
         #@dates = (next_month..next_month.end_of_month)  #.map{|date| date.strftime("%m月 %d日")}
         
         #rangeDate   pravateメソッドから呼び出し
-        @dates = rangeDate  
+        #@dates = rangeDate  
         
         
         
@@ -45,9 +46,6 @@ class SchedulesController < ApplicationController
 
     
     def create
-        
-        #@schedule = Schedule.new(schedule_params)
-        #logger.debug("--------------schedule_params=#{schedule_params}")
         
         date_and_times=[]
         
@@ -98,7 +96,6 @@ class SchedulesController < ApplicationController
             
             index = (end_time-start_time)*2
             
-
             dates =[]
             #indexと同じ回数日数を作る。
             # if文でbreakをはじく
@@ -130,46 +127,29 @@ class SchedulesController < ApplicationController
             i +=1
         end
 
-
 #-------------create----------------------
-
         #countをeachで複数個createする。
         count.each do |value|
             dates=value[:date]
             times= value[:working_hour]
-
                 
             dates.zip(times) do |date, time|
-                #logger.debug("------original_date=#{date}")
-                #logger.debug("------original_time=#{time}")
-                
+
                 if time == "0:00"            #休暇なら　frame_statusをbreakにする
-                
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'break')
-                    
-                    logger.debug("------break_date=#{date}")
-                    logger.debug("------break_time=#{time}")
-                    
 
                 elsif time == "9:30" || time == "21:00"
                 
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'preparation_period')
                     
-                    logger.debug("------preparation_period_date=#{date}")
-                    logger.debug("------preparation_period_time=#{time}")
-                
-                
-                    
                 else
                     #退勤時間を18:00にしても予約するときはavailable_timeの最後は17:30で入る。そのため18:00(退勤時間)はscheduleのDBには存在しない。
-                    logger.debug("------available_date=#{date}")
-                    logger.debug("------available_time=#{time}")
-                    
                     Schedule.create(staff_id: schedule_params[:staff_id], date: date, frame: time, frame_status: 'available')
                     
                 end
             end
         end
+        flash[:notice] = "スケジュールを作成しました。"
         redirect_to home_basic_path
     end
     
@@ -190,20 +170,22 @@ class SchedulesController < ApplicationController
             return string_time
         end
         
-        
+            #スタッフのチェック
         def schedules_check
             
-            staff = Staff.find_by(id: schedule_params[:staff_id])
-                
-            if staff.nil?
+            @schedule = Schedule.new(schedule_params)
+            staff = Staff.find_by(id: @schedule.staff_id)
+
+            if @schedule.invalid? && staff.nil?
                 
                 flash[:alert] = 'スタッフを選択してください。'
-                redirect_to schedules_new_path
+                #redirect_to schedules_new_path and return
+                render :new
             
-             elsif  Schedule.where(date: rangeDate, staff_id: staff.id).present?
+             elsif  Schedule.where(date: rangeDate, staff_id: @schedule.staff_id).present?
                 
                 flash[:alert] = '選択されたスタッフのシフトはすでに組まれています。'
-                redirect_to home_basic_path
+                redirect_to home_basic_path 
             
             end
             
@@ -211,6 +193,7 @@ class SchedulesController < ApplicationController
         
         
         def rangeDate
+            
             this_month_first_day = Date.today.beginning_of_month
             next_month = this_month_first_day.next_month
             
@@ -219,6 +202,8 @@ class SchedulesController < ApplicationController
             
         end
         
+        #view側でアクションの呼び出し
+        helper_method :rangeDate
         
     
         def schedule_params

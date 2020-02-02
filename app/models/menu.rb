@@ -15,7 +15,8 @@ class Menu < ApplicationRecord
     validates :price, format: { with: /\A[0-9]+\z/, message: "半角数値のみが使用できます" }
     
     validates :required_time, format: { with: /\A[0-9]+\z/, message: "半角数値のみが使用できます" }
-    
 
-    
+
+    #scope :group, ->(argument) { where(category: argument) }
+
 end

@@ -3,7 +3,7 @@ class StaffsController < ApplicationController
  before_action :staff_id_check, only: [:edit, :update, :destroy]
     
     def index
-        @staffs = Staff.all.order(status: :asc)
+        @staffs = Staff.recent
         @name = '名前'
         @age = '年齢'
         @gender = '性別'
@@ -33,7 +33,7 @@ class StaffsController < ApplicationController
     
     
     def edit
-        @staff = Staff.find(params[:id])
+        @staff = searchStaffId
         @staff_image = @staff.image
     end
     
@@ -41,7 +41,7 @@ class StaffsController < ApplicationController
     def update
         
         #else以下が実行された場合 renderが発動するので@staffにしておけば、勝手staffでーたを飛ばしてくれます。
-        @staff = Staff.find(params[:id])
+        @staff = searchStaffId
 
         @staff.assign_attributes(staff_params)
         
@@ -58,7 +58,7 @@ class StaffsController < ApplicationController
     
     
     def destroy
-        staff = Staff.find_by(id: params[:id])
+        staff = searchStaffId
         staff.destroy
         redirect_to staffs_path
             
@@ -73,12 +73,18 @@ class StaffsController < ApplicationController
 
 
         def staff_id_check
-            staff = Staff.find_by(id: params[:id])
+            staff = searchStaffId
             
             if staff.nil?
-                flash[:alert] = 'メニューがありません。'
+                flash[:alert] = 'スタッフが存在しません。'
                 redirect_to root_path
                 
             end
+        end
+        
+        def searchStaffId
+            
+            Staff.find_by(id: params[:id])
+            
         end
 end

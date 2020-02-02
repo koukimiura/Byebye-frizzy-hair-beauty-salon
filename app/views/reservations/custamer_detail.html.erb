@@ -83,15 +83,18 @@
 <script>
     
     $(document).ready(function() {
+        let array_menus = JSON.parse(sessionStorage.getItem('menus'));
+        
         //choose_dateページ,urlのクエリを取得
         //choose_dateのsessionStorage
         //読み込みの時点であることでブラウザバックも使えるし、confirm画面に行ってからのブラウザバックにも変数を保持できる。
         let getDateQuery = sessionStorage.getItem('dateKey');
-        console.log(getDateQuery);
+        console.log("日程クエリ" + getDateQuery);
         
         //クエリを取得
         let queryStr = window.location.search; 
-        console.log("custamer_detail詳細" + queryStr);
+        console.log("お客さん詳細" + queryStr);
+        
         //Storageに保存する。
         sessionStorage.setItem('params', queryStr);
         
@@ -101,15 +104,16 @@
     
     //render後のリロード対策  createからのrenderも太陽します。
     function addToNewUrl() {
+        let array_menus = JSON.parse(sessionStorage.getItem('menus'));
+
         //renderされたらstorageのkeyを取得してdefaultのurlにクエリを追加する。
         //sessionStorageだからブラウザが閉じるまでは保持される。
-        
+
         let query = sessionStorage.getItem('params');
         
         //urlを取得  
         let path = location.pathname;
-        console.log(path);
-        
+
         let pattern = "/reservations/custamer_detail"
     
         //検証

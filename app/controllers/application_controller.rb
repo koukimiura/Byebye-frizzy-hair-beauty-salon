@@ -33,7 +33,7 @@ class ApplicationController < ActionController::Base
             #15分足す。
             after_15min =  schedule.updated_at + 900
              
-            #logger.debug("--------グリンリッジ=#{time}")
+            #logger.debug("--------グリンリッジ=#{time}")  UTC
             #logger.debug("--------target..=#{Time.parse(after_30min.to_s)}")
                 
              #Time.parse　string化しなさい。
@@ -45,6 +45,6 @@ class ApplicationController < ActionController::Base
             end#if
         end#each
     end#update_frame_status
-        
+    
         
 end

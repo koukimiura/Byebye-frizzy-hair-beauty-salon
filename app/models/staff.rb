@@ -22,12 +22,21 @@ class Staff < ApplicationRecord
     validates :first_name_kana, presence: true,format: { with: /\A[\p{katakana}\p{blank}ー－]+\z/, message: 'はカタカナで入力して下さい。'}
     validates :number, presence: true, uniqueness: true
 
+    #シフト作成時のスタッフ選択
     def last_nameANDfirst_name
         
         return '(' + self.number.to_s + ')' + self.last_name + self.first_name
         
     end
     
+    scope :active, -> { all }
+
+    # statusカラムを昇順で取得する
+    scope :sorted, -> { order(status: :asc) }
+    
+    # activeとsortedを合わせたもの
+    scope :recent, -> { active.sorted }
+
     
     
     

@@ -3,7 +3,7 @@ class MenusController < ApplicationController
   before_action :menu_id_check, only: [:edit, :update, :destroy]
   
   def index
-    #@menus = Menu.all.order(category: :asc)
+  
     @menus = Menu.where(category: 1)
     @menus2 = Menu.where(category: 2)
     @menus3 = Menu.where(category: 3)
@@ -21,11 +21,9 @@ class MenusController < ApplicationController
   end
 
 
-
   def new
     @menu = Menu.new
   end
-
 
 
   def create
@@ -43,13 +41,13 @@ class MenusController < ApplicationController
 
 
   def edit
-    @menu = Menu.find(params[:id])
+    @menu = searchId
   end
 
 
 
   def update
-    @menu = Menu.find(params[:id])
+    @menu = searchId
     @menu.assign_attributes(menu_params)
     
     if @menu.save
@@ -65,7 +63,7 @@ class MenusController < ApplicationController
 
 
   def destroy
-     menu = Menu.find_by(id: params[:id])
+     menu = searchId
     
       menu.destroy
       redirect_to menus_path
@@ -82,12 +80,18 @@ class MenusController < ApplicationController
     end
   
     def menu_id_check
-        menu =  Menu.find_by(id: params[:id])
+        menu = searchId
         
         if menu.nil?
             flash[:alert] = 'メニューが見つかりません。'
             redirect_to root_path
         end
+      
+    end
+    
+    def searchId
+      
+      Menu.find_by(id: params[:id])
       
     end
 

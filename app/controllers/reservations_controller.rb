@@ -31,10 +31,11 @@ class ReservationsController < ApplicationController
         d = (Date.current..end_this_month)
         
         #今日から今月末まで
-        this_month_reservations = Reservation.where(date: d).order(date: :asc)
+        #searchDateはreservationのscope
+        this_month_reservations = Reservation.searchDate(d).order(date: :asc)
         
-        #全体
-        after_this_month_reservations = Reservation.all.order(date: :desc)
+        #全体  activeはscope 
+        after_this_month_reservations = Reservation.active.order(date: :desc)
         
         mixed_reservations = this_month_reservations | after_this_month_reservations
         @reservations = mixed_reservations.uniq
@@ -45,6 +46,7 @@ class ReservationsController < ApplicationController
 #-----------------------Reservation-------------------------    
     
     def choose_menus
+        
         @reservation = Reservation.new
         
         @menus = Menu.where(category: 1)
@@ -60,6 +62,7 @@ class ReservationsController < ApplicationController
         @treatment = 'トリートメント'
         @setting_your_hair = 'ヘアセット'
         @other = 'その他'
+        
     end
     
     
@@ -81,7 +84,8 @@ class ReservationsController < ApplicationController
     def choose_staff
         selectedMenus = menuIds_params
 
-        @staffs = Staff.all.order(status: :ASC)
+        #recentはstaff.rbにscopeとして書いている。
+        @staffs = Staff.recent
         
         @name = '名前'
         @age = '年齢'
@@ -91,8 +95,7 @@ class ReservationsController < ApplicationController
         #view用
         @menuIds =  menuIds_params
         
-       #selected_Menus = selectedMenus #||= selected_Menus2
-      
+
 #---------------------メニュー----------------------
 
         menus = selectedMenus.map{|menuId|totalMenus(menuId)}
@@ -140,7 +143,6 @@ class ReservationsController < ApplicationController
         #custamer_detailからブラウザバック時のリロード対策
         if params[:scheduleIds]
             params[:scheduleIds].each do |scheduleId|
-                logger.debug("---------------scheduleId=#{scheduleId}") 
                 schedule = Schedule.find_by(id: scheduleId)
                 schedule.update(frame_status: "available")
                 
@@ -304,7 +306,7 @@ class ReservationsController < ApplicationController
             #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
 
             @reservation.errors.full_messages.each do |array_errors_message|
-                logger.debug("------------array_errors_message=#{array_errors_message}")
+                #logger.debug("------------array_errors_message=#{array_errors_message}")
                 case array_errors_message
                 
                     when "Last nameを入力してください" then
@@ -391,19 +393,20 @@ class ReservationsController < ApplicationController
                                           frame_status: 'keep')
                 if schedules
                     schedules.update(frame_status: "reserved")
-                elses
+                else
                     flash[:notice] = '時間時れです。もう一度選んでください。'
-                    redirect_to choose_menus_reservations_path
+                    redirect_to choose_menus_reservations_path and return
                 end
             end
             
             flash[:notice] ='予約が確定しました。ありがとうございました。'
             redirect_to root_path
-        else
             
-            redirect_to :back
-            #redirect_back(fallback_location: fallback_location)
+        else
             flash.now[:alert] = '記入が漏れがあります。'
+            render :custamer_detail and return
+            
+            #redirect_back(fallback_location: fallback_location)
         end
     end
     
@@ -531,6 +534,7 @@ class ReservationsController < ApplicationController
 #-------------------------------------------------------
         #時間が過ぎていたら当日のframe_status == availableをupdateする
         def update_passedTimes
+            
             #datetime = DateTime.now
             #tokyo = ActiveSupport::TimeZone.new("Tokyo").parse(datetime.to_s)   
             #logger.debug("----------time_zone=#{Time.current.zone}")
@@ -538,8 +542,11 @@ class ReservationsController < ApplicationController
             #logger.debug("----------in_time_zone('Tokyo')=#{Time.now.in_time_zone('Tokyo')}")
             #logger.debug("----------tokyotime=#{Time.parse(tokyo.to_s)}")
             
-            #JSCで日付を検索                                            staffId_paramsの呼び出し
-            schedules = Schedule.where(staff_id: staffId_params).where(date: Date.current).where(frame_status: "available")
+            
+            #JSCで日付を検索  
+            #staffId_paramsの呼び出し
+            #currentとavailable scope使った。 schedule.rbに記載s
+            schedules = Schedule.where(staff_id: staffId_params).current.available
 
             schedules.each do |schedule|
                 #日本時間で(日本の)現在時刻とDBを比較。現在時刻よりも小さいのであればupdate

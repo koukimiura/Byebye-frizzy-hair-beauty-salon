@@ -33,6 +33,8 @@ $(document).ready(function() {
         var i = 0;
         var Ids =[];
         
+        //if (array_menus.length > 0) {
+            
         while (i < array_menus.length){
             array_menus.forEach(function(menu){
                 
@@ -78,6 +80,8 @@ $(document).ready(function() {
             });
         i ++;   
        }
+       
+      // }
     }
 
    

@@ -68,8 +68,18 @@ class Reservation < ApplicationRecord
         return result
     end
     
+    scope :active, -> { all }
     
-   
-
+    # statusカラムを昇順で取得する
+    scope :sorted, -> { order(status: :asc) }
+    
+    # activeとsortedを合わせたもの
+    scope :recent, -> { active.sorted }
+    
+    scope :searchDate, -> (d){where(date: d)}
+    
+    
+    
+    
 end
     

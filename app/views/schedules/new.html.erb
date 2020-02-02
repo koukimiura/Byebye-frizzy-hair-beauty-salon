@@ -2,16 +2,16 @@
 <div class='schedule'>
     <div class='form-body'>
         <div class='timesheet'>
-            <% d= Date.today %>
+            <% d= Date.current %>
             <h2><%= d.strftime("%Y年") %><%= d.next_month.strftime("%m月") %></h2>
             
             <%= form_for @schedule do |f| %>
-                <%= render 'layouts/error_messages', model: f.object %>
                     <div class='timesheet-staff'>
                         <%= f.label :＊スタッフを選択してください。, class:'font-color' %></br>
-                        <%= f.collection_select :staff_id, @staffs, :id, :last_nameANDfirst_name, :prompt => "選択してください" %>
+                        <%= f.collection_select :staff_id, Staff.all.order(status: :asc), :id, :last_nameANDfirst_name, :prompt => "選択してください" %>
                     </div>
                         <hr>
+                            <% @dates = rangeDate %>
                             <% @dates.each_with_index do |date, i| %>
                                 <p class='font-color'>＊休暇申請は出勤、退勤時間共に休暇を選択してください。</p>
                                 <%= f.label :日付け %>

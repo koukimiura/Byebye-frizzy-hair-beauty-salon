@@ -27,7 +27,6 @@ Rails.application.routes.draw do
       get 'choose_staff'
       get 'choose_date'
       get 'custamer_detail'
-      #post 'deal'
       post 'confirm'
     end
     
