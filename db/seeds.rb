@@ -8,8 +8,11 @@
 
 
 #menus
-
+Menu.create(name: 'スタイリストカット', category: 1, price: '6600', required_time: '60', detail: '')
+Menu.create(name: 'ディレクターカット', category: 1, price: '7700', required_time: '60', detail: '')
 Menu.create(name: '前髪カット', category: 1, price: '6600', required_time: '10', detail: '')
+Menu.create(name: '松本人志刈り', category: 1, price: '4000', required_time: '60', detail: '松本人志のように丸刈り金髪にします。ムキムキになるかもしれません。')
+Menu.create(name: '浜田雅功', category: 1, price: '4000', required_time: '60', detail: '浜田雅功風の髪型にします。ツッコミがうまくなるかも')
 Menu.create(:name => "ヘアカラー", :category => 2, :price =>"7700", :required_time =>"60", :detail => "厳選した日本製のカラー剤を使用。※カットされない場合は＋シャンプー&ブローもご選択ください。（前回の施術から30日以内でしたら＋シャンプー&ブロー代はかかりませんが＋シャンプー&ブローもご選択下さい。")
 Menu.create(:name => "オーガニックカラー", :category => 2,  :price =>"7700", :required_time =>"60", :detail => "天然由来成分92%配合。においと刺激を抑えたカラー剤。4種類のアロマオイルの中から好みや気分に合わせて香りを選択し、放置中も快適に過ごせます。※カットされない場合は＋シャンプー&ブローもご選択ください。（前回の施術から30日以内でしたら＋シャンプー&ブロー代はかかりませんが＋シャンプー&ブローもご選択下さい。）")
 Menu.create(:name => "ハーブカラー", :category => 2, :price =>"3100", :required_time =>"60", :detail =>"漢方・ハーブを主成分としたカラー。ノンアルカリで頭皮への負担も少なく、髪にハリコシがでます。黒髪は明るくならず、白髪のみ色がつきます。※カットされない場合は＋シャンプー&ブローもご選択ください。（前回の施術から30日以内でしたら＋シャンプー&ブロー代はかかりませんが＋シャンプー&ブローもご選択ください)")

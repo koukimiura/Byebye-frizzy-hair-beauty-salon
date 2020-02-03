@@ -1,4 +1,10 @@
 module ReservationsHelper
+    
+    #def reservation_menu_number_to_currency(menu)
+        #"￥#{menu.price.to_s(:delimited)}"
+    #end
+
+
     def reservation_calender(d, staff, menuRequiredTimes)
 
         next_week = d - 1 + 1.week
