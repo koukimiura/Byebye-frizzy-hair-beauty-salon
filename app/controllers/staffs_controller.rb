@@ -18,7 +18,9 @@ class StaffsController < ApplicationController
         staffIds = Staff.pluck(:id)
         
         if staffIds.present?
-            @staff_number = "推奨ナンバー#{date.year}#{staffIds.last + 1}"
+            @staff_number = "推奨ナンバー#{date.year}00#{staffIds.last + 1}"
+        else
+            @staff_number = "推奨ナンバー#{date.year}001"
         end
     end
     

@@ -127,19 +127,13 @@
     //呼び出し
     window.onload = addToNewUrl();
 
-    //HTTP postメソッドdealと一致したら
-    //if (location.pathname.match("/reservations/confirm")) {
-        //呼び出し
-        //window.onload = addToNewUrl();
-    //}
-
 //------------------------------------------------------------------------
     
     //ブラウザバックに反応
     $(window).on("popstate", function () {
         
         //choose_dateページ,urlのクエリを取得
-        let getDateQuery = sessionStorage.getItem('dateKey');
+        //let getDateQuery = sessionStorage.getItem('dateKey');
         //render後のリロード対策
         function addToCorrectUrl() {
             //renderされたらstorageのkeyを取得してdefaultのurlにクエリを追加する。

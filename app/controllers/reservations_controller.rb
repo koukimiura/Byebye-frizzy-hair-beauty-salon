@@ -1,15 +1,13 @@
 class ReservationsController < ApplicationController
     
- before_action :basic_auth, only: [:search, :index]
+ before_action :basic_auth, only: [:search, :index], if: :production?
  
  #createアクションが呼ばれたら、menuIds, staffId, framesは空になっている。
  before_action :nil_check_menus, only: [:choosen_menus, :choose_staff, :choosen_staff, :choose_date]   
  before_action :nil_check_staff, only: [:choosen_staff, :choose_date] 
  before_action :update_passedTimes, only: [:choose_date]
  before_action :nil_check_something, only: [:custamer_detail]
- before_action :nil_check_strong_parameters, only: [:deal, :confirm, :create]
- before_action :reservation_params, only: [:deal, :create]
-
+ before_action :reservation_params, only: [:create]
 
 #--------------検索-----------------  
     def search
@@ -69,14 +67,12 @@ class ReservationsController < ApplicationController
     def choosen_menus
         menuIds = menuIds_params
 
-        #logger.debug("----------menuIds_params=#{menuIds_params}")
-        
         if menuIds.present?
             #javascriptで returnをして飛べないようにしてます。
             redirect_to controller: 'reservations', action: 'choose_staff', menus: menuIds_params
         else
             #render :choose_menus
-            redirect_to choose_menus_path
+            redirect_to choose_menus_path and return
         end
     end
     
@@ -97,24 +93,11 @@ class ReservationsController < ApplicationController
         
 
 #---------------------メニュー----------------------
-
         menus = selectedMenus.map{|menuId|totalMenus(menuId)}
         
-        names = menus.map{|menu| name(menu)}
-        #文字列をまとめる
-        @menuNames = names.join('+')
-        
-        prices = menus.map{|menu| price(menu)}
-        required_times = menus.map{|menu| required_time(menu)}
-        
-        #各文字列をintegerにして合計金額と時間を出す。
-        prices_integer = prices.map{|x| integer(x)}
-        required_times_integer = required_times.map{|y| integer(y)}
-        
-        @menuPrices = prices_integer.sum
-    
-        @menuRequiredTimes = required_times_integer.sum
-    
+        #privateの一番した
+        combination(menus)
+
     end
     
     
@@ -157,24 +140,12 @@ class ReservationsController < ApplicationController
         @staff = Staff.find(staffId)
     
 #-------------メニュー-----------------------
-    #pravateメソッド下さんからメソッド呼び出し。
+        #pravateメソッド下さんからメソッド呼び出し。
         menus = @menuIds.map{|menuId|totalMenus(menuId)}
-        names = menus.map{|menu| name(menu)}
-        #文字列をまとめる
-        @menuNames = names.join(',')
         
-        #各文字列をintegerにして合計金額と時間を出す
-        prices = menus.map{|menu| price(menu)}
-        required_times = menus.map{|menu| required_time(menu)}
-        
-        #各文字列をintegerにして合計金額と時間を出す。
-        prices_integer = prices.map{|x| integer(x)}
-        required_times_integer = required_times.map{|y| integer(y)}
-        
-        #合計の出し方
-        @menuPrices = prices_integer.sum
-        @menuRequiredTimes = required_times_integer.sum
-        
+        #privateの一番した
+        combination(menus)
+
 #-------------先週、翌週のbtn対策--------------
         #@dの条件文(先週なのか翌週なのかで表示する一週間を変更)
         if receivedNext
@@ -238,7 +209,6 @@ class ReservationsController < ApplicationController
             
             #iは0から始まり
             updateNumber.times do |i|      
-                logger.debug("--------i=#{i}")
                 #一週目は初めのselectedScheduleのidを取得
                 
                 scheduleId = selectedSchedule.id + i
@@ -260,8 +230,10 @@ class ReservationsController < ApplicationController
             @reservation = Reservation.new(staff_id:  @staffId, date: @date, menu_ids: @hash_menuIds.to_json, frames: @hash_frames.to_json)
         else
             
-            #確認画面の戻るボタンを押した場合の処理
+            #確認画面(confirm)の戻るボタンを押した場合の処理
             @reservation = Reservation.new(reservation_params)
+            
+            #配列で入ったやつをviewに出せるように変更
             @frames = json_to_hash_frames
             @menuIds = json_to_hash_menuIds
         end
@@ -281,22 +253,14 @@ class ReservationsController < ApplicationController
            
             #privateメソッド内json_to_hash_framesメソッドで呼び出し。    
             @frames = json_to_hash_frames
+            
     #---------------------メニュー-------------------------------------   
             #privateメソッド内json_to_hash_menuIdsメソッド下で呼び出し。  
             menus = json_to_hash_menuIds.map{|menuId|totalMenus(menuId)}
-            names = menus.map{|menu| name(menu)}
-            #文字列をまとめる
-            @menuNames = names.join(',')
             
-            prices = menus.map{|menu| price(menu)}
-            required_times = menus.map{|menu| required_time(menu)}
+            #privateの一番した
+            combination(menus)
             
-            #各文字列をintegerにして合計金額と時間を出す。
-            prices_integer = prices.map{|x| integer(x)}
-            required_times_integer = required_times.map{|y| integer(y)}
-            
-            @menuPrices = prices_integer.sum
-            @menuRequiredTimes = required_times_integer.sum
         else
             #配列@reservation.errors.messagesにはvalidationのエラーメッセージが入っているがredirect＿toで戻していいるから表示されない。
             #log 
@@ -306,7 +270,6 @@ class ReservationsController < ApplicationController
             #:tel=>["can't be blank", "電話番号はハイフンなしです。"], :email=>["can't be blank", "適切なアドレスを入れてください。"]}
 
             @reservation.errors.full_messages.each do |array_errors_message|
-                #logger.debug("------------array_errors_message=#{array_errors_message}")
                 case array_errors_message
                 
                     when "Last nameを入力してください" then
@@ -438,7 +401,7 @@ class ReservationsController < ApplicationController
     
 #------------------------------------------------------private--------------------------------------   
     private
-    
+        
         def menuIds_params
             params[:menus]
         end
@@ -447,7 +410,7 @@ class ReservationsController < ApplicationController
             params[:selectedStaff]
         end
         
-#-------------before_actionシリーズ------------------
+#-------------before_actionシリーズ---URL直打ちを防ぐ------------------
         def nil_check_menus
             if menuIds_params == nil 
             
@@ -467,6 +430,7 @@ class ReservationsController < ApplicationController
             end
         end
         
+        #urlにreservation/custamer_detailを直打ちされると "param is missing or the value is empty: reservation" のエラーが出ちゃうから対策
         def nil_check_something
             if menuIds_params == nil && params.fetch(:reservation, {}) == {}
                 
@@ -474,7 +438,7 @@ class ReservationsController < ApplicationController
                 redirect_to choose_menus_reservations_path
 
                 
-             elsif  staffId_params == nil && params.fetch(:reservation, {}) == {}
+            elsif  staffId_params == nil && params.fetch(:reservation, {}) == {}
                 
                 flash[:alert] = 'スタッフを選択してください。'
                 redirect_to choose_staff_reservations_path(menus: menuIds_params)
@@ -487,23 +451,7 @@ class ReservationsController < ApplicationController
             end
         end
         
-        
-        def nil_check_strong_parameters
-                
-            #fetchでキーがreservationでないならデフォルト値{}を作る。
-            if params.fetch(:reservation, {}) == {}
-            
-                flash[:alert] = '選び直してください。'
-                redirect_to choose_menus_reservations_path
-                #schedule = Schedule.where
-            end
-        end
-        
-        def frame_status_check
-            #application_controllerのframe_status_updateでkeepからavailableに戻されていないかchec
-            schedule = Schedule.find_by(id: params[:scheduleId])
-            
-        end
+     
         
 #-------------------------json文字列変換-----------------------       
         
@@ -519,7 +467,6 @@ class ReservationsController < ApplicationController
             
         end
         
-        
         def json_to_hash_menuIds
                 
             #framesのJSON文字列{key_menuIds: @menuIds}をparseしてhashとして扱えるようにする。
@@ -532,17 +479,9 @@ class ReservationsController < ApplicationController
         end
         
 #-------------------------------------------------------
-        #時間が過ぎていたら当日のframe_status == availableをupdateする
+        #当日、fame_statusがavailableのカラム（時間帯）があっても、現在時刻を過ぎていたらをupdateする
         def update_passedTimes
-            
-            #datetime = DateTime.now
-            #tokyo = ActiveSupport::TimeZone.new("Tokyo").parse(datetime.to_s)   
-            #logger.debug("----------time_zone=#{Time.current.zone}")
-            #logger.debug("----------date.current=#{Date.current}")
-            #logger.debug("----------in_time_zone('Tokyo')=#{Time.now.in_time_zone('Tokyo')}")
-            #logger.debug("----------tokyotime=#{Time.parse(tokyo.to_s)}")
-            
-            
+
             #JSCで日付を検索  
             #staffId_paramsの呼び出し
             #currentとavailable scope使った。 schedule.rbに記載s
@@ -560,21 +499,9 @@ class ReservationsController < ApplicationController
             
         #ストロングパラメータは制限かけてるですーー
         def reservation_params
-            params.require(:reservation).permit(:staff_id, 
-                                                :last_name, 
-                                                :first_name, 
-                                                :last_name_kana,
-                                                :first_name_kana, 
-                                                :tel, 
-                                                :email, 
-                                                :gender, 
-                                                :request, 
-                                                :check, 
-                                                :date, 
-                                                :frames, 
-                                                :menu_ids
+            params.require(:reservation).permit(:staff_id, :last_name, :first_name, :last_name_kana, :first_name_kana, :tel,
+                                                :email, :gender, :request, :check, :date, :frames, :menu_ids
                                                 )
-                                                
         end
 
 #------------------------------------menu----------------------------------------
@@ -585,24 +512,23 @@ class ReservationsController < ApplicationController
             return menu
         end
         
-        def name(menu)
-            return menu.name
-        end
+        #まとめた, choose_staff, choose_date, confirmで使った
+        def combination(menus)
+            
+            names = menus.map{|menu| menu.name}
+            prices = menus.map{|menu| menu.price}
+            required_times = menus.map{|menu| menu.required_time}
+            
+            #各文字列をintegerにして合計金額と時間を出す。
+            prices_integer = prices.map{|x| x.to_i}
+            required_times_integer = required_times.map{|y| y.to_i}
         
-        def required_time(menu)
-            return menu.required_time
-        end
-        
-        def price(menu)
-            return menu.price
-        end
-        
-        def integer(x)
-            return x.to_i
-        end
-        
-        def integer(y)
-            return y.to_i
+            #文字列をまとめる
+            @menuNames = names.join(',')
+            #合計
+            @menuPrices = prices_integer.sum
+            @menuRequiredTimes = required_times_integer.sum
+            
         end
 
 end

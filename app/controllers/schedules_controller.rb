@@ -28,7 +28,6 @@ class SchedulesController < ApplicationController
     
     
     def new
-        #@staffs = Staff.all.order(status: :asc)
         @schedule = Schedule.new 
         
         #this_month_first_day = Date.today.beginning_of_month
@@ -37,10 +36,6 @@ class SchedulesController < ApplicationController
         
         #rangeDate   pravateメソッドから呼び出し
         #@dates = rangeDate  
-        
-        
-        
-        
     end
     
 

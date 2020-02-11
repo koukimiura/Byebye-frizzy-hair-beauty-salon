@@ -11,7 +11,7 @@
                     
                     <p>来店予定日</p>
                         <select name= 'search_date'>
-                            <option value="" selected="">洗濯してください</option>
+                            <option value="" selected="">選択してください</option>
                             <% @dates.each do |date| %>
                                 <option name="search_date" value="<%= date %>"><%= date.strftime("%Y年 %m月 %d日") %></option>
                             <% end %>

@@ -1,6 +1,10 @@
 //読み込んだら
 $(document).ready(function() {
     
+    function comma(price, total_Price, number) {
+        return String(price,total_Price,number).replace( /(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+    }
+    
     
     if (window.performance.navigation.type === 0/* TYPE_NAVIGATE */) {
       // 初期表示
@@ -26,62 +30,56 @@ $(document).ready(function() {
         //sessionStorage.clear()
         //console.log(times);
         //console.log(prices);
-        //console.log(array_menus);
-        //console.log(JSON.parse(array_clones));
-        
 
-        var i = 0;
-        var Ids =[];
-        
-        //if (array_menus.length > 0) {
-            
-        while (i < array_menus.length){
-            array_menus.forEach(function(menu){
-                
-            //== と ===は同じデータ型であれば　===が推奨される。しかも厳密な条件文。
-            
-            //初回
-            if (i === 0) {
-                var $copy = $('#selectedMenu').clone().css('display', 'block');
-                $copy.removeAttr('id');
-                
-                var Id = 'selectedCheck'+ (menu['value']);
+        //Uncaught TypeError: Cannot read propertyのエラー対策
+        if (array_menus) {
+            let i = 0;
+            var Ids =[];
+            while (i < array_menus.length){
+                array_menus.forEach(function(menu){
                     
-                Ids.push(Id);
-                
-                $copy.attr('id', 'selectedCheck'+ (menu['value']));
-                $copy.find('#selected_Name').html(menu['nameKey']);
-                $copy.find("#selected_Price").html('￥' + menu['priceKey']);
-                $copy.find("#selected_Time").html(menu['timeKey'] + '分');
-                $('#selectedMenu').after($copy);
-                
-            } else {
-                
-                var $copy = $('#selectedMenu').clone().css('display', 'block');
-                $copy.removeAttr('id');
-                
-                var Id = 'selectedCheck'+ (menu['value']);
-                
-                
-                $copy.attr('id', 'selectedCheck'+ (menu['value']));
-                
-                $copy.find('#selected_Name').html(menu['nameKey']);
-                $copy.find("#selected_Price").html('￥' + menu['priceKey']);
-                $copy.find("#selected_Time").html(menu['timeKey'] + '分');
-                
-                console.log(Ids.pop());
-                
-                // 配列のケツの要素をとってきて、一個前にviewに出力したidの前に$copyを出力
-                $(Ids.pop()).before($copy);
-                
-                //月の配列要素が来たときのために最後にプッシュs
-                Ids.push(Id);
+                    //== と ===は同じデータ型であれば　===が推奨される。しかも厳密な条件文。
+                    //初回 copyで出力良くするのは良いが複数個メニューが選択された場合書き換えになっていますので条件文で出力
+                    if (i === 0) {
+                        var $copy = $('#selectedMenu').clone().css('display', 'block');
+                        $copy.removeAttr('id');
+                        
+                        var Id = 'selectedCheck'+ (menu['value']);
+                            
+                        Ids.push(Id);
+                        
+                        $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                        $copy.find('#selected_Name').html(menu['nameKey']);
+                        $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                        $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                        $('#selectedMenu').after($copy);
+                        
+                    } else {
+                        
+                        var $copy = $('#selectedMenu').clone().css('display', 'block');
+                        $copy.removeAttr('id');
+                        
+                        var Id = 'selectedCheck'+ (menu['value']);
+                        
+                        
+                        $copy.attr('id', 'selectedCheck'+ (menu['value']));
+                        
+                        $copy.find('#selected_Name').html(menu['nameKey']);
+                        $copy.find("#selected_Price").html('￥' + menu['priceKey']);
+                        $copy.find("#selected_Time").html(menu['timeKey'] + '分');
+                        
+                        console.log(Ids.pop());
+                        
+                        // 配列のケツの要素をとってきて、一個前にviewに出力したidの前に$copyを出力
+                        $(Ids.pop()).before($copy);
+                        
+                        //月の配列要素が来たときのために最後にプッシュs
+                        Ids.push(Id);
+                    }
+                });
+            i ++;   
             }
-            });
-        i ++;   
-       }
-       
-      // }
+        }
     }
 
    
@@ -99,9 +97,12 @@ $(document).ready(function() {
             var price= $(this).attr('data-price');
             var time = $(this).attr('data-time');
             
-            //出力
+            //クローン出力
             $copy.find('#selected_Name').html(name);
-            $copy.find("#selected_Price").html('￥' + price);
+            
+            //クローン出力
+            //正規表現comma(price)を使って3桁でカンマ入れる
+            $copy.find("#selected_Price").html('￥' + comma(price));
             $copy.find("#selected_Time").html(time + '分');
             $('#selectedMenu').after($copy);
             
@@ -119,7 +120,6 @@ $(document).ready(function() {
 
         //金額合計と時間
         
-        //Ids = [];
         var prices = [];
         var required_time = [];
         var array_hash_menus = [];
@@ -146,8 +146,9 @@ $(document).ready(function() {
             
             // keyは文字列かシラブル、　valueは文字列が基本
             //array_hash_menus.push({ [i]: {"value": menuId, "nameKey": name, "priceKey": price, "timeKey": time}});
-            array_hash_menus.push({"value": menuId, "nameKey": name, "priceKey": price, "timeKey": time});
-            //array_hash_clones.push({clone});
+            
+            //正規表現comma(price)を使って3桁でカンマ入れる
+            array_hash_menus.push({"value": menuId, "nameKey": name, "priceKey": comma(number), "timeKey": time});
         });
         
     
@@ -167,13 +168,14 @@ $(document).ready(function() {
             total_Time += required_time[i];
         }
         
-        //出力
-        $("#totalPrice").attr('price', total_Price ).html('￥' + total_Price);
+        //合計出力
+        //正規表現comma(price)を使って3桁でカンマ入れる
+        $("#totalPrice").attr('price', total_Price ).html('￥' + comma(total_Price));
         $("#totalTime").attr('time', total_Time ).html(total_Time + '分');
         
-        console.log(total_Time);
-        console.log(total_Price);
-        console.log(clones);
+        //console.log(total_Time);
+        //console.log(total_Price);
+       // console.log(clones);
         
         // keyは文字列かシラブル、　valueは文字列が基本
         //menus_hash = {"value": Ids, "name": names, "price": prices, "time": required_time};
@@ -185,7 +187,9 @@ $(document).ready(function() {
         //var tojson_clones = JSON.stringify(clones);
 
         sessionStorage.setItem('array_time', total_Time);
-        sessionStorage.setItem('array_price', total_Price);
+        
+        //正規表現comma(price)を使って3桁でカンマ入れる
+        sessionStorage.setItem('array_price', comma(total_Price));
         sessionStorage.setItem('menus', tojson); 
         sessionStorage.setItem('clonedMenu', JSON.stringify(clones)); 
 
@@ -207,6 +211,7 @@ $(document).ready(function() {
         
         
      });
+     
 });
 
 
