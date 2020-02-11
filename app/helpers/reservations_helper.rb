@@ -500,7 +500,7 @@ module ReservationsHelper
                 elsif firstDatesFrames.include?(working_hours[i])
 
                     circle = link_to '◎', custamer_detail_reservations_path(selectedStaff: @staff.id, menu_required_times: @menuRequiredTimes,
-                                        menus: @menuIds, date: rangeDates[0], frame: working_hours[i]), class:'date-link'
+                                        menus: @menuIds, date: rangeDates[0], frame: working_hours[i]), class:" date-link"
                     
                     calender << circle
                     
