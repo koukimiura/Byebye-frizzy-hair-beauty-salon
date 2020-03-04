@@ -87,3 +87,7 @@ gem 'whenever', require: false
 
 #エラーメッセージ日本語化
 gem 'rails-i18n'
+
+#nokogiri
+
+gem "nokogiri", ">= 1.10.8"
