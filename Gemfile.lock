@@ -133,7 +133,8 @@ GEM
       mini_portile2 (~> 2.4.0)
     pg (1.2.2)
     public_suffix (4.0.3)
-    puma (3.12.2)
+    puma (4.3.3)
+      nio4r (~> 2.0)
     rack (2.1.2)
     rack-test (0.6.3)
       rack (>= 1.0)
@@ -233,7 +234,7 @@ DEPENDENCIES
   less-rails!
   listen (~> 3.0.5)
   pg
-  puma (~> 3.0)
+  puma (>= 3.12.4)
   rails (~> 5.0.0)
   rails-i18n
   sass-rails (~> 5.0)
