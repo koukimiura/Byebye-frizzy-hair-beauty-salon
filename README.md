@@ -160,6 +160,12 @@ It is available to choose a date and time.
 
 
 
+# basic認証
+
+* kouki
+
+* 1006
+
 
 # Author
  
