@@ -18,6 +18,7 @@ class MenusController < ApplicationController
     @setting_your_hair = 'ヘアセット'
     @other = 'その他'
     
+    
   end
 
 
